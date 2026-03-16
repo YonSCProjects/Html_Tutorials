@@ -9,7 +9,7 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
     font-family: 'Heebo', sans-serif;
-    background: #FAFAF7;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: #1A1A18;
     min-height: 100vh;
     display: flex;
@@ -18,40 +18,91 @@
     padding: 60px 20px;
   }
   h1 {
-    font-size: 2.4rem;
+    font-size: 2.6rem;
     font-weight: 900;
-    margin-bottom: 40px;
+    margin-bottom: 12px;
+    color: #fff;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+  .subtitle {
+    font-size: 1.1rem;
+    color: rgba(255,255,255,0.8);
+    margin-bottom: 44px;
+    font-weight: 300;
   }
   .tutorials {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 18px;
     width: 100%;
-    max-width: 600px;
+    max-width: 620px;
   }
   a.card {
-    display: block;
-    background: #fff;
-    border: 1px solid rgba(0,0,0,0.08);
-    border-radius: 12px;
-    padding: 24px 28px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(10px);
+    border: none;
+    border-radius: 16px;
+    padding: 26px 30px;
     text-decoration: none;
-    color: inherit;
+    color: #2d2d2d;
     font-size: 1.15rem;
     font-weight: 500;
-    transition: box-shadow 0.2s, transform 0.2s;
+    transition: box-shadow 0.3s, transform 0.3s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   }
   a.card:hover {
-    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.18);
+    transform: translateY(-4px);
+  }
+  .card-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+  }
+  .card-icon.purple { background: #EDE9FE; }
+  .card-icon.teal { background: #D1FAE5; }
+  .card-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .card-title {
+    font-weight: 700;
+    line-height: 1.4;
+  }
+  .card-desc {
+    font-size: 0.85rem;
+    color: #888;
+    font-weight: 300;
   }
 </style>
 </head>
 <body>
   <h1>מדריכים</h1>
+  <p class="subtitle">בחרו מדריך כדי להתחיל</p>
   <div class="tutorials">
-    <a class="card" href="MC_Mods.html">איך לשנות סקינים של מודים ב-Minecraft Java Edition</a>
-    <a class="card" href="circuits-guide-rtl.html">מדריך מעגלים חשמליים — עקרונות בסיסיים</a>
+    <a class="card" href="MC_Mods.html">
+      <div class="card-icon purple">🎮</div>
+      <div class="card-text">
+        <span class="card-title">איך לשנות סקינים של מודים ב-Minecraft Java Edition</span>
+        <span class="card-desc">Minecraft · מודים · סקינים</span>
+      </div>
+    </a>
+    <a class="card" href="circuits-guide-rtl.html">
+      <div class="card-icon teal">⚡</div>
+      <div class="card-text">
+        <span class="card-title">מדריך מעגלים חשמליים — עקרונות בסיסיים</span>
+        <span class="card-desc">אלקטרוניקה · מעגלים · עקרונות</span>
+      </div>
+    </a>
   </div>
 </body>
 </html>
