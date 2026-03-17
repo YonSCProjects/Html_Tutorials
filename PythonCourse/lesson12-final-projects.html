@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>שיעור 12: פרויקטים מסכמים — קורס Python</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.8;
+            background: #0d1117;
+            color: #c9d1d9;
+            direction: rtl;
+            text-align: right;
+        }
+        h1, h2, h3, h4, h5, h6, p, li, td, th, div, label {
+            direction: rtl;
+            text-align: right;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: #161b22;
+            border-bottom: 1px solid #30363d;
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .navbar a {
+            color: #58a6ff;
+            text-decoration: none;
+            font-size: 0.95em;
+            transition: color 0.2s;
+        }
+        .navbar a:hover { color: #79c0ff; }
+        .nav-center { font-weight: bold; color: #f0f6fc; }
+
+        /* Header */
+        .lesson-hero {
+            background: linear-gradient(180deg, rgba(240,136,62,0.25) 0%, transparent 100%);
+            padding: 50px 20px 30px;
+            text-align: center;
+        }
+        .lesson-hero .icon { font-size: 3.5em; margin-bottom: 10px; }
+        .lesson-hero h1 { color: #f0883e; font-size: 2.4em; margin-bottom: 8px; }
+        .lesson-hero p { color: #8b949e; font-size: 1.15em; max-width: 650px; margin: 0 auto; }
+
+        /* Container */
+        .container { max-width: 850px; margin: 0 auto; padding: 30px 20px; }
+
+        /* Mission Header */
+        .mission-header {
+            background: linear-gradient(135deg, #21262d, #161b22);
+            border: 1px solid #30363d;
+            border-right: 5px solid #f0883e;
+            border-radius: 10px;
+            padding: 20px 25px;
+            margin: 40px 0 20px;
+        }
+        .mission-header h2 { color: #f0883e; font-size: 1.5em; margin-bottom: 4px; }
+        .time-estimate {
+            display: inline-block;
+            background: rgba(139,148,158,0.15);
+            color: #8b949e;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            margin-top: 5px;
+        }
+
+        /* Exercise Box */
+        .exercise {
+            background: #161b22;
+            border: 2px solid #238636;
+            border-radius: 10px;
+            padding: 22px;
+            margin: 18px 0;
+        }
+        .exercise h3 { color: #3fb950; font-size: 1.2em; margin-bottom: 12px; }
+
+        /* Steps */
+        .steps { list-style: none; padding: 0; counter-reset: step-counter; }
+        .steps li {
+            padding: 8px 0 8px 0;
+            padding-right: 40px;
+            position: relative;
+            counter-increment: step-counter;
+        }
+        .steps li::before {
+            content: counter(step-counter);
+            position: absolute;
+            right: 0;
+            top: 8px;
+            background: #1f6feb;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+
+        /* Code Blocks */
+        pre, code {
+            direction: ltr;
+            text-align: left;
+            font-family: 'Consolas', 'Courier New', monospace;
+        }
+        pre {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            margin: 12px 0;
+            font-size: 0.92em;
+            line-height: 1.6;
+        }
+        code {
+            background: rgba(110,118,129,0.2);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        pre code { background: none; padding: 0; }
+        .keyword { color: #ff7b72; }
+        .string { color: #a5d6ff; }
+        .comment { color: #8b949e; }
+        .function { color: #d2a8ff; }
+        .number { color: #79c0ff; }
+
+        /* What You Should See */
+        .what-you-see {
+            background: #000;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 12px 0;
+        }
+        .what-you-see::before {
+            content: "מה שאתה אמור לראות:";
+            display: block;
+            color: #3fb950;
+            font-weight: bold;
+            margin-bottom: 8px;
+            direction: rtl;
+            text-align: right;
+        }
+        .what-you-see pre {
+            background: transparent;
+            border: none;
+            padding: 0;
+            margin: 0;
+            color: #3fb950;
+        }
+
+        /* Answer Box */
+        .answer-box {
+            border: 2px dashed #30363d;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 15px 0;
+            background: #161b22;
+        }
+        .answer-box label { color: #8b949e; font-weight: bold; display: block; margin-bottom: 8px; }
+        .answer-box input[type="text"] {
+            width: 100%;
+            padding: 10px 14px;
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            color: #c9d1d9;
+            font-size: 1em;
+            margin-bottom: 10px;
+            direction: ltr;
+            text-align: left;
+        }
+        .answer-box input:focus { border-color: #58a6ff; outline: none; }
+        .check-btn {
+            background: linear-gradient(135deg, #238636, #2ea043);
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+        .check-btn:hover { transform: scale(1.03); }
+
+        /* Checkpoint */
+        .checkpoint {
+            background: rgba(35,134,54,0.1);
+            border-right: 4px solid #238636;
+            border-radius: 6px;
+            padding: 16px 20px;
+            margin: 20px 0;
+            color: #3fb950;
+        }
+
+        /* Mission Complete */
+        .mission-complete {
+            background: rgba(240,136,62,0.1);
+            border: 2px solid #f0883e;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 25px 0;
+            text-align: center;
+        }
+        .mission-complete h3 { color: #f0883e; margin-bottom: 8px; }
+
+        /* Info Box */
+        .info-box {
+            background: rgba(31,111,235,0.1);
+            border-right: 4px solid #1f6feb;
+            border-radius: 6px;
+            padding: 16px 20px;
+            margin: 15px 0;
+        }
+        .info-box strong { color: #58a6ff; }
+
+        /* Planning Box */
+        .planning-box {
+            background: rgba(210,159,34,0.1);
+            border: 2px solid #d29922;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .planning-box h4 { color: #d29922; margin-bottom: 10px; }
+        .planning-box ul { padding-right: 20px; }
+
+        /* Challenge Box */
+        .challenge-box {
+            background: rgba(137,87,229,0.1);
+            border-right: 4px solid #8957e5;
+            border-radius: 6px;
+            padding: 16px 20px;
+            margin: 15px 0;
+        }
+        .challenge-box strong { color: #a371f7; }
+
+        /* Popup */
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+        .popup {
+            background: #21262d;
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            border: 2px solid #30363d;
+        }
+        .popup .emoji { font-size: 3em; margin-bottom: 10px; }
+        .popup h3 { margin-bottom: 8px; color: #f0f6fc; }
+        .popup p { color: #8b949e; margin-bottom: 16px; }
+        .popup button {
+            background: #30363d;
+            color: #f0f6fc;
+            border: none;
+            padding: 8px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        .popup.correct { border-color: #238636; }
+        .popup.correct h3 { color: #3fb950; }
+        .popup.incorrect { border-color: #da3633; }
+        .popup.incorrect h3 { color: #f85149; }
+
+        /* Table of Contents */
+        .toc {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .toc h3 { color: #58a6ff; margin-bottom: 12px; }
+        .toc ul { list-style: none; padding: 0; }
+        .toc li { padding: 6px 0; }
+        .toc a { color: #f0883e; text-decoration: none; }
+        .toc a:hover { text-decoration: underline; }
+
+        @media (max-width: 600px) {
+            .lesson-hero h1 { font-size: 1.8em; }
+            .container { padding: 15px; }
+            .navbar { flex-direction: column; gap: 8px; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="index.html">חזרה לתוכן הקורס</a>
+    <span class="nav-center">שיעור 12 מתוך 12 — השיעור האחרון!</span>
+    <a href="lesson11-apis.html">&rarr; שיעור 11: APIs ו-Web</a>
+</nav>
+
+<div class="lesson-hero">
+    <div class="icon">🚀</div>
+    <h1>שיעור 12: פרויקטים מסכמים</h1>
+    <p>הגיע הזמן לשלב הכל! 4 פרויקטים שמשתמשים בכל מה שלמדת</p>
+</div>
+
+<div class="container">
+
+    <div class="toc">
+        <h3>פרויקטים</h3>
+        <ul>
+            <li><a href="#project1">פרויקט 1: מחולל סיסמאות (20 דק')</a></li>
+            <li><a href="#project2">פרויקט 2: מנהל אנשי קשר (25 דק')</a></li>
+            <li><a href="#project3">פרויקט 3: מנוע חידונים (25 דק')</a></li>
+            <li><a href="#project4">פרויקט 4: דשבורד מידע מהרשת (20 דק')</a></li>
+        </ul>
+    </div>
+
+    <!-- ==================== PROJECT 1 ==================== -->
+    <div class="mission-header" id="project1">
+        <h2>פרויקט 1: מחולל סיסמאות</h2>
+        <span class="time-estimate">⏱️ 20 דקות</span>
+    </div>
+
+    <div class="planning-box">
+        <h4>שלב תכנון — מה אנחנו צריכים?</h4>
+        <ul>
+            <li>בחירת אורך סיסמה</li>
+            <li>אפשרות לכלול: אותיות גדולות/קטנות, מספרים, סמלים</li>
+            <li>יצירת סיסמה אקראית</li>
+            <li>שמירה לקובץ</li>
+            <li>מודולים: <code>random</code>, <code>string</code></li>
+        </ul>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 1.1: מחולל בסיסי</h3>
+        <ol class="steps">
+            <li>צור קובץ <code>password_generator.py</code></li>
+            <li>כתוב:</li>
+        </ol>
+<pre><code><span class="keyword">import</span> random
+<span class="keyword">import</span> string
+
+<span class="keyword">def</span> <span class="function">generate_password</span>(length=<span class="number">12</span>, use_upper=<span class="keyword">True</span>, use_digits=<span class="keyword">True</span>, use_symbols=<span class="keyword">True</span>):
+    <span class="string">"""Generate a secure random password."""</span>
+    chars = string.ascii_lowercase  <span class="comment"># always include lowercase</span>
+
+    <span class="keyword">if</span> use_upper:
+        chars += string.ascii_uppercase
+    <span class="keyword">if</span> use_digits:
+        chars += string.digits
+    <span class="keyword">if</span> use_symbols:
+        chars += string.punctuation
+
+    <span class="comment"># Ensure at least one of each required type</span>
+    password = []
+    password.append(random.choice(string.ascii_lowercase))
+    <span class="keyword">if</span> use_upper:
+        password.append(random.choice(string.ascii_uppercase))
+    <span class="keyword">if</span> use_digits:
+        password.append(random.choice(string.digits))
+    <span class="keyword">if</span> use_symbols:
+        password.append(random.choice(string.punctuation))
+
+    <span class="comment"># Fill the rest randomly</span>
+    <span class="keyword">while</span> <span class="keyword">len</span>(password) < length:
+        password.append(random.choice(chars))
+
+    <span class="comment"># Shuffle so the required chars aren't always first</span>
+    random.shuffle(password)
+    <span class="keyword">return</span> <span class="string">''</span>.join(password)
+
+<span class="comment"># Test it</span>
+<span class="keyword">print</span>(<span class="string">"Generated passwords:"</span>)
+<span class="keyword">for</span> i <span class="keyword">in</span> <span class="keyword">range</span>(<span class="number">5</span>):
+    <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"  {i+1}. {generate_password(16)}"</span>)</code></pre>
+
+        <div class="what-you-see">
+<pre>Generated passwords:
+  1. kR7$mP2!xNq9Fw#L
+  2. Yb3@hT8&wQz5Jn!e
+  3. pX4#cM6*sKr2Dv@W
+  4. Ng9!fA1%tHx7Lm$B
+  5. wE5&jR8#bQy3Pn!Z</pre>
+        </div>
+
+        <p><strong>איזה מודול מכיל את <code>ascii_lowercase</code> ו-<code>digits</code>?</strong></p>
+        <div class="answer-box">
+            <label>התשובה שלך:</label>
+            <input type="text" id="answer-1-1" placeholder="שם המודול">
+            <button class="check-btn" onclick="checkAnswer('answer-1-1', ['string'], 'מדויק! מודול string מכיל קבועים שימושיים לעבודה עם טקסט.', 'רמז: תסתכל על שורת ה-import בקוד...')">בדוק תשובה</button>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 1.2: ממשק אינטראקטיבי ושמירה</h3>
+        <ol class="steps">
+            <li>הוסף לקובץ:</li>
+        </ol>
+<pre><code><span class="keyword">import</span> json
+<span class="keyword">from</span> datetime <span class="keyword">import</span> datetime
+
+<span class="keyword">def</span> <span class="function">save_password</span>(service, password, filename=<span class="string">"passwords.json"</span>):
+    <span class="string">"""Save password to a JSON file."""</span>
+    <span class="keyword">try</span>:
+        <span class="keyword">with</span> <span class="keyword">open</span>(filename, <span class="string">'r'</span>) <span class="keyword">as</span> f:
+            data = json.load(f)
+    <span class="keyword">except</span> (FileNotFoundError, json.JSONDecodeError):
+        data = []
+
+    data.append({
+        <span class="string">'service'</span>: service,
+        <span class="string">'password'</span>: password,
+        <span class="string">'created'</span>: datetime.now().strftime(<span class="string">"%Y-%m-%d %H:%M"</span>)
+    })
+
+    <span class="keyword">with</span> <span class="keyword">open</span>(filename, <span class="string">'w'</span>) <span class="keyword">as</span> f:
+        json.dump(data, f, indent=<span class="number">2</span>)
+    <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"Password saved for {service}!"</span>)
+
+<span class="keyword">def</span> <span class="function">main</span>():
+    <span class="keyword">print</span>(<span class="string">"🔐 Password Generator"</span>)
+    <span class="keyword">print</span>(<span class="string">"=" * 30</span>)
+
+    <span class="keyword">while True</span>:
+        <span class="keyword">print</span>(<span class="string">"\n1. Generate password"</span>)
+        <span class="keyword">print</span>(<span class="string">"2. Generate and save"</span>)
+        <span class="keyword">print</span>(<span class="string">"3. View saved passwords"</span>)
+        <span class="keyword">print</span>(<span class="string">"4. Exit"</span>)
+
+        choice = <span class="keyword">input</span>(<span class="string">"\nChoice: "</span>).strip()
+
+        <span class="keyword">if</span> choice == <span class="string">'1'</span>:
+            length = <span class="keyword">int</span>(<span class="keyword">input</span>(<span class="string">"Length (8-50): "</span>) <span class="keyword">or</span> <span class="string">'12'</span>)
+            pw = generate_password(length)
+            <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"\n  Your password: {pw}"</span>)
+
+        <span class="keyword">elif</span> choice == <span class="string">'2'</span>:
+            service = <span class="keyword">input</span>(<span class="string">"Service name: "</span>).strip()
+            length = <span class="keyword">int</span>(<span class="keyword">input</span>(<span class="string">"Length (8-50): "</span>) <span class="keyword">or</span> <span class="string">'12'</span>)
+            pw = generate_password(length)
+            <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"\n  Your password: {pw}"</span>)
+            save_password(service, pw)
+
+        <span class="keyword">elif</span> choice == <span class="string">'3'</span>:
+            <span class="keyword">try</span>:
+                <span class="keyword">with</span> <span class="keyword">open</span>(<span class="string">"passwords.json"</span>, <span class="string">'r'</span>) <span class="keyword">as</span> f:
+                    data = json.load(f)
+                <span class="keyword">for</span> entry <span class="keyword">in</span> data:
+                    <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"  {entry['service']}: {entry['password']} ({entry['created']})"</span>)
+            <span class="keyword">except</span> FileNotFoundError:
+                <span class="keyword">print</span>(<span class="string">"  No saved passwords yet."</span>)
+
+        <span class="keyword">elif</span> choice == <span class="string">'4'</span>:
+            <span class="keyword">print</span>(<span class="string">"Goodbye!"</span>)
+            <span class="keyword">break</span>
+
+<span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:
+    main()</code></pre>
+    </div>
+
+    <div class="challenge-box">
+        <strong>אתגרים להרחבה:</strong><br>
+        - הוסף בדיקת חוזק סיסמה (חלשה/בינונית/חזקה)<br>
+        - הוסף אפשרות ליצור סיסמה שקל לזכור (passphrase מילים אקראיות)<br>
+        - הוסף אפשרות למחוק סיסמה שמורה
+    </div>
+
+    <div class="checkpoint">
+        ✅ <strong>עצור!</strong> הרץ את התוכנית, צור כמה סיסמאות ושמור אותן. בדוק שהקובץ passwords.json נוצר.
+    </div>
+
+    <div class="mission-complete">
+        <h3>🎉 פרויקט 1 הושלם!</h3>
+        <p>שילבת: random, string, קבצים, JSON, לולאות, פונקציות</p>
+    </div>
+
+    <!-- ==================== PROJECT 2 ==================== -->
+    <div class="mission-header" id="project2">
+        <h2>פרויקט 2: מנהל אנשי קשר</h2>
+        <span class="time-estimate">⏱️ 25 דקות</span>
+    </div>
+
+    <div class="planning-box">
+        <h4>שלב תכנון — מה אנחנו צריכים?</h4>
+        <ul>
+            <li>הוספת איש קשר (שם, טלפון, אימייל, קטגוריה)</li>
+            <li>חיפוש אנשי קשר</li>
+            <li>עריכה ומחיקה</li>
+            <li>שמירה וטעינה מקובץ JSON</li>
+            <li>מודולים: <code>json</code>, <code>os</code></li>
+        </ul>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 2.1: מחלקת ContactManager</h3>
+        <ol class="steps">
+            <li>צור קובץ <code>contact_manager.py</code></li>
+            <li>כתוב:</li>
+        </ol>
+<pre><code><span class="keyword">import</span> json
+<span class="keyword">import</span> os
+
+<span class="keyword">class</span> <span class="function">ContactManager</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, filename=<span class="string">"contacts.json"</span>):
+        self.filename = filename
+        self.contacts = self._load()
+
+    <span class="keyword">def</span> <span class="function">_load</span>(self):
+        <span class="string">"""Load contacts from file."""</span>
+        <span class="keyword">if</span> os.path.exists(self.filename):
+            <span class="keyword">with</span> <span class="keyword">open</span>(self.filename, <span class="string">'r'</span>, encoding=<span class="string">'utf-8'</span>) <span class="keyword">as</span> f:
+                <span class="keyword">return</span> json.load(f)
+        <span class="keyword">return</span> {}
+
+    <span class="keyword">def</span> <span class="function">_save</span>(self):
+        <span class="string">"""Save contacts to file."""</span>
+        <span class="keyword">with</span> <span class="keyword">open</span>(self.filename, <span class="string">'w'</span>, encoding=<span class="string">'utf-8'</span>) <span class="keyword">as</span> f:
+            json.dump(self.contacts, f, indent=<span class="number">2</span>, ensure_ascii=<span class="keyword">False</span>)
+
+    <span class="keyword">def</span> <span class="function">add</span>(self, name, phone, email=<span class="string">""</span>, category=<span class="string">"general"</span>):
+        <span class="string">"""Add a new contact."""</span>
+        self.contacts[name] = {
+            <span class="string">'phone'</span>: phone,
+            <span class="string">'email'</span>: email,
+            <span class="string">'category'</span>: category
+        }
+        self._save()
+        <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"Added: {name}"</span>)
+
+    <span class="keyword">def</span> <span class="function">search</span>(self, query):
+        <span class="string">"""Search contacts by name (partial match)."""</span>
+        results = {}
+        <span class="keyword">for</span> name, info <span class="keyword">in</span> self.contacts.items():
+            <span class="keyword">if</span> query.lower() <span class="keyword">in</span> name.lower():
+                results[name] = info
+        <span class="keyword">return</span> results
+
+    <span class="keyword">def</span> <span class="function">delete</span>(self, name):
+        <span class="string">"""Delete a contact."""</span>
+        <span class="keyword">if</span> name <span class="keyword">in</span> self.contacts:
+            <span class="keyword">del</span> self.contacts[name]
+            self._save()
+            <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"Deleted: {name}"</span>)
+        <span class="keyword">else</span>:
+            <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"Not found: {name}"</span>)
+
+    <span class="keyword">def</span> <span class="function">list_all</span>(self):
+        <span class="string">"""Display all contacts."""</span>
+        <span class="keyword">if not</span> self.contacts:
+            <span class="keyword">print</span>(<span class="string">"  No contacts yet."</span>)
+            <span class="keyword">return</span>
+        <span class="keyword">for</span> name, info <span class="keyword">in</span> <span class="keyword">sorted</span>(self.contacts.items()):
+            <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"  {name}: {info['phone']} | {info['email']} [{info['category']}]"</span>)
+
+    <span class="keyword">def</span> <span class="function">list_by_category</span>(self, category):
+        <span class="string">"""List contacts in a specific category."""</span>
+        <span class="keyword">for</span> name, info <span class="keyword">in</span> self.contacts.items():
+            <span class="keyword">if</span> info[<span class="string">'category'</span>] == category:
+                <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"  {name}: {info['phone']}"</span>)</code></pre>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 2.2: תפריט אינטראקטיבי</h3>
+        <ol class="steps">
+            <li>הוסף לקובץ:</li>
+        </ol>
+<pre><code><span class="keyword">def</span> <span class="function">main</span>():
+    cm = ContactManager()
+    <span class="keyword">print</span>(<span class="string">"📒 Contact Manager"</span>)
+
+    <span class="keyword">while True</span>:
+        <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"\n--- {len(cm.contacts)} contacts ---"</span>)
+        <span class="keyword">print</span>(<span class="string">"1. Add contact"</span>)
+        <span class="keyword">print</span>(<span class="string">"2. Search"</span>)
+        <span class="keyword">print</span>(<span class="string">"3. List all"</span>)
+        <span class="keyword">print</span>(<span class="string">"4. Delete contact"</span>)
+        <span class="keyword">print</span>(<span class="string">"5. List by category"</span>)
+        <span class="keyword">print</span>(<span class="string">"6. Exit"</span>)
+
+        choice = <span class="keyword">input</span>(<span class="string">"\nChoice: "</span>).strip()
+
+        <span class="keyword">if</span> choice == <span class="string">'1'</span>:
+            name = <span class="keyword">input</span>(<span class="string">"Name: "</span>).strip()
+            phone = <span class="keyword">input</span>(<span class="string">"Phone: "</span>).strip()
+            email = <span class="keyword">input</span>(<span class="string">"Email (optional): "</span>).strip()
+            category = <span class="keyword">input</span>(<span class="string">"Category (family/friend/work): "</span>).strip() <span class="keyword">or</span> <span class="string">"general"</span>
+            cm.add(name, phone, email, category)
+
+        <span class="keyword">elif</span> choice == <span class="string">'2'</span>:
+            query = <span class="keyword">input</span>(<span class="string">"Search: "</span>).strip()
+            results = cm.search(query)
+            <span class="keyword">if</span> results:
+                <span class="keyword">for</span> name, info <span class="keyword">in</span> results.items():
+                    <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"  {name}: {info['phone']} | {info['email']}"</span>)
+            <span class="keyword">else</span>:
+                <span class="keyword">print</span>(<span class="string">"  No results."</span>)
+
+        <span class="keyword">elif</span> choice == <span class="string">'3'</span>:
+            cm.list_all()
+
+        <span class="keyword">elif</span> choice == <span class="string">'4'</span>:
+            name = <span class="keyword">input</span>(<span class="string">"Name to delete: "</span>).strip()
+            cm.delete(name)
+
+        <span class="keyword">elif</span> choice == <span class="string">'5'</span>:
+            cat = <span class="keyword">input</span>(<span class="string">"Category: "</span>).strip()
+            cm.list_by_category(cat)
+
+        <span class="keyword">elif</span> choice == <span class="string">'6'</span>:
+            <span class="keyword">print</span>(<span class="string">"Goodbye!"</span>)
+            <span class="keyword">break</span>
+
+<span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:
+    main()</code></pre>
+
+        <div class="what-you-see">
+<pre>📒 Contact Manager
+
+--- 0 contacts ---
+1. Add contact
+2. Search
+3. List all
+4. Delete contact
+5. List by category
+6. Exit
+
+Choice: 1
+Name: David
+Phone: 050-1234567
+Email: david@email.com
+Category (family/friend/work): friend
+Added: David</pre>
+        </div>
+
+        <p><strong>איזו מתודה שומרת את הנתונים אוטומטית אחרי כל שינוי?</strong></p>
+        <div class="answer-box">
+            <label>התשובה שלך:</label>
+            <input type="text" id="answer-2-1" placeholder="_save / _load / ...">
+            <button class="check-btn" onclick="checkAnswer('answer-2-1', ['_save', 'save'], 'נכון! _save נקראת אחרי add ואחרי delete כדי לשמור את השינויים.', 'רמז: חפש מתודה שנקראת בתוך add() ו-delete()...')">בדוק תשובה</button>
+        </div>
+    </div>
+
+    <div class="challenge-box">
+        <strong>אתגרים להרחבה:</strong><br>
+        - הוסף אפשרות עריכה (update) של איש קשר קיים<br>
+        - הוסף ייצוא ל-CSV<br>
+        - הוסף אפשרות ייבוא מ-CSV
+    </div>
+
+    <div class="mission-complete">
+        <h3>🎉 פרויקט 2 הושלם!</h3>
+        <p>שילבת: OOP, מילונים, קבצים, JSON, חיפוש, CRUD מלא</p>
+    </div>
+
+    <!-- ==================== PROJECT 3 ==================== -->
+    <div class="mission-header" id="project3">
+        <h2>פרויקט 3: מנוע חידונים</h2>
+        <span class="time-estimate">⏱️ 25 דקות</span>
+    </div>
+
+    <div class="planning-box">
+        <h4>שלב תכנון — מה אנחנו צריכים?</h4>
+        <ul>
+            <li>טעינת שאלות מקובץ JSON</li>
+            <li>קטגוריות שונות</li>
+            <li>מערכת ניקוד</li>
+            <li>שמירת שיאים (high scores)</li>
+            <li>מודולים: <code>json</code>, <code>random</code>, <code>time</code></li>
+        </ul>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 3.1: קובץ שאלות</h3>
+        <ol class="steps">
+            <li>צור קובץ <code>questions.json</code></li>
+            <li>כתוב:</li>
+        </ol>
+<pre><code>{
+  "python": [
+    {
+      "question": "What function prints text to the screen?",
+      "options": ["print()", "display()", "show()", "write()"],
+      "answer": 0
+    },
+    {
+      "question": "Which data type stores True/False?",
+      "options": ["string", "integer", "boolean", "float"],
+      "answer": 2
+    },
+    {
+      "question": "What keyword starts a function definition?",
+      "options": ["func", "function", "def", "define"],
+      "answer": 2
+    },
+    {
+      "question": "What does len() return for [1, 2, 3]?",
+      "options": ["1", "2", "3", "6"],
+      "answer": 2
+    }
+  ],
+  "general": [
+    {
+      "question": "How many continents are there?",
+      "options": ["5", "6", "7", "8"],
+      "answer": 2
+    },
+    {
+      "question": "What is the largest ocean?",
+      "options": ["Atlantic", "Indian", "Arctic", "Pacific"],
+      "answer": 3
+    },
+    {
+      "question": "What planet is known as the Red Planet?",
+      "options": ["Venus", "Mars", "Jupiter", "Saturn"],
+      "answer": 1
+    }
+  ]
+}</code></pre>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 3.2: מנוע המשחק</h3>
+        <ol class="steps">
+            <li>צור קובץ <code>quiz_game.py</code></li>
+            <li>כתוב:</li>
+        </ol>
+<pre><code><span class="keyword">import</span> json
+<span class="keyword">import</span> random
+<span class="keyword">import</span> time
+
+<span class="keyword">class</span> <span class="function">QuizGame</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, questions_file=<span class="string">"questions.json"</span>):
+        <span class="keyword">with</span> <span class="keyword">open</span>(questions_file, <span class="string">'r'</span>) <span class="keyword">as</span> f:
+            self.all_questions = json.load(f)
+        self.score = <span class="number">0</span>
+        self.total = <span class="number">0</span>
+        self.high_scores = self._load_high_scores()
+
+    <span class="keyword">def</span> <span class="function">_load_high_scores</span>(self):
+        <span class="keyword">try</span>:
+            <span class="keyword">with</span> <span class="keyword">open</span>(<span class="string">"high_scores.json"</span>, <span class="string">'r'</span>) <span class="keyword">as</span> f:
+                <span class="keyword">return</span> json.load(f)
+        <span class="keyword">except</span> (FileNotFoundError, json.JSONDecodeError):
+            <span class="keyword">return</span> []
+
+    <span class="keyword">def</span> <span class="function">_save_high_score</span>(self, name, score, total, time_taken):
+        self.high_scores.append({
+            <span class="string">'name'</span>: name,
+            <span class="string">'score'</span>: score,
+            <span class="string">'total'</span>: total,
+            <span class="string">'percentage'</span>: <span class="keyword">round</span>(score / total * <span class="number">100</span>) <span class="keyword">if</span> total > <span class="number">0</span> <span class="keyword">else</span> <span class="number">0</span>,
+            <span class="string">'time'</span>: <span class="keyword">round</span>(time_taken, <span class="number">1</span>)
+        })
+        self.high_scores.sort(key=<span class="keyword">lambda</span> x: x[<span class="string">'percentage'</span>], reverse=<span class="keyword">True</span>)
+        <span class="keyword">with</span> <span class="keyword">open</span>(<span class="string">"high_scores.json"</span>, <span class="string">'w'</span>) <span class="keyword">as</span> f:
+            json.dump(self.high_scores, f, indent=<span class="number">2</span>)
+
+    <span class="keyword">def</span> <span class="function">ask_question</span>(self, q):
+        <span class="string">"""Ask one question and return True if correct."""</span>
+        <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"\n  {q['question']}"</span>)
+        <span class="keyword">for</span> i, option <span class="keyword">in</span> <span class="keyword">enumerate</span>(q[<span class="string">'options'</span>]):
+            <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"    {i + 1}. {option}"</span>)
+
+        <span class="keyword">try</span>:
+            answer = <span class="keyword">int</span>(<span class="keyword">input</span>(<span class="string">"  Your answer (number): "</span>)) - <span class="number">1</span>
+        <span class="keyword">except</span> ValueError:
+            answer = -<span class="number">1</span>
+
+        <span class="keyword">if</span> answer == q[<span class="string">'answer'</span>]:
+            <span class="keyword">print</span>(<span class="string">"  ✅ Correct!"</span>)
+            <span class="keyword">return</span> <span class="keyword">True</span>
+        <span class="keyword">else</span>:
+            correct = q[<span class="string">'options'</span>][q[<span class="string">'answer'</span>]]
+            <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"  ❌ Wrong! The answer was: {correct}"</span>)
+            <span class="keyword">return</span> <span class="keyword">False</span>
+
+    <span class="keyword">def</span> <span class="function">play</span>(self, category):
+        <span class="string">"""Play a quiz in a given category."""</span>
+        <span class="keyword">if</span> category <span class="keyword">not in</span> self.all_questions:
+            <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"Category '{category}' not found!"</span>)
+            <span class="keyword">return</span>
+
+        questions = self.all_questions[category][:]
+        random.shuffle(questions)
+
+        <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"\n🧠 Quiz: {category.upper()} ({len(questions)} questions)"</span>)
+        <span class="keyword">print</span>(<span class="string">"=" * 35</span>)
+
+        self.score = <span class="number">0</span>
+        self.total = <span class="keyword">len</span>(questions)
+        start_time = time.time()
+
+        <span class="keyword">for</span> i, q <span class="keyword">in</span> <span class="keyword">enumerate</span>(questions, <span class="number">1</span>):
+            <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"\nQuestion {i}/{self.total}:"</span>)
+            <span class="keyword">if</span> self.ask_question(q):
+                self.score += <span class="number">1</span>
+
+        elapsed = time.time() - start_time
+        pct = <span class="keyword">round</span>(self.score / self.total * <span class="number">100</span>)
+
+        <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"\n{'=' * 35}"</span>)
+        <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"Score: {self.score}/{self.total} ({pct}%)"</span>)
+        <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"Time: {elapsed:.1f} seconds"</span>)
+
+        <span class="keyword">if</span> pct == <span class="number">100</span>:
+            <span class="keyword">print</span>(<span class="string">"🏆 PERFECT SCORE!"</span>)
+        <span class="keyword">elif</span> pct >= <span class="number">70</span>:
+            <span class="keyword">print</span>(<span class="string">"⭐ Great job!"</span>)
+        <span class="keyword">else</span>:
+            <span class="keyword">print</span>(<span class="string">"📚 Keep studying!"</span>)
+
+        name = <span class="keyword">input</span>(<span class="string">"\nYour name for the leaderboard: "</span>).strip()
+        <span class="keyword">if</span> name:
+            self._save_high_score(name, self.score, self.total, elapsed)
+
+    <span class="keyword">def</span> <span class="function">show_high_scores</span>(self):
+        <span class="keyword">print</span>(<span class="string">"\n🏆 HIGH SCORES:"</span>)
+        <span class="keyword">for</span> i, hs <span class="keyword">in</span> <span class="keyword">enumerate</span>(self.high_scores[:<span class="number">5</span>], <span class="number">1</span>):
+            <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"  {i}. {hs['name']} - {hs['percentage']}% ({hs['score']}/{hs['total']}) in {hs['time']}s"</span>)
+
+<span class="comment"># Main</span>
+game = QuizGame()
+<span class="keyword">print</span>(<span class="string">"🧠 Quiz Game!"</span>)
+<span class="keyword">print</span>(<span class="string">"Categories:"</span>, <span class="keyword">list</span>(game.all_questions.keys()))
+cat = <span class="keyword">input</span>(<span class="string">"Choose category: "</span>).strip()
+game.play(cat)
+game.show_high_scores()</code></pre>
+
+        <div class="what-you-see">
+<pre>🧠 Quiz Game!
+Categories: ['python', 'general']
+Choose category: python
+
+🧠 Quiz: PYTHON (4 questions)
+===================================
+
+Question 1/4:
+  What function prints text to the screen?
+    1. print()
+    2. display()
+    3. show()
+    4. write()
+  Your answer (number): 1
+  ✅ Correct!</pre>
+        </div>
+
+        <p><strong>באיזו מתודה מתבצע ערבוב (shuffle) של השאלות?</strong></p>
+        <div class="answer-box">
+            <label>התשובה שלך:</label>
+            <input type="text" id="answer-3-1" placeholder="שם המתודה">
+            <button class="check-btn" onclick="checkAnswer('answer-3-1', ['play', 'play()'], 'מדויק! המתודה play() מערבבת את השאלות לפני שמתחילים.', 'רמז: חפש את random.shuffle בקוד — באיזו מתודה זה נמצא?')">בדוק תשובה</button>
+        </div>
+    </div>
+
+    <div class="challenge-box">
+        <strong>אתגרים להרחבה:</strong><br>
+        - הוסף מצב "קשה" שבו יש זמן מוגבל לכל שאלה<br>
+        - הוסף אפשרות להוסיף שאלות חדשות דרך התוכנית<br>
+        - הוסף קטגוריה שלישית עם שאלות שאתה כותב
+    </div>
+
+    <div class="mission-complete">
+        <h3>🎉 פרויקט 3 הושלם!</h3>
+        <p>שילבת: OOP, JSON, קבצים, random, time, מערכת ניקוד</p>
+    </div>
+
+    <!-- ==================== PROJECT 4 ==================== -->
+    <div class="mission-header" id="project4">
+        <h2>פרויקט 4: דשבורד מידע מהרשת</h2>
+        <span class="time-estimate">⏱️ 20 דקות</span>
+    </div>
+
+    <div class="planning-box">
+        <h4>שלב תכנון — מה אנחנו צריכים?</h4>
+        <ul>
+            <li>מזג אוויר (wttr.in)</li>
+            <li>בדיחה אקראית (jokeapi.dev)</li>
+            <li>עובדה מעניינת (numbersapi.com)</li>
+            <li>עובדה על חתולים (catfact.ninja)</li>
+            <li>מודולים: <code>requests</code>, <code>datetime</code></li>
+        </ul>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 4.1: הדשבורד השלם</h3>
+        <ol class="steps">
+            <li>צור קובץ <code>info_dashboard.py</code></li>
+            <li>כתוב:</li>
+        </ol>
+<pre><code><span class="keyword">import</span> requests
+<span class="keyword">import</span> datetime
+
+<span class="keyword">class</span> <span class="function">Dashboard</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self.sections = []
+
+    <span class="keyword">def</span> <span class="function">_safe_get</span>(self, url, params=<span class="keyword">None</span>, timeout=<span class="number">5</span>):
+        <span class="string">"""Safe API call with error handling."""</span>
+        <span class="keyword">try</span>:
+            r = requests.get(url, params=params, timeout=timeout)
+            r.raise_for_status()
+            <span class="keyword">return</span> r
+        <span class="keyword">except</span> requests.exceptions.RequestException:
+            <span class="keyword">return</span> <span class="keyword">None</span>
+
+    <span class="keyword">def</span> <span class="function">get_weather</span>(self, city=<span class="string">"Tel+Aviv"</span>):
+        <span class="string">"""Get weather from wttr.in."""</span>
+        r = self._safe_get(<span class="keyword">f</span><span class="string">"https://wttr.in/{city}?format=j1"</span>)
+        <span class="keyword">if</span> r:
+            current = r.json()[<span class="string">'current_condition'</span>][<span class="number">0</span>]
+            desc = current[<span class="string">'weatherDesc'</span>][<span class="number">0</span>][<span class="string">'value'</span>]
+            <span class="keyword">return</span> <span class="keyword">f</span><span class="string">"{city}: {current['temp_C']}°C, {desc}, Humidity: {current['humidity']}%"</span>
+        <span class="keyword">return</span> <span class="string">"Weather unavailable"</span>
+
+    <span class="keyword">def</span> <span class="function">get_joke</span>(self):
+        <span class="string">"""Get random joke from JokeAPI."""</span>
+        r = self._safe_get(<span class="string">"https://v2.jokeapi.dev/joke/Any"</span>, {<span class="string">'type'</span>: <span class="string">'single'</span>})
+        <span class="keyword">if</span> r:
+            <span class="keyword">return</span> r.json().get(<span class="string">'joke'</span>, <span class="string">'No joke found'</span>)
+        <span class="keyword">return</span> <span class="string">"Joke unavailable"</span>
+
+    <span class="keyword">def</span> <span class="function">get_cat_fact</span>(self):
+        <span class="string">"""Get random cat fact."""</span>
+        r = self._safe_get(<span class="string">"https://catfact.ninja/fact"</span>)
+        <span class="keyword">if</span> r:
+            <span class="keyword">return</span> r.json()[<span class="string">'fact'</span>]
+        <span class="keyword">return</span> <span class="string">"Cat fact unavailable"</span>
+
+    <span class="keyword">def</span> <span class="function">get_number_fact</span>(self):
+        <span class="string">"""Get fun fact about today's date."""</span>
+        day = datetime.datetime.now().day
+        r = self._safe_get(<span class="keyword">f</span><span class="string">"http://numbersapi.com/{day}?json"</span>)
+        <span class="keyword">if</span> r:
+            <span class="keyword">return</span> r.json()[<span class="string">'text'</span>]
+        <span class="keyword">return</span> <span class="string">"Number fact unavailable"</span>
+
+    <span class="keyword">def</span> <span class="function">display</span>(self, cities=<span class="keyword">None</span>):
+        <span class="string">"""Display the full dashboard."""</span>
+        <span class="keyword">if</span> cities <span class="keyword">is None</span>:
+            cities = [<span class="string">"Tel+Aviv"</span>]
+
+        now = datetime.datetime.now()
+        width = <span class="number">50</span>
+
+        <span class="keyword">print</span>(<span class="string">"\n"</span> + <span class="string">"="</span> * width)
+        <span class="keyword">print</span>(<span class="string">"  📊 DAILY INFO DASHBOARD"</span>)
+        <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"  {now.strftime('%Y-%m-%d %H:%M')}"</span>)
+        <span class="keyword">print</span>(<span class="string">"="</span> * width)
+
+        <span class="comment"># Weather</span>
+        <span class="keyword">print</span>(<span class="string">"\n🌤️  WEATHER:"</span>)
+        <span class="keyword">for</span> city <span class="keyword">in</span> cities:
+            <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"  {self.get_weather(city)}"</span>)
+
+        <span class="comment"># Joke</span>
+        <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"\n🃏  JOKE OF THE MOMENT:"</span>)
+        <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"  {self.get_joke()}"</span>)
+
+        <span class="comment"># Cat fact</span>
+        <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"\n🐱  CAT FACT:"</span>)
+        <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"  {self.get_cat_fact()}"</span>)
+
+        <span class="comment"># Number fact</span>
+        <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"\n🔢  TODAY'S NUMBER ({now.day}):"</span>)
+        <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"  {self.get_number_fact()}"</span>)
+
+        <span class="keyword">print</span>(<span class="string">"\n"</span> + <span class="string">"="</span> * width)
+
+<span class="comment"># Run the dashboard!</span>
+dashboard = Dashboard()
+dashboard.display([<span class="string">"Tel+Aviv"</span>, <span class="string">"London"</span>, <span class="string">"New+York"</span>])</code></pre>
+
+        <div class="what-you-see">
+<pre>==================================================
+  📊 DAILY INFO DASHBOARD
+  2026-03-17 14:30
+==================================================
+
+🌤️  WEATHER:
+  Tel+Aviv: 22°C, Partly cloudy, Humidity: 60%
+  London: 12°C, Light rain, Humidity: 78%
+  New+York: 8°C, Clear, Humidity: 45%
+
+🃏  JOKE OF THE MOMENT:
+  Why do programmers prefer dark mode? Because light attracts bugs.
+
+🐱  CAT FACT:
+  A cat can jump up to five times its own height in a single bound.
+
+🔢  TODAY'S NUMBER (17):
+  17 is the number of syllables in a haiku.
+
+==================================================</pre>
+        </div>
+
+        <p><strong>מה המתודה שמטפלת בשגיאות בכל קריאות ה-API?</strong></p>
+        <div class="answer-box">
+            <label>התשובה שלך:</label>
+            <input type="text" id="answer-4-1" placeholder="_safe_get / get_weather / ...">
+            <button class="check-btn" onclick="checkAnswer('answer-4-1', ['_safe_get', 'safe_get'], 'מדויק! _safe_get עוטפת כל קריאת API עם try/except.', 'רמז: חפש מתודה שכל המתודות האחרות קוראות לה...')">בדוק תשובה</button>
+        </div>
+    </div>
+
+    <div class="challenge-box">
+        <strong>אתגרים להרחבה:</strong><br>
+        - הוסף שמירת הדשבורד לקובץ טקסט עם תאריך<br>
+        - הוסף API נוסף שמעניין אותך<br>
+        - הוסף צבעים לפלט באמצעות ANSI escape codes
+    </div>
+
+    <div class="checkpoint">
+        ✅ <strong>עצור!</strong> הרץ את הדשבורד — אם יש שגיאת חיבור, בדוק שיש לך אינטרנט ו-requests מותקנת.
+    </div>
+
+    <div class="mission-complete">
+        <h3>🎉 פרויקט 4 הושלם!</h3>
+        <p>שילבת: APIs, requests, JSON, OOP, datetime, טיפול בשגיאות</p>
+    </div>
+
+    <!-- ==================== COURSE COMPLETE ==================== -->
+    <div style="background: linear-gradient(135deg, rgba(240,136,62,0.2), rgba(137,87,229,0.2)); border: 2px solid #f0883e; border-radius: 16px; padding: 40px; margin: 40px 0; text-align: center;">
+        <h2 style="color: #f0883e; font-size: 2em; margin-bottom: 15px;">🏆 סיימת את הקורס!</h2>
+        <p style="font-size: 1.2em; margin-bottom: 20px;">12 שיעורים, עשרות תרגילים, ו-4 פרויקטים אמיתיים.</p>
+        <p style="color: #8b949e; font-size: 1.05em;">מה למדת:</p>
+        <p style="margin: 15px 0;">
+            <span style="background: rgba(35,134,54,0.2); color: #3fb950; padding: 4px 12px; border-radius: 20px; margin: 4px; display: inline-block;">משתנים</span>
+            <span style="background: rgba(35,134,54,0.2); color: #3fb950; padding: 4px 12px; border-radius: 20px; margin: 4px; display: inline-block;">תנאים</span>
+            <span style="background: rgba(35,134,54,0.2); color: #3fb950; padding: 4px 12px; border-radius: 20px; margin: 4px; display: inline-block;">לולאות</span>
+            <span style="background: rgba(31,111,235,0.2); color: #58a6ff; padding: 4px 12px; border-radius: 20px; margin: 4px; display: inline-block;">רשימות</span>
+            <span style="background: rgba(31,111,235,0.2); color: #58a6ff; padding: 4px 12px; border-radius: 20px; margin: 4px; display: inline-block;">מילונים</span>
+            <span style="background: rgba(31,111,235,0.2); color: #58a6ff; padding: 4px 12px; border-radius: 20px; margin: 4px; display: inline-block;">פונקציות</span>
+            <span style="background: rgba(137,87,229,0.2); color: #a371f7; padding: 4px 12px; border-radius: 20px; margin: 4px; display: inline-block;">קבצים</span>
+            <span style="background: rgba(137,87,229,0.2); color: #a371f7; padding: 4px 12px; border-radius: 20px; margin: 4px; display: inline-block;">שגיאות</span>
+            <span style="background: rgba(137,87,229,0.2); color: #a371f7; padding: 4px 12px; border-radius: 20px; margin: 4px; display: inline-block;">OOP</span>
+            <span style="background: rgba(240,136,62,0.2); color: #f0883e; padding: 4px 12px; border-radius: 20px; margin: 4px; display: inline-block;">APIs</span>
+            <span style="background: rgba(240,136,62,0.2); color: #f0883e; padding: 4px 12px; border-radius: 20px; margin: 4px; display: inline-block;">פרויקטים</span>
+        </p>
+        <p style="color: #8b949e; margin-top: 20px;">המשך ללמוד, לבנות, וליצור. השמיים הם הגבול!</p>
+    </div>
+
+</div>
+
+<!-- Popup Modal -->
+<div class="popup-overlay" id="popup-overlay" onclick="closePopup()">
+    <div class="popup" id="popup" onclick="event.stopPropagation()">
+        <div class="emoji" id="popup-emoji"></div>
+        <h3 id="popup-title"></h3>
+        <p id="popup-message"></p>
+        <button onclick="closePopup()">סגור</button>
+    </div>
+</div>
+
+<script>
+function checkAnswer(inputId, correctAnswers, successMsg, failMsg) {
+    var input = document.getElementById(inputId);
+    var val = input.value.trim();
+    var isCorrect = false;
+    for (var i = 0; i < correctAnswers.length; i++) {
+        if (val === correctAnswers[i] || val.toLowerCase() === correctAnswers[i].toLowerCase()) { isCorrect = true; break; }
+    }
+    var overlay = document.getElementById('popup-overlay');
+    var emoji = document.getElementById('popup-emoji');
+    var title = document.getElementById('popup-title');
+    var message = document.getElementById('popup-message');
+    var popup = document.getElementById('popup');
+    if (isCorrect) { emoji.textContent = '🎉'; title.textContent = 'כל הכבוד!'; message.textContent = successMsg; popup.className = 'popup correct'; }
+    else { emoji.textContent = '🤔'; title.textContent = 'נסה שוב'; message.textContent = failMsg; popup.className = 'popup incorrect'; }
+    overlay.style.display = 'flex';
+}
+function closePopup() { document.getElementById('popup-overlay').style.display = 'none'; }
+</script>
+
+</body>
+</html>

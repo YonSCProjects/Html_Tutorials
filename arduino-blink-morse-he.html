@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ארדואינו: בלינק ותבניות מורס</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0d1b2a 0%, #1b263b 100%);
+            color: #e0e0e0;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.8;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 40px;
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            color: #00b4d8;
+            font-size: 2.2em;
+            text-align: center;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(0, 180, 216, 0.3);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .intro-box {
+            background: linear-gradient(135deg, #00b4d820, #00b4d810);
+            border: 2px solid #00b4d8;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .intro-box h3 {
+            color: #00b4d8;
+            margin-top: 0;
+        }
+
+        .warning-box {
+            background: rgba(255, 193, 7, 0.15);
+            border: 2px solid #ffc107;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .warning-box::before {
+            content: "⚠️ לפני שמתחילים:";
+            display: block;
+            color: #ffc107;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .mission-header {
+            background: linear-gradient(90deg, #ffc107, #0077b6);
+            color: #0d1b2a;
+            padding: 20px 25px;
+            border-radius: 15px;
+            margin: 40px 0 20px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .mission-header h2 {
+            margin: 0;
+            font-size: 1.5em;
+            color: #0d1b2a;
+        }
+
+        .time-estimate {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            color: #0d1b2a;
+        }
+
+        .exercise {
+            background: rgba(0, 180, 216, 0.1);
+            border: 2px solid #00b4d8;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .exercise h3 {
+            color: #00b4d8;
+            margin-top: 0;
+            font-size: 1.3em;
+        }
+
+        .steps {
+            counter-reset: step-counter;
+            list-style: none;
+            padding: 0;
+        }
+
+        .steps li {
+            counter-increment: step-counter;
+            margin: 15px 0;
+            padding-right: 45px;
+            position: relative;
+        }
+
+        .steps li::before {
+            content: counter(step-counter);
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 30px;
+            height: 30px;
+            background: #00b4d8;
+            color: #0d1b2a;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .prompt-box {
+            background: #0d1b2a;
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            direction: rtl;
+            text-align: right;
+        }
+
+        .prompt-box::before {
+            content: "💬 פרומפט ל-Claude:";
+            display: block;
+            color: #ffc107;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .prompt-box pre {
+            background: #0a141f;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 0;
+            white-space: pre-wrap;
+            direction: rtl;
+            text-align: right;
+            color: #fff;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .what-you-see {
+            background: #000;
+            border: 2px solid #00b4d8;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .what-you-see::before {
+            content: "👀 מה צריך לראות:";
+            display: block;
+            color: #00b4d8;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .what-you-see pre {
+            margin: 0;
+            color: #00ff00;
+            direction: ltr;
+            text-align: left;
+        }
+
+        .checkpoint {
+            background: linear-gradient(135deg, #00b4d820, #00b4d810);
+            border-right: 5px solid #00b4d8;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 0 15px 15px 0;
+        }
+
+        .checkpoint strong {
+            color: #00b4d8;
+        }
+
+        .answer-box {
+            background: rgba(255, 193, 7, 0.1);
+            border: 2px dashed #ffc107;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .answer-box label {
+            display: block;
+            color: #ffc107;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .answer-box input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #444;
+            border-radius: 8px;
+            background: #0d1b2a;
+            color: #fff;
+            font-size: 1em;
+            margin-bottom: 10px;
+        }
+
+        .answer-box input[type="text"]:focus {
+            border-color: #ffc107;
+            outline: none;
+        }
+
+        .check-btn {
+            background: linear-gradient(135deg, #ffc107, #0077b6);
+            color: #0d1b2a;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .check-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(255, 193, 7, 0.4);
+        }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .feedback.correct {
+            background: rgba(0, 180, 216, 0.2);
+            border: 2px solid #00b4d8;
+            color: #00b4d8;
+            display: block;
+        }
+
+        .feedback.incorrect {
+            background: rgba(255, 107, 107, 0.2);
+            border: 2px solid #ff6b6b;
+            color: #ff6b6b;
+            display: block;
+        }
+
+        .mission-complete {
+            background: linear-gradient(135deg, #9b59b620, #9b59b610);
+            border: 2px solid #9b59b6;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .mission-complete h3 {
+            color: #9b59b6;
+            margin-top: 0;
+        }
+
+        .morse-diagram {
+            background: #0a141f;
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .morse-diagram pre {
+            color: #ffc107;
+            font-family: monospace;
+            direction: ltr;
+            text-align: center;
+            margin: 0;
+            font-size: 1.2em;
+        }
+
+        .tip-box {
+            background: rgba(0, 180, 216, 0.1);
+            border: 2px solid #00b4d8;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .tip-box::before {
+            content: "💡 טיפ:";
+            display: block;
+            color: #00b4d8;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .circuit-box {
+            background: #0a141f;
+            border: 2px solid #00b4d8;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .circuit-box::before {
+            content: "🔌 חיבור חשמלי:";
+            display: block;
+            color: #00b4d8;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .circuit-box pre {
+            color: #00b4d8;
+            font-family: monospace;
+            direction: ltr;
+            margin: 0;
+        }
+
+        .final-section {
+            background: linear-gradient(135deg, #00b4d820, #ffc10720);
+            border: 2px solid #00b4d8;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        .final-section h2 {
+            color: #00b4d8;
+            margin-top: 0;
+        }
+
+        /* Popup Styles */
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popup {
+            background: #0d1b2a;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            max-width: 400px;
+            animation: popIn 0.3s ease-out;
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0.5); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .popup.correct {
+            border: 3px solid #00b4d8;
+            box-shadow: 0 0 30px rgba(0, 180, 216, 0.5);
+        }
+
+        .popup.incorrect {
+            border: 3px solid #ff6b6b;
+            box-shadow: 0 0 30px rgba(255, 107, 107, 0.5);
+        }
+
+        .popup .emoji {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        .popup h3 {
+            margin: 0 0 15px 0;
+        }
+
+        .popup.correct h3 {
+            color: #00b4d8;
+        }
+
+        .popup.incorrect h3 {
+            color: #ff6b6b;
+        }
+
+        .popup button {
+            background: linear-gradient(135deg, #ffc107, #0077b6);
+            color: #0d1b2a;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        ul {
+            padding-right: 20px;
+        }
+
+        li {
+            margin: 8px 0;
+        }
+
+        code {
+            background: #0a141f;
+            padding: 2px 8px;
+            border-radius: 4px;
+            color: #ffc107;
+            font-family: Consolas, monospace;
+        }
+
+        .led-animation {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #333;
+            margin: 0 5px;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 49% { background: #ff0; box-shadow: 0 0 20px #ff0; }
+            50%, 100% { background: #333; box-shadow: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>💡 ארדואינו: בלינק ותבניות מורס</h1>
+        <p class="subtitle">בונים LED מהבהב ומשדרים SOS בעזרת Claude!</p>
+
+        <div class="intro-box">
+            <h3>🎯 מה נלמד היום?</h3>
+            <p>במדריך הזה תלמדו לתכנת ארדואינו בעזרת Claude AI:</p>
+            <ul>
+                <li><strong>בלינק לא-חוסם</strong> - LED שמהבהב בלי לעצור את התוכנית</li>
+                <li><strong>תבניות</strong> - דפוסי הבהוב כמו פעימת לב</li>
+                <li><strong>קוד מורס</strong> - לשדר SOS (... --- ...) עם אור!</li>
+            </ul>
+        </div>
+
+        <div class="warning-box">
+            <ul>
+                <li>וודאו ש-Arduino IDE (2.x) מותקן ושהלוח מזוהה</li>
+                <li>נשתמש ב-LED המובנה (אין צורך בחיבורים)</li>
+                <li>אם עובדים עם LED חיצוני - חברו נגד 220Ω בטור!</li>
+            </ul>
+        </div>
+
+        <!-- משימה 1 -->
+        <div class="mission-header">
+            <h2>משימה 1: בלינק לא-חוסם (millis)</h2>
+            <span class="time-estimate">⏱️ 10 דקות</span>
+        </div>
+
+        <div class="exercise">
+            <h3>תרגיל 1.1: מה ההבדל?</h3>
+            <p>יש שתי דרכים לגרום ל-LED להבהב:</p>
+
+            <div class="morse-diagram">
+                <pre>
+delay() - עוצר את כל התוכנית! ⛔
+millis() - ממשיך לרוץ ובודק את השעון ✅
+                </pre>
+            </div>
+
+            <p><strong>למה millis() עדיף על delay()?</strong></p>
+            <div class="answer-box">
+                <label>התשובה שלך:</label>
+                <input type="text" id="answer-1-1" placeholder="כי...">
+                <button class="check-btn" onclick="checkAnswer('answer-1-1', ['לא עוצר', 'לא חוסם', 'ממשיך', 'לא מחכה', 'עובד', 'רץ'], '✨ נכון! millis לא עוצר את התוכנית', '❌ רמז: מה קורה לשאר הקוד כשמשתמשים ב-delay?', true)">בדוק תשובה</button>
+                <div class="feedback" id="feedback-1-1"></div>
+            </div>
+        </div>
+
+        <div class="exercise">
+            <h3>תרגיל 1.2: יצירת קוד הבלינק</h3>
+            <ol class="steps">
+                <li>פתחו את Claude ויצרו תיקייה בשם <code>millis_blink</code></li>
+                <li>העתיקו את הפרומפט הזה:</li>
+            </ol>
+
+            <div class="prompt-box">
+                <pre>צור/י קובץ millis_blink/millis_blink.ino שמממש בלינק לא-חוסם בעזרת millis():
+LED מובנה, החלפה כל 500ms, ללא delay(). הוסף/י הערות קצרות בעברית.</pre>
+            </div>
+
+            <ol class="steps" start="3">
+                <li>פתחו את Arduino IDE</li>
+                <li>העלו את הקוד ללוח</li>
+                <li>צפו ב-LED המהבהב <span class="led-animation"></span></li>
+            </ol>
+
+            <div class="what-you-see">
+                <pre>
+LED מהבהב כל חצי שנייה
+(דולק 500ms, כבוי 500ms, חוזר...)
+                </pre>
+            </div>
+
+            <p><strong>כל כמה מילישניות ה-LED מתחלף? (מספר)</strong></p>
+            <div class="answer-box">
+                <label>התשובה שלך:</label>
+                <input type="text" id="answer-1-2" placeholder="מספר...">
+                <button class="check-btn" onclick="checkAnswer('answer-1-2', ['500', '500ms'], '💡 נכון! כל 500 מילישניות = חצי שנייה', '❌ רמז: כתוב בפרומפט...')">בדוק תשובה</button>
+                <div class="feedback" id="feedback-1-2"></div>
+            </div>
+        </div>
+
+        <div class="checkpoint">
+            ✅ <strong>עצור!</strong> ה-LED צריך להבהב בצורה חלקה. אם הוא נתקע - תארו ל-Claude מה קרה!
+        </div>
+
+        <div class="mission-complete">
+            <h3>🎉 משימה 1 הושלמה!</h3>
+            <p>למדת: בלינק לא-חוסם עם millis() - ה-LED מהבהב בלי לעצור את התוכנית</p>
+        </div>
+
+        <!-- משימה 2 -->
+        <div class="mission-header">
+            <h2>משימה 2: נגן תבניות (Heartbeat)</h2>
+            <span class="time-estimate">⏱️ 12 דקות</span>
+        </div>
+
+        <div class="exercise">
+            <h3>תרגיל 2.1: מה זה struct?</h3>
+            <p><code>struct</code> זה כמו קופסה שמכילה כמה ערכים ביחד:</p>
+
+            <div class="morse-diagram">
+                <pre>
+struct Segment {
+    int durationMs;  // כמה זמן (מילישניות)
+    bool level;      // דולק (true) או כבוי (false)
+}
+                </pre>
+            </div>
+
+            <p><strong>מה מייצג durationMs?</strong></p>
+            <div class="answer-box">
+                <label>התשובה שלך:</label>
+                <input type="text" id="answer-2-1" placeholder="...">
+                <button class="check-btn" onclick="checkAnswer('answer-2-1', ['זמן', 'משך', 'כמה זמן', 'מילישניות', 'אורך'], '⏱️ נכון! משך הזמן של המקטע', '❌ רמז: duration = משך...', true)">בדוק תשובה</button>
+                <div class="feedback" id="feedback-2-1"></div>
+            </div>
+        </div>
+
+        <div class="exercise">
+            <h3>תרגיל 2.2: יצירת תבנית פעימת לב</h3>
+            <ol class="steps">
+                <li>העתיקו את הפרומפט הזה ל-Claude:</li>
+            </ol>
+
+            <div class="prompt-box">
+                <pre>עדכן/ני את millis_blink/millis_blink.ino: הוסף/י struct Segment {durationMs, level}
+ומערך HEARTBEAT קצר. כתוב/י לולאה שמנגנת את המקטעים ברצף ללא delay().
+הוסף/י הדפסות Serial מינימליות לצורך דיבוג (אינדקס/משך).</pre>
+            </div>
+
+            <ol class="steps" start="2">
+                <li>העלו את הקוד</li>
+                <li>פתחו את Serial Monitor (כפתור זכוכית מגדלת)</li>
+                <li>צפו בתבנית: קצר-קצר-הפסקה</li>
+            </ol>
+
+            <div class="what-you-see">
+                <pre>
+Serial Monitor:
+Segment 0: 100ms ON
+Segment 1: 100ms OFF
+Segment 2: 100ms ON
+Segment 3: 600ms OFF
+(חוזר...)
+                </pre>
+            </div>
+
+            <div class="tip-box">
+                אם ה-LED נתקע דולק או כבוי, בקשו מ-Claude הדפסות של elapsed ו-segIndex!
+            </div>
+        </div>
+
+        <div class="checkpoint">
+            ✅ <strong>עצור!</strong> ה-LED צריך להראות תבנית "פעימת לב" - שתי הבזקות קצרות והפסקה
+        </div>
+
+        <div class="mission-complete">
+            <h3>🎉 משימה 2 הושלמה!</h3>
+            <p>למדת: ליצור תבניות הבהוב מורכבות עם struct ומערכים</p>
+        </div>
+
+        <!-- משימה 3 -->
+        <div class="mission-header">
+            <h2>משימה 3: SOS במורס (... --- ...)</h2>
+            <span class="time-estimate">⏱️ 15 דקות</span>
+        </div>
+
+        <div class="exercise">
+            <h3>תרגיל 3.1: לומדים קוד מורס</h3>
+            <p>קוד מורס משתמש בנקודות (קצר) ומקפים (ארוך):</p>
+
+            <div class="morse-diagram">
+                <pre>
+S = ...     (שלוש נקודות)
+O = ---     (שלושה מקפים)
+SOS = ... --- ...
+
+יחידת זמן (U):
+• נקודה = 1U
+• מקף = 3U
+• הפסקה בין אותיות = 3U
+• הפסקה בין מילים = 7U
+                </pre>
+            </div>
+
+            <p><strong>כמה יחידות זמן (U) אורך מקף?</strong></p>
+            <div class="answer-box">
+                <label>התשובה שלך:</label>
+                <input type="text" id="answer-3-1" placeholder="מספר...">
+                <button class="check-btn" onclick="checkAnswer('answer-3-1', ['3', 'שלוש', 'שלושה'], '📡 נכון! מקף אורך 3 יחידות', '❌ רמז: כתוב בטבלה למעלה')">בדוק תשובה</button>
+                <div class="feedback" id="feedback-3-1"></div>
+            </div>
+        </div>
+
+        <div class="exercise">
+            <h3>תרגיל 3.2: יצירת קוד SOS</h3>
+            <ol class="steps">
+                <li>צרו תיקייה חדשה בשם <code>morse_sos</code></li>
+                <li>העתיקו את הפרומפט הזה:</li>
+            </ol>
+
+            <div class="prompt-box">
+                <pre>צור/י קובץ morse_sos/morse_sos.ino עם יחידת זמן U=120ms.
+הגדר/י מערך Segment ל-... --- ... כולל פערים בהתאם לכללי מורס.
+הדפס/י ל-Serial מעבר מקטעים (אינדקס/משך/LEVEL) לאימות.</pre>
+            </div>
+
+            <ol class="steps" start="3">
+                <li>העלו את הקוד</li>
+                <li>צפו ב-LED משדר SOS</li>
+                <li>נסו לקרוא את התבנית!</li>
+            </ol>
+
+            <div class="what-you-see">
+                <pre>
+תבנית SOS:
+. . .  (שלוש הבזקות קצרות)
+- - -  (שלוש הבזקות ארוכות)
+. . .  (שלוש הבזקות קצרות)
+[הפסקה ארוכה]
+(חוזר...)
+                </pre>
+            </div>
+        </div>
+
+        <div class="exercise">
+            <h3>תרגיל 3.3: התאמת מהירות</h3>
+            <ol class="steps">
+                <li>שנו את U ל-60ms (מהיר יותר)</li>
+                <li>בדקו את התבנית</li>
+                <li>שנו את U ל-200ms (איטי יותר)</li>
+                <li>בדקו שוב</li>
+            </ol>
+
+            <p><strong>מה קורה כשמגדילים את U?</strong></p>
+            <div class="answer-box">
+                <label>התשובה שלך:</label>
+                <input type="text" id="answer-3-3" placeholder="התבנית...">
+                <button class="check-btn" onclick="checkAnswer('answer-3-3', ['איטי', 'לאט', 'ארוך', 'יותר איטי', 'מאט'], '🐢 נכון! U גדול יותר = תבנית איטית יותר', '❌ רמז: U הוא יחידת הזמן הבסיסית...', true)">בדוק תשובה</button>
+                <div class="feedback" id="feedback-3-3"></div>
+            </div>
+        </div>
+
+        <div class="checkpoint">
+            ✅ <strong>עצור!</strong> התבנית צריכה להיות ברורה - שלוש קצרות, שלוש ארוכות, שלוש קצרות
+        </div>
+
+        <div class="mission-complete">
+            <h3>🎉 משימה 3 הושלמה!</h3>
+            <p>למדת: קוד מורס ואיך לשדר SOS עם LED!</p>
+        </div>
+
+        <!-- משימה 4 -->
+        <div class="mission-header">
+            <h2>משימה 4: בדיקות ואימות</h2>
+            <span class="time-estimate">⏱️ 8 דקות</span>
+        </div>
+
+        <div class="exercise">
+            <h3>תרגיל 4.1: יצירת בדיקות</h3>
+            <ol class="steps">
+                <li>העתיקו את הפרומפט הזה:</li>
+            </ol>
+
+            <div class="prompt-box">
+                <pre>הצע/י 3-5 בדיקות קצרות לאימות: (1) אין delay(), (2) HEARTBEAT מתקדם בזמן הנכון,
+(3) SOS מחזור ≈ 27U. הצע/י פונקציה לבדיקת זמן מחזור והוסף/י הערות בטיחות.</pre>
+            </div>
+
+            <ol class="steps" start="2">
+                <li>קראו את הבדיקות ש-Claude מציע</li>
+                <li>בצעו כל בדיקה וסמנו ✓</li>
+            </ol>
+        </div>
+
+        <div class="exercise">
+            <h3>תרגיל 4.2: רשימת אימות</h3>
+            <p>סמנו ✓ ליד כל בדיקה שעברה:</p>
+            <ul>
+                <li>☐ בלינק millis יציב וללא קיפאון</li>
+                <li>☐ HEARTBEAT מנגן במחזוריות עקבית</li>
+                <li>☐ SOS ברור וניתן לזיהוי</li>
+                <li>☐ שינוי U משפיע על הקצב</li>
+                <li>☐ Serial Monitor מציג דיבוג סביר</li>
+            </ul>
+
+            <p><strong>כמה יחידות זמן (U) אמור לקחת מחזור SOS שלם?</strong></p>
+            <div class="answer-box">
+                <label>התשובה שלך:</label>
+                <input type="text" id="answer-4-1" placeholder="מספר...">
+                <button class="check-btn" onclick="checkNumberRange('answer-4-1', 25, 30, '📐 נכון! SOS לוקח כ-27 יחידות זמן', '❌ רמז: חשבו על כל הנקודות, מקפים והפסקות...')">בדוק תשובה</button>
+                <div class="feedback" id="feedback-4-1"></div>
+            </div>
+        </div>
+
+        <div class="checkpoint">
+            ✅ <strong>עצור!</strong> כל הבדיקות צריכות לעבור. עשו commit!
+        </div>
+
+        <div class="mission-complete">
+            <h3>🎉 משימה 4 הושלמה!</h3>
+            <p>למדת: איך לבדוק ולאמת קוד ארדואינו</p>
+        </div>
+
+        <!-- סיכום -->
+        <div class="final-section">
+            <h2>🏆 כל הכבוד! סיימת את המדריך!</h2>
+            <p>בנית מערכת שידור מורס שלמה בעזרת Claude!</p>
+            <h3>מה למדת:</h3>
+            <ul style="text-align: right; display: inline-block;">
+                <li>בלינק לא-חוסם עם millis()</li>
+                <li>שימוש ב-struct ומערכים</li>
+                <li>קוד מורס ותזמונים</li>
+                <li>דיבוג עם Serial Monitor</li>
+            </ul>
+            <h3 style="margin-top: 20px;">טיפים לזכור:</h3>
+            <ul style="text-align: right; display: inline-block;">
+                <li>לציין תמיד קובץ יעד ומה לבצע בו</li>
+                <li>לדווח תוצאה נצפית, ולבקש התאמה</li>
+                <li>איטרציות קצרות; commit כשעובד!</li>
+            </ul>
+            <h3 style="margin-top: 20px;">אתגר בונוס:</h3>
+            <p>נסו לתכנת את השם שלכם בקוד מורס! 📡</p>
+        </div>
+    </div>
+
+    <!-- Popup Modal -->
+    <div class="popup-overlay" id="popup-overlay" onclick="closePopup()">
+        <div class="popup" id="popup" onclick="event.stopPropagation()">
+            <div class="emoji" id="popup-emoji"></div>
+            <h3 id="popup-title"></h3>
+            <p id="popup-message"></p>
+            <button onclick="closePopup()">סגור</button>
+        </div>
+    </div>
+
+    <script>
+        function showPopup(isCorrect, title, message) {
+            const overlay = document.getElementById('popup-overlay');
+            const popup = document.getElementById('popup');
+            const emoji = document.getElementById('popup-emoji');
+            const titleEl = document.getElementById('popup-title');
+            const messageEl = document.getElementById('popup-message');
+
+            popup.className = 'popup ' + (isCorrect ? 'correct' : 'incorrect');
+            emoji.textContent = isCorrect ? '🎉' : '🤔';
+            titleEl.textContent = isCorrect ? 'מעולה!' : 'נסה שוב';
+            messageEl.textContent = message;
+
+            overlay.style.display = 'flex';
+        }
+
+        function closePopup() {
+            document.getElementById('popup-overlay').style.display = 'none';
+        }
+
+        function checkAnswer(inputId, correctAnswers, successMsg, failMsg, partialMatch = false) {
+            const input = document.getElementById(inputId);
+            const feedback = document.getElementById('feedback-' + inputId.split('-').slice(1).join('-'));
+            const userAnswer = input.value.trim().toLowerCase();
+
+            let isCorrect;
+            if (partialMatch) {
+                isCorrect = correctAnswers.some(answer =>
+                    userAnswer.includes(answer.toLowerCase())
+                );
+            } else {
+                isCorrect = correctAnswers.some(answer =>
+                    userAnswer === answer.toLowerCase()
+                );
+            }
+
+            if (isCorrect) {
+                feedback.className = 'feedback correct';
+                feedback.textContent = successMsg;
+                showPopup(true, 'מעולה!', successMsg);
+            } else {
+                feedback.className = 'feedback incorrect';
+                feedback.textContent = failMsg;
+                showPopup(false, 'נסה שוב', failMsg);
+            }
+        }
+
+        function checkNumberRange(inputId, min, max, successMsg, failMsg) {
+            const input = document.getElementById(inputId);
+            const feedback = document.getElementById('feedback-' + inputId.split('-').slice(1).join('-'));
+            const userAnswer = parseInt(input.value.trim());
+
+            if (!isNaN(userAnswer) && userAnswer >= min && userAnswer <= max) {
+                feedback.className = 'feedback correct';
+                feedback.textContent = successMsg;
+                showPopup(true, 'מעולה!', successMsg);
+            } else {
+                feedback.className = 'feedback incorrect';
+                feedback.textContent = failMsg;
+                showPopup(false, 'נסה שוב', failMsg);
+            }
+        }
+
+        // Close popup with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closePopup();
+            }
+        });
+
+        // Submit on Enter
+        document.querySelectorAll('.answer-box input').forEach(input => {
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const btn = this.parentElement.querySelector('.check-btn');
+                    if (btn) btn.click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arduino: טיימר תגובה</title>
+    <style>
+
+  body, div, p, h1, h2, h3, h4, h5, h6, li, td, th {
+    direction: rtl;
+    text-align: right;
+  }
+  code, pre {
+    direction: ltr;
+    text-align: left;
+  }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            color: #34495e;
+            margin-top: 30px;
+            border-right: 4px solid #3498db;
+            padding-right: 10px;
+        }
+
+        h3 {
+            color: #7f8c8d;
+        }
+
+        code {
+            background-color: #f8f8f8;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9em;
+        }
+
+        pre {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            direction: ltr;
+            text-align: left;
+        }
+
+        pre code {
+            background-color: transparent;
+            color: inherit;
+            padding: 0;
+        }
+
+        ul {
+            padding-right: 20px;
+        }
+
+        li {
+            margin: 8px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+        }
+
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px solid #ecf0f1;
+            margin: 30px 0;
+        }
+
+        strong {
+            color: #2c3e50;
+        }
+
+        details {
+            margin: 20px 0;
+            padding: 10px;
+            background-color: #ecf0f1;
+            border-radius: 5px;
+        }
+
+        summary {
+            cursor: pointer;
+            font-weight: bold;
+            padding: 10px;
+        }
+
+        summary:hover {
+            background-color: #bdc3c7;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" dir="rtl" style="text-align: right;">
+<h1>Arduino: טיימר תגובה</h1>
+
+<p>
+בנו טיימר תגובה כדי לבדוק כמה מהר אתם יכולים להגיב לאור.
+</p>
+
+<h2>חומרים</h2>
+
+<ul>
+<li>Arduino Uno או Nano (1)</li>
+<li>כבל USB (1)</li>
+<li>Breadboard (1)</li>
+<li>נורית LED אדומה (1)</li>
+<li>נורית LED ירוקה (1)</li>
+<li>נגדים 220 Ω (2)</li>
+<li>נגד 10 kΩ (1)</li>
+<li>כפתור לחיצה (1)</li>
+<li>חוטי מגשר (~8)</li>
+</ul>
+
+<h2>הכנה</h2>
+
+<h3>שלב 1: פתיחת תוכנת Arduino IDE</h3>
+
+<p>
+1. מצאו את אייקון Arduino IDE על שולחן העבודה או בתפריט התחל.
+2. לחצו פעמיים כדי לפתוח את Arduino IDE.
+3. חברו את ה-Arduino למחשב באמצעות כבל USB.
+4. המתינו ש-Windows יזהה את ה-Arduino (אתם עשויים לשמוע צליל חיבור USB).
+</p>
+
+<h3>שלב 2: הגדרת Arduino IDE</h3>
+
+<p>
+1. לחצו על תפריט <strong>Tools</strong> בחלק העליון.
+2. עברו ל-<strong>Tools → Board</strong> ובחרו <strong>Arduino Uno</strong> (או <strong>Arduino Nano</strong> אם אתם משתמשים ב-Nano).
+3. עברו ל-<strong>Tools → Port</strong> ובחרו את פורט COM עם "Arduino" בשם (לדוגמה, COM3, COM5).
+</p>
+<ul>
+<li>אם אתם לא רואים שום פורט, נתקו וחברו מחדש את כבל ה-USB, ואז בדקו שוב.</li>
+</ul>
+
+<h3>שלב 3: חיווט הרכיבים</h3>
+
+<p>
+<strong>לפני שמתחילים:</strong> מצאו את <strong>מסילת ה-GND</strong> על ה-breadboard שלכם (פס כחול או סימני מינוס לאורך הקצה).
+</p>
+
+<p>
+<strong>שלב 3.1 - חיבור הארקה (GND)</strong>
+</p>
+
+<p>
+1. חברו חוט מגשר שחור מפין <strong>GND</strong> של ה-Arduino אל <strong>מסילת ה-GND</strong> (פס כחול) על ה-breadboard.
+</p>
+
+<p>
+<strong>שלב 3.2 - חיווט נורית LED אדומה</strong>
+</p>
+
+<p>
+לנוריות LED יש קוטביות! <strong>רגל ארוכה = חיובי (+), רגל קצרה = שלילי (-)</strong>
+</p>
+
+<p>
+1. הכניסו את <strong>נורית ה-LED האדומה</strong> ל-breadboard:
+</p>
+<ul>
+<li><strong>רגל ארוכה</strong> לשורה כלשהי (לדוגמה: שורה 5)</li>
+<li><strong>רגל קצרה</strong> לשורה אחרת, במרחק 2-3 שורות (לדוגמה: שורה 8)</li>
+</ul>
+
+<p>
+2. חברו את הרגל <strong>הקצרה של ה-LED ל-GND</strong>:
+</p>
+<ul>
+<li>חוט מגשר שחור מאותה שורה של הרגל הקצרה של ה-LED → <strong>מסילת GND</strong></li>
+</ul>
+
+<p>
+3. חברו <strong>נגד 220Ω</strong> לרגל הארוכה של ה-LED:
+</p>
+<ul>
+<li>רגל אחת של הנגד: באותה שורה של הרגל <strong>הארוכה</strong> של ה-LED</li>
+<li>רגל שנייה של הנגד: שורה ריקה חדשה</li>
+</ul>
+
+<p>
+4. חברו את הנגד אל <strong>פין 12 של Arduino</strong>:
+</p>
+<ul>
+<li>חוט מגשר משורת הנגד (זו שלא נוגעת ב-LED) → <strong>Arduino Pin 12</strong></li>
+</ul>
+
+<p>
+<strong>שלב 3.3 - חיווט נורית LED ירוקה</strong>
+</p>
+
+<p>
+חזרו על אותו תהליך עבור נורית ה-LED הירוקה:
+</p>
+
+<p>
+1. הכניסו את <strong>נורית ה-LED הירוקה</strong> לאזור חדש ב-breadboard:
+</p>
+<ul>
+<li><strong>רגל ארוכה</strong> לשורה (הרחיקו אותה מנורית ה-LED האדומה)</li>
+<li><strong>רגל קצרה</strong> לשורה אחרת</li>
+</ul>
+
+<p>
+2. חברו את הרגל <strong>הקצרה של ה-LED ל-GND</strong>:
+</p>
+<ul>
+<li>חוט מגשר שחור → <strong>מסילת GND</strong></li>
+</ul>
+
+<p>
+3. חברו <strong>נגד 220Ω</strong> לרגל הארוכה של ה-LED:
+</p>
+<ul>
+<li>רגל אחת: באותה שורה של הרגל <strong>הארוכה</strong> של ה-LED</li>
+<li>רגל שנייה: שורה ריקה חדשה</li>
+</ul>
+
+<p>
+4. חברו את הנגד אל <strong>פין 11 של Arduino</strong>:
+</p>
+<ul>
+<li>חוט מגשר → <strong>Arduino Pin 11</strong></li>
+</ul>
+
+<p>
+<strong>שלב 3.4 - חיווט הכפתור</strong>
+</p>
+
+<p>
+1. הכניסו את <strong>כפתור הלחיצה</strong> על פני <strong>הרווח המרכזי</strong> של ה-breadboard:
+</p>
+<ul>
+<li>2 פינים בצד שמאל של הרווח, 2 פינים בצד ימין</li>
+<li>הכפתור צריך לשבת שטוח</li>
+</ul>
+
+<p>
+2. חברו צד אחד של הכפתור ל-<strong>פין 2 של Arduino</strong>:
+</p>
+<ul>
+<li>חוט מגשר מפין כלשהו של הכפתור → <strong>Arduino Pin 2</strong></li>
+</ul>
+
+<p>
+3. חברו את הצד <strong>המנוגד</strong> של הכפתור ל-<strong>GND</strong>:
+</p>
+<ul>
+<li>חוט מגשר מפין הכפתור בצד השני של הרווח המרכזי → <strong>מסילת GND</strong></li>
+</ul>
+
+<h3>שלב 4: בדיקת החיווט</h3>
+
+<p>
+העלו תוכנית בדיקה כדי לוודא שהכל מחובר נכון.
+</p>
+
+<p>
+1. ב-Arduino IDE, מחקו כל קוד קיים בחלון העורך.
+2. העתיקו את הקוד למטה והדביקו אותו ב-Arduino IDE:
+</p>
+
+<div dir="ltr" style="text-align: left;"><pre><code class="language-cpp">void setup() {
+  pinMode(12, OUTPUT);
+  pinMode(11, OUTPUT);
+}
+
+void loop() {
+  digitalWrite(12, HIGH);
+  digitalWrite(11, HIGH);
+  delay(500);
+  digitalWrite(12, LOW);
+  digitalWrite(11, LOW);
+  delay(500);
+}</code></pre></div>
+
+<p>
+3. לחצו על כפתור <strong>Upload</strong> (אייקון החץ ימינה בחלק העליון משמאל).
+4. המתינו להודעה "Done uploading" בתחתית.
+5. הסתכלו על ה-breadboard שלכם.
+</p>
+
+<p>
+<strong>נקודת ביקורת CP-1:</strong> שתי נוריות ה-LED מהבהבות כל 0.5 שניות.
+</p>
+
+<p>
+<span style="color: red;">❌</span> <strong>אם לא:</strong> בדקו את קוטביות ה-LED (הרגל הארוכה צריכה להתחבר לפין דרך הנגד). ודאו ש-Arduino מחובר לפורט COM הנכון ב-<strong>Tools → Port</strong>.
+</p>
+
+<hr>
+
+<h2>שלבי הבנייה</h2>
+
+<h3>שלב 1 — העלאת קוד השלד</h3>
+
+<p>
+1. ב-Arduino IDE, לחצו על <strong>File → New</strong> כדי ליצור sketch חדש.
+2. לחצו על <strong>File → Save</strong> ותנו לו את השם <code>ReactionTimer</code>.
+3. מחקו את כל הקוד בחלון העורך.
+4. העתיקו והדביקו את הקוד הזה:
+</p>
+
+<div dir="ltr" style="text-align: left;"><pre><code class="language-cpp">// Reaction Timer
+const int RED_LED = 12;
+const int GREEN_LED = 11;
+const int BUTTON = 2;
+
+enum State { IDLE, WAITING, READY, RESULT };
+State currentState = IDLE;
+
+unsigned long waitStartTime = 0;
+unsigned long randomDelay = 0;
+unsigned long readyTime = 0;
+
+void setup() {
+  pinMode(RED_LED, OUTPUT);
+  pinMode(GREEN_LED, OUTPUT);
+  pinMode(BUTTON, INPUT_PULLUP);
+
+  Serial.begin(9600);
+  randomSeed(analogRead(A0));
+
+  Serial.println("=== Reaction Timer ===");
+  Serial.println("Press button to start!");
+
+  currentState = IDLE;
+}
+
+void loop() {
+  // We will add code here in the next steps
+}</code></pre></div>
+
+<p>
+5. לחצו על כפתור <strong>Upload</strong> (אייקון החץ ימינה).
+6. המתינו להודעה "Done uploading".
+7. לחצו על <strong>Tools → Serial Monitor</strong> (או לחצו Ctrl+Shift+M).
+8. בחלון ה-Serial Monitor, מצאו את התפריט הנפתח בפינה הימנית התחתונה ובחרו <strong>9600 baud</strong>.
+</p>
+
+<p>
+<strong>נקודת ביקורת CP-2:</strong> ה-Serial Monitor מציג:
+</p>
+
+<div dir="ltr" style="text-align: left;"><pre><code>=== Reaction Timer ===
+Press button to start!</code></pre></div>
+
+<hr>
+
+<h3>שלב 2 — הוספת מצב IDLE</h3>
+
+<p>
+1. מצאו את השורה שאומרת <code>// We will add code here in the next steps</code> בתוך הפונקציה <code>loop()</code>.
+2. מחקו את שורת ההערה הזו.
+3. הוסיפו את הקוד הזה בתוך <code>loop()</code>:
+</p>
+
+<div dir="ltr" style="text-align: left;"><pre><code class="language-cpp">void loop() {
+  bool buttonPressed = (digitalRead(BUTTON) == LOW);
+
+  if (currentState == IDLE) {
+    digitalWrite(RED_LED, LOW);
+    digitalWrite(GREEN_LED, LOW);
+
+    if (buttonPressed) {
+      currentState = WAITING;
+      digitalWrite(RED_LED, HIGH);
+      randomDelay = random(2000, 5000);
+      waitStartTime = millis();
+      Serial.println("Wait for green...");
+    }
+  }
+}</code></pre></div>
+
+<p>
+4. לחצו על כפתור <strong>Upload</strong>.
+5. המתינו להודעה "Done uploading".
+6. לחצו על הכפתור הפיזי על ה-breadboard שלכם.
+</p>
+
+<p>
+<strong>נקודת ביקורת CP-3:</strong> לחצו על הכפתור. נורית ה-LED האדומה נדלקת. ה-Serial Monitor מדפיס:
+</p>
+
+<div dir="ltr" style="text-align: left;"><pre><code>Wait for green...</code></pre></div>
+
+<p>
+<span style="color: red;">❌</span> <strong>אם הכפתור לא עושה כלום:</strong> הדפיסו <code>digitalRead(BUTTON)</code> ב-Serial Monitor כדי לבדוק. אם משתמשים ב-<code>INPUT_PULLUP</code>, לחוץ = LOW. בדקו את החיווט.
+</p>
+
+<hr>
+
+<h3>שלב 3 — הוספת מצב WAITING</h3>
+
+<p>
+1. מצאו את הסוגריים המסולסלים הסוגרים <code>}</code> של בלוק <code>if (currentState == IDLE)</code>.
+2. מיד אחרי הסוגריים הסוגרים, הוסיפו את הקוד הזה (עדיין בתוך פונקציית <code>loop()</code>):
+</p>
+
+<div dir="ltr" style="text-align: left;"><pre><code class="language-cpp">  else if (currentState == WAITING) {
+    unsigned long elapsed = millis() - waitStartTime;
+
+    if (buttonPressed) {
+      Serial.println("Too soon! Try again.");
+      currentState = IDLE;
+      digitalWrite(RED_LED, LOW);
+    }
+    else if (elapsed &gt;= randomDelay) {
+      currentState = READY;
+      digitalWrite(RED_LED, LOW);
+      digitalWrite(GREEN_LED, HIGH);
+      readyTime = micros();
+      Serial.println("GO!");
+    }
+  }</code></pre></div>
+
+<p>
+3. לחצו על כפתור <strong>Upload</strong>.
+4. המתינו להודעה "Done uploading".
+</p>
+
+<p>
+<strong>בדיקה 1:</strong> לחצו על הכפתור, ואז לחצו שוב מיד (בזמן שנורית ה-LED האדומה דולקת).
+</p>
+
+<p>
+<strong>נקודת ביקורת CP-4a:</strong> ה-Serial מדפיס <code>Too soon! Try again.</code> נורית ה-LED האדומה כבה.
+</p>
+
+<p>
+<strong>בדיקה 2:</strong> לחצו על הכפתור, המתינו בלי ללחוץ.
+</p>
+
+<p>
+<strong>נקודת ביקורת CP-4b:</strong> אחרי 2–5 שניות, נורית ה-LED הירוקה נדלקת. ה-Serial מדפיס <code>GO!</code>
+</p>
+
+<hr>
+
+<h3>שלב 4 — הוספת מצב READY</h3>
+
+<p>
+1. מצאו את הסוגריים המסולסלים הסוגרים <code>}</code> של בלוק <code>else if (currentState == WAITING)</code>.
+2. מיד אחרי הסוגריים הסוגרים, הוסיפו את הקוד הזה:
+</p>
+
+<div dir="ltr" style="text-align: left;"><pre><code class="language-cpp">  else if (currentState == READY) {
+    if (buttonPressed) {
+      unsigned long reactionMicros = micros() - readyTime;
+      float reactionMs = reactionMicros / 1000.0;
+
+      Serial.print("Reaction time: ");
+      Serial.print(reactionMs, 1);
+      Serial.println(" ms");
+
+      currentState = RESULT;
+    }
+  }</code></pre></div>
+
+<p>
+3. לחצו על כפתור <strong>Upload</strong>.
+4. המתינו להודעה "Done uploading".
+5. לחצו על הכפתור כדי להתחיל, המתינו לנורית ה-LED הירוקה, לחצו על הכפתור מהר ככל האפשר.
+</p>
+
+<p>
+<strong>נקודת ביקורת CP-5:</strong> ה-Serial מדפיס את זמן התגובה שלכם, לדוגמה:
+</p>
+
+<div dir="ltr" style="text-align: left;"><pre><code>Reaction time: 284.7 ms</code></pre></div>
+
+<hr>
+
+<h3>שלב 5 — הוספת מצב RESULT (השלמת הלולאה)</h3>
+
+<p>
+1. מצאו את הסוגריים המסולסלים הסוגרים <code>}</code> של בלוק <code>else if (currentState == READY)</code>.
+2. מיד אחרי הסוגריים הסוגרים, הוסיפו את הקוד הזה:
+</p>
+
+<div dir="ltr" style="text-align: left;"><pre><code class="language-cpp">  else if (currentState == RESULT) {
+    digitalWrite(GREEN_LED, LOW);
+    delay(2000);
+    Serial.println("\nPress button to try again!");
+    currentState = IDLE;
+  }</code></pre></div>
+
+<p>
+3. לחצו על כפתור <strong>Upload</strong>.
+4. המתינו להודעה "Done uploading".
+5. בדקו את לולאת המשחק המלאה.
+</p>
+
+<p>
+<strong>נקודת ביקורת CP-6:</strong> אחרי הצגת זמן התגובה, המערכת ממתינה 2 שניות, ואז מדפיסה:
+</p>
+
+<div dir="ltr" style="text-align: left;"><pre><code>Press button to try again!</code></pre></div>
+
+<p>
+לחיצה על הכפתור שוב → המחזור חוזר על עצמו.
+</p>
+
+<p>
+<strong>הקוד שלכם הושלם!</strong> טיימר התגובה עובד כעת במלואו.
+</p>
+
+<hr>
+
+<h2>קוד מלא (לעיון)</h2>
+
+<details dir="ltr">
+<p>
+<summary>לחצו להרחבת הקוד המלא</summary>
+</p>
+
+<div dir="ltr" style="text-align: left;"><pre><code class="language-cpp">// Reaction Timer - Complete
+const int RED_LED = 12;
+const int GREEN_LED = 11;
+const int BUTTON = 2;
+
+enum State { IDLE, WAITING, READY, RESULT };
+State currentState = IDLE;
+
+unsigned long waitStartTime = 0;
+unsigned long randomDelay = 0;
+unsigned long readyTime = 0;
+
+void setup() {
+  pinMode(RED_LED, OUTPUT);
+  pinMode(GREEN_LED, OUTPUT);
+  pinMode(BUTTON, INPUT_PULLUP);
+
+  Serial.begin(9600);
+  randomSeed(analogRead(A0));
+
+  Serial.println("=== Reaction Timer ===");
+  Serial.println("Press button to start!");
+
+  currentState = IDLE;
+}
+
+void loop() {
+  bool buttonPressed = (digitalRead(BUTTON) == LOW);
+
+  if (currentState == IDLE) {
+    digitalWrite(RED_LED, LOW);
+    digitalWrite(GREEN_LED, LOW);
+
+    if (buttonPressed) {
+      currentState = WAITING;
+      digitalWrite(RED_LED, HIGH);
+      randomDelay = random(2000, 5000);
+      waitStartTime = millis();
+      Serial.println("Wait for green...");
+    }
+  }
+  else if (currentState == WAITING) {
+    unsigned long elapsed = millis() - waitStartTime;
+
+    if (buttonPressed) {
+      Serial.println("Too soon! Try again.");
+      currentState = IDLE;
+      digitalWrite(RED_LED, LOW);
+    }
+    else if (elapsed &gt;= randomDelay) {
+      currentState = READY;
+      digitalWrite(RED_LED, LOW);
+      digitalWrite(GREEN_LED, HIGH);
+      readyTime = micros();
+      Serial.println("GO!");
+    }
+  }
+  else if (currentState == READY) {
+    if (buttonPressed) {
+      unsigned long reactionMicros = micros() - readyTime;
+      float reactionMs = reactionMicros / 1000.0;
+
+      Serial.print("Reaction time: ");
+      Serial.print(reactionMs, 1);
+      Serial.println(" ms");
+
+      currentState = RESULT;
+    }
+  }
+  else if (currentState == RESULT) {
+    digitalWrite(GREEN_LED, LOW);
+    delay(2000);
+    Serial.println("\nPress button to try again!");
+    currentState = IDLE;
+  }
+}</code></pre></div>
+
+</details>
+
+<hr>
+
+<h2>פתרון בעיות</h2>
+
+<p>
+<tr><td>בעיה</td><td>פתרון</td></tr>
+|------|--------|
+<tr><td>נוריות LED לא נדלקות</td><td>בדקו קוטביות: רגל ארוכה → נגד → פין. רגל קצרה → GND.</td></tr>
+<tr><td>הכפתור תמיד מופעל או אף פעם לא מופעל</td><td>בדקו חיווט. אם משתמשים ב-<code>INPUT_PULLUP</code>, לחוץ = LOW. הדפיסו <code>digitalRead(BUTTON)</code> לניפוי באגים.</td></tr>
+<tr><td>"Too soon!" בכל פעם</td><td>חיווט הכפתור הפוך. החליפו את רגלי הכפתור או שנו את הקוד ל-<code>digitalRead(BUTTON) == HIGH</code>.</td></tr>
+<tr><td>זמן תגובה הוא תמיד 0 או מספר ענק</td><td>בדקו שהשתמשתם ב-<code>micros()</code> ולא ב-<code>millis()</code>. ודאו ש-<code>readyTime</code> הוא <code>unsigned long</code>.</td></tr>
+<tr><td>Serial Monitor ריק</td><td>הגדירו baud ל-9600. בדקו ש-Tools → Port נכון.</td></tr>
+<tr><td>העלאה נכשלת</td><td>בדקו ש-Tools → Board נכון. נסו כבל USB אחר.</td></tr>
+</p>
+
+<hr>
+
+<h2>הרחבות (אופציונלי)</h2>
+
+<p>
+1. <strong>מעקב אחר הזמן הטוב ביותר:</strong> הוסיפו משתנה <code>bestTime</code> ועדכנו אותו אם הזמן החדש נמוך יותר. הדפיסו אותו אחרי כל ניסיון.
+2. <strong>ממוצע של 5 ניסיונות:</strong> שמרו את 5 הזמנים האחרונים במערך וחשבו את הממוצע.
+3. <strong>הוספת זמזם:</strong> חברו זמזם לפין 10. השמיעו ביפ כשנורית ה-LED הירוקה נדלקת.
+4. <strong>מצב שני שחקנים:</strong> הוסיפו כפתור שני ונורית LED ירוקה שנייה. ראו מי לוחץ ראשון.
+5. <strong>מצבי קושי:</strong> השתמשו בכפתור שני כדי לעבור בין קל (השהיית 3–5 שניות), בינוני (2–4 שניות), קשה (1–2 שניות).
+</p>
+
+<hr>
+
+<h2>סיכום נקודות ביקורת</h2>
+
+<ul>
+<li><span style="color: green;">✅</span> <strong>CP-1:</strong> בדיקת חיווט — שתי נוריות ה-LED מהבהבות</li>
+<li><span style="color: green;">✅</span> <strong>CP-2:</strong> Serial Monitor מציג הודעת פתיחה</li>
+<li><span style="color: green;">✅</span> <strong>CP-3:</strong> לחיצה על כפתור מדליקה נורית LED אדומה ומדפיסה "Wait for green..."</li>
+<li><span style="color: green;">✅</span> <strong>CP-4a:</strong> לחיצה על כפתור במהלך ההמתנה מדפיסה "Too soon!"</li>
+<li><span style="color: green;">✅</span> <strong>CP-4b:</strong> אחרי השהייה אקראית, נורית LED ירוקה נדלקת</li>
+<li><span style="color: green;">✅</span> <strong>CP-5:</strong> לחיצה על כפתור כשירוק מדפיסה זמן תגובה</li>
+<li><span style="color: green;">✅</span> <strong>CP-6:</strong> המשחק מתאפס אחרי 2 שניות וחוזר לתחילת הלולאה</li>
+</ul>
+
+<hr>
+
+<h2>אתגר</h2>
+
+<p>
+האם אתם יכולים להשיג זמן תגובה מתחת ל-200 מילישניות? נסו 10 פעמים ורשמו את התוצאה הטובה ביותר שלכם!
+</p>
+
+<p>
+— סוף המדריך —
+</p>
+
+
+    </div>
+</body>
+</html>

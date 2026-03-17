@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>שיעור 4: לולאות — קורס Python</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.8;
+            background: #f5f7fa;
+            color: #2c3e50;
+            direction: rtl;
+            text-align: right;
+            padding: 0;
+        }
+        .navbar {
+            background: #2c3e50;
+            padding: 12px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            direction: rtl;
+        }
+        .navbar a {
+            color: #ecf0f1;
+            text-decoration: none;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 0.9em;
+            transition: background 0.3s;
+        }
+        .navbar a:hover { background: #34495e; }
+        .navbar .nav-center { font-weight: bold; color: #3498db; font-size: 1em; }
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+        h1 {
+            color: #2c3e50;
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            direction: rtl;
+            text-align: right;
+        }
+        h1 .emoji { font-size: 1.1em; }
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.1em;
+            margin-bottom: 30px;
+            direction: rtl;
+            text-align: right;
+        }
+        h2 {
+            color: #2c3e50;
+            direction: rtl;
+            text-align: right;
+        }
+        h3 {
+            direction: rtl;
+            text-align: right;
+        }
+        p, li, td, th, div, label {
+            direction: rtl;
+            text-align: right;
+        }
+        .mission-header {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            padding: 20px 25px;
+            border-radius: 12px;
+            margin: 35px 0 20px;
+        }
+        .mission-header h2 { color: white; margin-bottom: 5px; }
+        .time-estimate {
+            background: rgba(255,255,255,0.2);
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            display: inline-block;
+        }
+        .exercise {
+            background: white;
+            border: 3px solid #27ae60;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .exercise h3 {
+            color: #27ae60;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+        .steps {
+            padding-right: 20px;
+            margin: 10px 0;
+        }
+        .steps li {
+            margin-bottom: 10px;
+            padding-right: 5px;
+        }
+        .steps li::marker {
+            color: #3498db;
+            font-weight: bold;
+        }
+        pre, code {
+            direction: ltr;
+            text-align: left;
+        }
+        pre {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 18px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 12px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+        code {
+            background: #eef2f7;
+            color: #e74c3c;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        pre code {
+            background: none;
+            color: #ecf0f1;
+            padding: 0;
+        }
+        .what-you-see {
+            background: #1a1a2e;
+            border: 2px solid #16213e;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 12px 0;
+        }
+        .what-you-see::before {
+            content: "📺 מה שתראו:";
+            display: block;
+            color: #a8d8ea;
+            font-weight: bold;
+            margin-bottom: 8px;
+            direction: rtl;
+            text-align: right;
+        }
+        .what-you-see pre {
+            background: transparent;
+            margin: 0;
+            padding: 5px;
+            color: #a8d8ea;
+        }
+        .answer-box {
+            border: 2px dashed #3498db;
+            border-radius: 8px;
+            padding: 18px;
+            margin: 15px 0;
+            background: #f0f8ff;
+        }
+        .answer-box label {
+            font-weight: bold;
+            color: #2c3e50;
+            display: block;
+            margin-bottom: 8px;
+        }
+        .answer-box input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #bdc3c7;
+            border-radius: 6px;
+            font-size: 1em;
+            margin-bottom: 10px;
+            direction: ltr;
+            text-align: left;
+        }
+        .check-btn {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        .check-btn:hover { background: #219a52; }
+        .checkpoint {
+            background: #f0fff4;
+            border-right: 5px solid #27ae60;
+            padding: 18px;
+            border-radius: 0 8px 8px 0;
+            margin: 20px 0;
+        }
+        .mission-complete {
+            background: #faf0ff;
+            border: 3px solid #9b59b6;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 25px 0;
+            text-align: center;
+        }
+        .mission-complete h3 { color: #9b59b6; text-align: center; }
+        .mission-complete p { text-align: center; }
+        .tip {
+            background: #fff8e1;
+            border-right: 5px solid #f39c12;
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin: 15px 0;
+        }
+        .tip::before {
+            content: "💡 טיפ: ";
+            font-weight: bold;
+            color: #f39c12;
+        }
+        .warning {
+            background: #ffeaea;
+            border-right: 5px solid #e74c3c;
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin: 15px 0;
+        }
+        .warning::before {
+            content: "⚠️ זהירות: ";
+            font-weight: bold;
+            color: #e74c3c;
+        }
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .popup {
+            background: white;
+            border-radius: 16px;
+            padding: 35px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        .popup .emoji { font-size: 3em; margin-bottom: 10px; }
+        .popup h3 { margin-bottom: 8px; font-size: 1.4em; }
+        .popup p { color: #666; margin-bottom: 20px; }
+        .popup button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+        }
+        .popup.correct { border-top: 5px solid #27ae60; }
+        .popup.correct h3 { color: #27ae60; }
+        .popup.incorrect { border-top: 5px solid #e74c3c; }
+        .popup.incorrect h3 { color: #e74c3c; }
+    </style>
+</head>
+<body>
+
+<div class="navbar">
+    <div>
+        <a href="index.html">🏠 ראשי</a>
+        <a href="lesson03-conditions.html">→ שיעור קודם</a>
+    </div>
+    <span class="nav-center">🐍 שיעור 4: לולאות</span>
+    <div>
+        <a href="lesson05-lists.html">שיעור הבא ←</a>
+    </div>
+</div>
+
+<div class="container">
+    <h1><span class="emoji">🔄</span> שיעור 4: לולאות</h1>
+    <p class="subtitle">למה לכתוב 100 שורות כשאפשר שורה אחת? לולאות הן הכוח האמיתי של תכנות!</p>
+
+    <!-- Mission 1 -->
+    <div class="mission-header">
+        <h2>משימה 1: לולאת for — חזור על עצמך!</h2>
+        <span class="time-estimate">⏱️ 12 דקות</span>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 1.1: לולאה ראשונה</h3>
+        <p>לולאת <code>for</code> עוברת על כל פריט ברצף. בואו נתחיל!</p>
+        <ol class="steps">
+            <li>פתחו קובץ חדש בשם <code>loops.py</code></li>
+            <li>כתבו את הקוד הבא:</li>
+        </ol>
+<pre><code># עובר על כל אות במחרוזת
+for letter in "Python":
+    print(letter)</code></pre>
+        <div class="what-you-see">
+<pre>P
+y
+t
+h
+o
+n</pre>
+        </div>
+        <p>הלולאה עוברת על כל אות במילה <code>"Python"</code> ומדפיסה אותה!</p>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 1.2: range() — הכלי החשוב ביותר</h3>
+        <p><code>range()</code> יוצר רצף של מספרים. יש לו 3 צורות:</p>
+<pre><code># צורה 1: range(stop) — מ-0 עד stop-1
+for i in range(5):
+    print(i)   # ידפיס: 0, 1, 2, 3, 4
+
+# צורה 2: range(start, stop)
+for i in range(1, 6):
+    print(i)   # ידפיס: 1, 2, 3, 4, 5
+
+# צורה 3: range(start, stop, step)
+for i in range(0, 10, 2):
+    print(i)   # ידפיס: 0, 2, 4, 6, 8</code></pre>
+
+        <div class="answer-box">
+            <label>התשובה שלך:</label>
+            <p><strong>מה ידפיס <code>range(3, 12, 3)</code>?</strong> (רשמו את המספרים מופרדים בפסיקים)</p>
+            <input type="text" id="answer-1-2" placeholder="לדוגמה: 1,2,3">
+            <button class="check-btn" onclick="checkAnswer('answer-1-2', ['3,6,9', '3, 6, 9'], 'מעולה! range(3,12,3) מתחיל ב-3, קופץ 3 כל פעם, ועוצר לפני 12', 'נסו לחשוב: מתחילים ב-3, מוסיפים 3 כל פעם, עוצרים לפני 12')">בדוק תשובה</button>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 1.3: ספירה לאחור כמו שיגור רקטה!</h3>
+        <ol class="steps">
+            <li>צרו קובץ <code>rocket.py</code></li>
+            <li>כתבו ספירה לאחור מ-10 ל-1 ואז "שיגור!"</li>
+        </ol>
+<pre><code>for i in range(10, 0, -1):
+    print(i)
+print("🚀 שיגור!")</code></pre>
+        <div class="what-you-see">
+<pre>10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+🚀 שיגור!</pre>
+        </div>
+    </div>
+
+    <div class="checkpoint">
+        ✅ <strong>עצור!</strong> ודאו שאתם מבינים את שלושת הצורות של <code>range()</code>. נסו כל אחת בעצמכם!
+    </div>
+
+    <div class="mission-complete">
+        <h3>🎉 משימה 1 הושלמה!</h3>
+        <p>למדת: לולאת for, מעבר על מחרוזות, ושימוש ב-range()</p>
+    </div>
+
+    <!-- Mission 2 -->
+    <div class="mission-header">
+        <h2>משימה 2: לולאת while — כל עוד...</h2>
+        <span class="time-estimate">⏱️ 12 דקות</span>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 2.1: לולאת while בסיסית</h3>
+        <p>לולאת <code>while</code> רצה כל עוד התנאי נכון:</p>
+<pre><code>count = 1
+while count <= 5:
+    print(f"מספר: {count}")
+    count += 1
+print("סיימנו!")</code></pre>
+        <div class="what-you-see">
+<pre>מספר: 1
+מספר: 2
+מספר: 3
+מספר: 4
+מספר: 5
+סיימנו!</pre>
+        </div>
+        <div class="warning">אם שכחתם את <code>count += 1</code>, הלולאה תרוץ לנצח! זו "לולאה אינסופית". לחצו <code>Ctrl+C</code> כדי לעצור.</div>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 2.2: סכום מספרים</h3>
+        <p>בואו נחשב את הסכום של מספרים מ-1 עד 100:</p>
+<pre><code>total = 0
+num = 1
+while num <= 100:
+    total += num
+    num += 1
+print(f"הסכום של 1 עד 100 הוא: {total}")</code></pre>
+
+        <div class="answer-box">
+            <label>התשובה שלך:</label>
+            <p><strong>מה הסכום של המספרים מ-1 עד 100?</strong></p>
+            <input type="text" id="answer-2-2" placeholder="הכניסו מספר">
+            <button class="check-btn" onclick="checkAnswer('answer-2-2', ['5050'], 'מדהים! הסכום הוא 5050. יש נוסחה: n*(n+1)/2 = 100*101/2 = 5050', 'הריצו את הקוד ובדקו! טיפ: נסו את הנוסחה n*(n+1)/2')">בדוק תשובה</button>
+        </div>
+    </div>
+
+    <div class="checkpoint">
+        ✅ <strong>עצור!</strong> ודאו שאתם יודעים את ההבדל בין <code>for</code> ל-<code>while</code>. <code>for</code> = מספר פעמים ידוע, <code>while</code> = עד שתנאי מתקיים.
+    </div>
+
+    <div class="mission-complete">
+        <h3>🎉 משימה 2 הושלמה!</h3>
+        <p>למדת: לולאת while, מונים, ואיך להימנע מלולאות אינסופיות</p>
+    </div>
+
+    <!-- Mission 3 -->
+    <div class="mission-header">
+        <h2>משימה 3: break ו-continue — שליטה בלולאה</h2>
+        <span class="time-estimate">⏱️ 10 דקות</span>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 3.1: break — יציאה מהלולאה</h3>
+        <p><code>break</code> עוצר את הלולאה מיד:</p>
+<pre><code># מחפשים את המספר 7
+for i in range(1, 20):
+    if i == 7:
+        print(f"מצאתי את {i}!")
+        break
+    print(f"בודק: {i}")</code></pre>
+        <div class="what-you-see">
+<pre>בודק: 1
+בודק: 2
+בודק: 3
+בודק: 4
+בודק: 5
+בודק: 6
+מצאתי את 7!</pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 3.2: continue — דלג וממשיך</h3>
+        <p><code>continue</code> מדלג על שאר הקוד בסיבוב הנוכחי וממשיך לסיבוב הבא:</p>
+<pre><code># מדפיס רק מספרים אי-זוגיים
+for i in range(1, 11):
+    if i % 2 == 0:
+        continue   # דלג על זוגיים
+    print(i)</code></pre>
+        <div class="what-you-see">
+<pre>1
+3
+5
+7
+9</pre>
+        </div>
+
+        <div class="answer-box">
+            <label>התשובה שלך:</label>
+            <p><strong>מה ההבדל בין <code>break</code> ל-<code>continue</code>?</strong></p>
+            <input type="text" id="answer-3-2" placeholder="break עוצר..., continue...">
+            <button class="check-btn" onclick="checkAnswer('answer-3-2', ['break עוצר את הלולאה, continue מדלג לסיבוב הבא', 'break עוצר continue מדלג', 'break עוצר, continue מדלג'], 'מצוין! break = עצור הכל, continue = דלג וממשיך', 'כמעט! break עוצר את כל הלולאה, continue רק מדלג לסיבוב הבא')">בדוק תשובה</button>
+        </div>
+    </div>
+
+    <div class="mission-complete">
+        <h3>🎉 משימה 3 הושלמה!</h3>
+        <p>למדת: break לעצירת לולאה, continue לדילוג</p>
+    </div>
+
+    <!-- Mission 4 -->
+    <div class="mission-header">
+        <h2>משימה 4: לולאות מקוננות — לולאה בתוך לולאה</h2>
+        <span class="time-estimate">⏱️ 12 דקות</span>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 4.1: לוח הכפל</h3>
+        <p>נשתמש בלולאה מקוננת כדי להדפיס לוח כפל:</p>
+<pre><code>for i in range(1, 6):
+    for j in range(1, 6):
+        print(f"{i}x{j}={i*j}", end="\t")
+    print()  # שורה חדשה</code></pre>
+        <div class="what-you-see">
+<pre>1x1=1	1x2=2	1x3=3	1x4=4	1x5=5
+2x1=2	2x2=4	2x3=6	2x4=8	2x5=10
+3x1=3	3x2=6	3x3=9	3x4=12	3x5=15
+4x1=4	4x2=8	4x3=12	4x4=16	4x5=20
+5x1=5	5x2=10	5x3=15	5x4=20	5x5=25</pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 4.2: משולש כוכביות</h3>
+        <p>נייצר דפוס של משולש:</p>
+<pre><code>for i in range(1, 6):
+    print("*" * i)</code></pre>
+        <div class="what-you-see">
+<pre>*
+**
+***
+****
+*****</pre>
+        </div>
+        <p>עכשיו אתגר — נסו ליצור משולש הפוך (5 כוכביות בשורה הראשונה, 1 באחרונה)!</p>
+
+        <div class="answer-box">
+            <label>התשובה שלך:</label>
+            <p><strong>איזה range צריך כדי ליצור משולש הפוך (5 למעלה, 1 למטה)?</strong></p>
+            <input type="text" id="answer-4-2" placeholder='range(...)'>
+            <button class="check-btn" onclick="checkAnswer('answer-4-2', ['range(5, 0, -1)', 'range(5,0,-1)'], 'מעולה! range(5, 0, -1) הולך מ-5 עד 1 כלפי מטה', 'טיפ: צריכים להתחיל מ-5, לרדת ל-1, בצעדים של -1')">בדוק תשובה</button>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 4.3: אתגר FizzBuzz!</h3>
+        <p>זה אתגר קלאסי בראיונות עבודה!</p>
+        <p>הכללים: עברו על מספרים 1-30. אם מתחלק ב-3, הדפיסו "Fizz". אם ב-5, "Buzz". אם בשניהם, "FizzBuzz". אחרת — המספר עצמו.</p>
+<pre><code>for i in range(1, 31):
+    if i % 3 == 0 and i % 5 == 0:
+        print("FizzBuzz")
+    elif i % 3 == 0:
+        print("Fizz")
+    elif i % 5 == 0:
+        print("Buzz")
+    else:
+        print(i)</code></pre>
+
+        <div class="answer-box">
+            <label>התשובה שלך:</label>
+            <p><strong>מה ידפיס עבור המספר 15?</strong></p>
+            <input type="text" id="answer-4-3" placeholder="Fizz / Buzz / FizzBuzz / 15">
+            <button class="check-btn" onclick="checkAnswer('answer-4-3', ['FizzBuzz', 'fizzbuzz'], '15 מתחלק גם ב-3 וגם ב-5, אז התשובה היא FizzBuzz!', 'חישבו: האם 15 מתחלק ב-3? כן. האם 15 מתחלק ב-5? כן. מה קורה כששניהם נכונים?')">בדוק תשובה</button>
+        </div>
+    </div>
+
+    <div class="checkpoint">
+        ✅ <strong>עצור!</strong> ודאו שהצלחתם להריץ את לוח הכפל ואת FizzBuzz. הם תרגילים חשובים!
+    </div>
+
+    <div class="mission-complete">
+        <h3>🎉 משימה 4 הושלמה!</h3>
+        <p>למדת: לולאות מקוננות, דפוסים, ואתגר FizzBuzz</p>
+    </div>
+
+    <!-- Mission 5 -->
+    <div class="mission-header">
+        <h2>משימה 5: פרויקט מסכם — משחק ניחוש מספרים!</h2>
+        <span class="time-estimate">⏱️ 14 דקות</span>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 5.1: בניית המשחק</h3>
+        <p>המחשב יבחר מספר אקראי והשחקן ינחש! המשחק ייתן רמזים "גבוה מדי" או "נמוך מדי".</p>
+        <ol class="steps">
+            <li>צרו קובץ <code>guessing_game.py</code></li>
+            <li>כתבו את הקוד הבא:</li>
+        </ol>
+<pre><code>import random
+
+secret = random.randint(1, 100)
+attempts = 0
+
+print("🎲 ברוכים הבאים למשחק ניחוש המספרים!")
+print("בחרתי מספר בין 1 ל-100. נסו לנחש!")
+
+while True:
+    guess = int(input("הניחוש שלך: "))
+    attempts += 1
+
+    if guess < secret:
+        print("📈 נמוך מדי! נסו מספר גבוה יותר")
+    elif guess > secret:
+        print("📉 גבוה מדי! נסו מספר נמוך יותר")
+    else:
+        print(f"🎉 מצאת! המספר היה {secret}")
+        print(f"לקח לך {attempts} ניסיונות")
+        break</code></pre>
+        <div class="what-you-see">
+<pre>🎲 ברוכים הבאים למשחק ניחוש המספרים!
+בחרתי מספר בין 1 ל-100. נסו לנחש!
+הניחוש שלך: 50
+📈 נמוך מדי! נסו מספר גבוה יותר
+הניחוש שלך: 75
+📉 גבוה מדי! נסו מספר נמוך יותר
+הניחוש שלך: 63
+🎉 מצאת! המספר היה 63
+לקח לך 3 ניסיונות</pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 5.2: שדרגו את המשחק!</h3>
+        <p>הוסיפו מגבלת ניסיונות — השחקן מקבל 7 ניסיונות בלבד:</p>
+<pre><code>import random
+
+secret = random.randint(1, 100)
+max_attempts = 7
+
+print("🎲 יש לך 7 ניסיונות לנחש מספר בין 1-100!")
+
+for attempt in range(1, max_attempts + 1):
+    guess = int(input(f"ניסיון {attempt}/{max_attempts}: "))
+
+    if guess < secret:
+        print("📈 נמוך מדי!")
+    elif guess > secret:
+        print("📉 גבוה מדי!")
+    else:
+        print(f"🎉 ניצחת בניסיון {attempt}!")
+        break
+else:
+    print(f"😢 הפסדת! המספר היה {secret}")</code></pre>
+
+        <div class="tip">שימו לב ל-<code>else</code> אחרי <code>for</code>! הוא רץ רק אם הלולאה סיימה בלי <code>break</code>.</div>
+
+        <div class="answer-box">
+            <label>התשובה שלך:</label>
+            <p><strong>כמה ניסיונות מינימום נדרשים כדי לנחש מספר בין 1-100 בשיטת "חיפוש בינארי" (חצי-חצי)?</strong></p>
+            <input type="text" id="answer-5-2" placeholder="מספר">
+            <button class="check-btn" onclick="checkAnswer('answer-5-2', ['7'], 'נכון! log2(100) ≈ 7. בשיטת חצי-חצי תמיד אפשר למצוא תוך 7 ניסיונות!', 'טיפ: אם כל פעם מחלקים ל-2, כמה פעמים צריך לחלק 100? כלומר log2(100)')">בדוק תשובה</button>
+        </div>
+    </div>
+
+    <div class="mission-complete">
+        <h3>🎉 משימה 5 הושלמה — סיימנו את שיעור 4!</h3>
+        <p>למדת: לולאות for, while, break, continue, לולאות מקוננות, ובנית משחק שלם!</p>
+        <p><strong>בשיעור הבא:</strong> רשימות וטאפלים — מבני נתונים מדהימים!</p>
+    </div>
+</div>
+
+<!-- Popup Modal -->
+<div class="popup-overlay" id="popup-overlay" onclick="closePopup()">
+    <div class="popup" id="popup" onclick="event.stopPropagation()">
+        <div class="emoji" id="popup-emoji"></div>
+        <h3 id="popup-title"></h3>
+        <p id="popup-message"></p>
+        <button onclick="closePopup()">סגור</button>
+    </div>
+</div>
+
+<script>
+function checkAnswer(inputId, correctAnswers, successMsg, failMsg) {
+    var input = document.getElementById(inputId);
+    var val = input.value.trim();
+    var isCorrect = false;
+    for (var i = 0; i < correctAnswers.length; i++) {
+        if (val === correctAnswers[i] || val.toLowerCase() === correctAnswers[i].toLowerCase()) {
+            isCorrect = true; break;
+        }
+    }
+    var overlay = document.getElementById('popup-overlay');
+    var emoji = document.getElementById('popup-emoji');
+    var title = document.getElementById('popup-title');
+    var message = document.getElementById('popup-message');
+    var popup = document.getElementById('popup');
+    if (isCorrect) {
+        emoji.textContent = '🎉'; title.textContent = 'כל הכבוד!';
+        message.textContent = successMsg; popup.className = 'popup correct';
+    } else {
+        emoji.textContent = '🤔'; title.textContent = 'נסה שוב';
+        message.textContent = failMsg; popup.className = 'popup incorrect';
+    }
+    overlay.style.display = 'flex';
+}
+function closePopup() { document.getElementById('popup-overlay').style.display = 'none'; }
+</script>
+
+</body>
+</html>

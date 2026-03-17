@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>שיעור 9: טיפול בשגיאות ומודולים | קורס Python</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.8;
+            background: #0d1117;
+            color: #c9d1d9;
+            direction: rtl;
+            text-align: right;
+        }
+        .navbar {
+            background: #161b22;
+            border-bottom: 1px solid #30363d;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .navbar a {
+            color: #58a6ff;
+            text-decoration: none;
+            padding: 6px 14px;
+            border-radius: 6px;
+            transition: background 0.2s;
+            font-size: 0.9em;
+        }
+        .navbar a:hover { background: #21262d; }
+        .navbar .current { color: #f0883e; font-weight: bold; }
+        .nav-links { display: flex; gap: 8px; align-items: center; }
+        .lesson-hero {
+            text-align: center;
+            padding: 50px 20px 30px;
+            background: linear-gradient(180deg, rgba(137,87,229,0.15) 0%, transparent 100%);
+        }
+        .lesson-hero .icon { font-size: 3.5em; margin-bottom: 10px; }
+        .lesson-hero h1 { font-size: 2.5em; color: #58a6ff; margin-bottom: 8px; }
+        .lesson-hero p { color: #8b949e; font-size: 1.1em; max-width: 600px; margin: 0 auto; }
+        .container { max-width: 850px; margin: 0 auto; padding: 20px; }
+        .mission-header {
+            background: linear-gradient(135deg, #21262d, #161b22);
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 40px 0 20px;
+        }
+        .mission-header h2 { color: #58a6ff; font-size: 1.6em; margin-bottom: 6px; }
+        .time-estimate {
+            display: inline-block;
+            background: rgba(139,148,158,0.15);
+            color: #8b949e;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+        }
+        .exercise {
+            border: 2px solid #238636;
+            border-radius: 10px;
+            padding: 24px;
+            margin: 20px 0;
+            background: rgba(35,134,54,0.05);
+        }
+        .exercise h3 { color: #3fb950; font-size: 1.2em; margin-bottom: 12px; }
+        .steps { padding-right: 0; list-style: none; counter-reset: step; }
+        .steps li {
+            counter-increment: step;
+            padding: 6px 0 6px 0;
+            padding-right: 36px;
+            position: relative;
+        }
+        .steps li::before {
+            content: counter(step);
+            position: absolute;
+            right: 0;
+            top: 6px;
+            background: #1f6feb;
+            color: white;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        pre {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            margin: 12px 0;
+            direction: ltr;
+            text-align: left;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.92em;
+            color: #e6edf3;
+            line-height: 1.5;
+        }
+        code {
+            background: #161b22;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #f0883e;
+            direction: ltr;
+        }
+        .what-you-see {
+            background: #000;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 12px 0;
+        }
+        .what-you-see::before {
+            content: "מה שאתם אמורים לראות:";
+            display: block;
+            color: #8b949e;
+            font-size: 0.85em;
+            margin-bottom: 8px;
+            direction: rtl;
+            text-align: right;
+        }
+        .what-you-see pre {
+            background: transparent;
+            border: none;
+            padding: 0;
+            margin: 0;
+            color: #4af626;
+        }
+        .answer-box {
+            border: 2px dashed #30363d;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 14px 0;
+            background: rgba(22,27,34,0.5);
+        }
+        .answer-box label {
+            display: block;
+            margin-bottom: 8px;
+            color: #8b949e;
+            font-weight: bold;
+        }
+        .answer-box input {
+            width: 100%;
+            padding: 10px 14px;
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            color: #c9d1d9;
+            font-size: 1em;
+            margin-bottom: 10px;
+            direction: ltr;
+            text-align: left;
+        }
+        .answer-box input:focus { outline: none; border-color: #58a6ff; }
+        .check-btn {
+            background: #238636;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+        .check-btn:hover { background: #2ea043; }
+        .feedback { margin-top: 8px; font-weight: bold; display: none; }
+        .feedback.correct { color: #3fb950; display: block; }
+        .feedback.incorrect { color: #f85149; display: block; }
+        .checkpoint {
+            border-right: 4px solid #238636;
+            background: rgba(35,134,54,0.08);
+            padding: 16px 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .mission-complete {
+            border: 2px solid #8957e5;
+            border-radius: 10px;
+            padding: 24px;
+            margin: 20px 0;
+            background: rgba(137,87,229,0.08);
+            text-align: center;
+        }
+        .mission-complete h3 { color: #a371f7; font-size: 1.3em; margin-bottom: 8px; }
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .popup {
+            background: #21262d;
+            border: 1px solid #30363d;
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+        .popup .emoji { font-size: 3em; margin-bottom: 10px; }
+        .popup h3 { margin-bottom: 8px; font-size: 1.4em; }
+        .popup p { color: #8b949e; margin-bottom: 20px; }
+        .popup button {
+            background: #30363d;
+            color: #c9d1d9;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        .popup button:hover { background: #484f58; }
+        .popup.correct { border-color: #238636; }
+        .popup.correct h3 { color: #3fb950; }
+        .popup.incorrect { border-color: #f85149; }
+        .popup.incorrect h3 { color: #f85149; }
+        .info-box {
+            background: rgba(56,139,253,0.1);
+            border: 1px solid #1f6feb;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 14px 0;
+        }
+        .info-box strong { color: #58a6ff; }
+        .tip-box {
+            background: rgba(240,136,62,0.1);
+            border: 1px solid #f0883e;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 14px 0;
+        }
+        .tip-box strong { color: #f0883e; }
+        .error-box {
+            background: rgba(248,81,73,0.1);
+            border: 1px solid #f85149;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 14px 0;
+        }
+        .error-box strong { color: #f85149; }
+        h2, h3, h4, h5, h6 { direction: rtl; text-align: right; }
+        p, li, td, th, div { direction: rtl; text-align: right; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0;
+        }
+        th, td {
+            border: 1px solid #30363d;
+            padding: 10px 14px;
+        }
+        th { background: #161b22; color: #58a6ff; }
+        td code { direction: ltr; display: inline-block; }
+        @media (max-width: 600px) {
+            .lesson-hero h1 { font-size: 1.8em; }
+            .container { padding: 12px; }
+            .exercise, .mission-header { padding: 16px; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-links">
+        <a href="index.html">🏠 דף ראשי</a>
+        <a href="lesson08-strings-files.html">← שיעור 8</a>
+        <span class="current">שיעור 9</span>
+        <a href="lesson10-oop.html">שיעור 10 →</a>
+    </div>
+</nav>
+
+<div class="lesson-hero">
+    <div class="icon">🛡️</div>
+    <h1>שיעור 9: טיפול בשגיאות ומודולים</h1>
+    <p>למד לכתוב קוד שלא קורס, ולהשתמש בספריות מדהימות שאחרים כבר כתבו!</p>
+</div>
+
+<div class="container">
+
+    <!-- ===== MISSION 1 ===== -->
+    <div class="mission-header">
+        <h2>משימה 1: הבנת שגיאות</h2>
+        <p class="time-estimate">⏱️ 10 דקות</p>
+    </div>
+
+    <div class="info-box">
+        <strong>שגיאות הן לא אויב!</strong> הן מידע חשוב שעוזר לנו לתקן את הקוד. מתכנתים מקצועיים קוראים שגיאות כל יום.
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 1.1: סוגי שגיאות נפוצות</h3>
+        <ol class="steps">
+            <li>נסה להריץ כל אחד מהקודים הבאים וראה את השגיאה:</li>
+        </ol>
+
+        <table>
+            <tr><th>שגיאה</th><th>קוד לדוגמה</th><th>מה קרה</th></tr>
+            <tr><td><code>SyntaxError</code></td><td><code>print("hello"</code></td><td>שכחת סוגר</td></tr>
+            <tr><td><code>NameError</code></td><td><code>print(xyz)</code></td><td>משתנה לא קיים</td></tr>
+            <tr><td><code>TypeError</code></td><td><code>"age: " + 15</code></td><td>ערבוב סוגים</td></tr>
+            <tr><td><code>ValueError</code></td><td><code>int("hello")</code></td><td>ערך לא מתאים</td></tr>
+            <tr><td><code>IndexError</code></td><td><code>[1,2,3][5]</code></td><td>אינדקס מחוץ לטווח</td></tr>
+            <tr><td><code>KeyError</code></td><td><code>{"a":1}["b"]</code></td><td>מפתח לא קיים</td></tr>
+            <tr><td><code>ZeroDivisionError</code></td><td><code>10 / 0</code></td><td>חלוקה באפס</td></tr>
+            <tr><td><code>FileNotFoundError</code></td><td><code>open("xyz.txt")</code></td><td>קובץ לא קיים</td></tr>
+        </table>
+
+        <p><strong>איזו שגיאה מתקבלת מ-<code>int("abc")</code>?</strong></p>
+        <div class="answer-box">
+            <label>התשובה שלך:</label>
+            <input type="text" id="answer-1-1" placeholder="שם השגיאה...">
+            <button class="check-btn" onclick="checkAnswer('answer-1-1', ['ValueError', 'valueerror'], 'נכון! Python לא יכול להמיר abc למספר — הערך לא מתאים.', 'רמז: הערך (Value) של abc לא מתאים להמרה למספר')">בדוק תשובה</button>
+            <div class="feedback" id="feedback-1-1"></div>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 1.2: קריאת Traceback</h3>
+        <ol class="steps">
+            <li>הרץ את הקוד הבא וקרא את הודעת השגיאה:</li>
+        </ol>
+<pre>
+def divide(a, b):
+    return a / b
+
+def calculate():
+    result = divide(10, 0)
+    return result
+
+calculate()
+</pre>
+        <div class="error-box">
+            <strong>קריאת Traceback מלמטה למעלה:</strong>
+            <ol>
+                <li>השורה התחתונה — סוג השגיאה: <code>ZeroDivisionError</code></li>
+                <li>למעלה — השורה שגרמה לבעיה ומספר השורה</li>
+                <li>עוד למעלה — מאיפה נקראה הפונקציה</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="checkpoint">
+        ✅ <strong>עצור!</strong> האם אתה מזהה לפחות 5 סוגי שגיאות? תמיד קרא את ה-Traceback מלמטה למעלה!
+    </div>
+
+    <!-- ===== MISSION 2 ===== -->
+    <div class="mission-header">
+        <h2>משימה 2: try/except — תפיסת שגיאות</h2>
+        <p class="time-estimate">⏱️ 10 דקות</p>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 2.1: try/except בסיסי</h3>
+        <ol class="steps">
+            <li>במקום שהתוכנית תקרוס, נתפוס את השגיאה:</li>
+        </ol>
+<pre>
+# בלי try/except — התוכנית קורסת!
+# number = int(input("הכנס מספר: "))  # מה אם מכניסים "abc"?
+
+# עם try/except — התוכנית ממשיכה!
+try:
+    number = int(input("הכנס מספר: "))
+    print(f"המספר שלך: {number}")
+except ValueError:
+    print("זה לא מספר! נסה שוב.")
+
+print("התוכנית ממשיכה לרוץ!")
+</pre>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 2.2: תפיסת שגיאות ספציפיות</h3>
+<pre>
+def safe_divide(a, b):
+    try:
+        result = a / b
+        return result
+    except ZeroDivisionError:
+        print("אי אפשר לחלק באפס!")
+        return None
+    except TypeError:
+        print("הערכים חייבים להיות מספרים!")
+        return None
+
+print(safe_divide(10, 2))    # 5.0
+print(safe_divide(10, 0))    # אי אפשר לחלק באפס! None
+print(safe_divide("a", 2))   # הערכים חייבים להיות מספרים! None
+</pre>
+
+        <div class="tip-box">
+            <strong>כלל חשוב:</strong> תמיד תפוס שגיאות ספציפיות! הימנע מ-<code>except:</code> כללי כי הוא מסתיר באגים.
+        </div>
+
+        <p><strong>מה הפקודה שתופסת שגיאת חלוקה באפס? (כתוב: except + שם השגיאה)</strong></p>
+        <div class="answer-box">
+            <label>התשובה שלך:</label>
+            <input type="text" id="answer-2-2" placeholder="except ...">
+            <button class="check-btn" onclick="checkAnswer('answer-2-2', ['except ZeroDivisionError', 'except ZeroDivisionError:'], 'מצוין! except ZeroDivisionError תופסת בדיוק את השגיאה הזו.', 'רמז: except + שם השגיאה מהטבלה למעלה')">בדוק תשובה</button>
+            <div class="feedback" id="feedback-2-2"></div>
+        </div>
+    </div>
+
+    <!-- ===== MISSION 3 ===== -->
+    <div class="mission-header">
+        <h2>משימה 3: else ו-finally</h2>
+        <p class="time-estimate">⏱️ 8 דקות</p>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 3.1: המבנה המלא</h3>
+<pre>
+def read_file_safe(filename):
+    try:
+        with open(filename, "r", encoding="utf-8") as f:
+            content = f.read()
+    except FileNotFoundError:
+        print(f"הקובץ {filename} לא נמצא!")
+    except PermissionError:
+        print("אין הרשאה לקרוא את הקובץ!")
+    else:
+        # רץ רק אם לא הייתה שגיאה
+        print(f"הקובץ נקרא בהצלחה! ({len(content)} תווים)")
+        return content
+    finally:
+        # רץ תמיד — גם אם הייתה שגיאה!
+        print("--- סיום ניסיון קריאה ---")
+
+read_file_safe("sample.txt")   # הקובץ נקרא בהצלחה!
+read_file_safe("missing.txt")  # הקובץ missing.txt לא נמצא!
+</pre>
+
+        <div class="info-box">
+            <strong>סדר הביצוע:</strong>
+            <code>try</code> → (אם שגיאה: <code>except</code>) → (אם הצלחה: <code>else</code>) → (תמיד: <code>finally</code>)
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 3.2: קלט מוגן בלולאה</h3>
+<pre>
+def get_number(prompt):
+    while True:
+        try:
+            return float(input(prompt))
+        except ValueError:
+            print("זה לא מספר! נסה שוב.")
+
+# שימוש
+age = get_number("מה הגיל שלך? ")
+print(f"בעוד 10 שנים תהיה בן {age + 10:.0f}")
+</pre>
+
+        <p><strong>מה רץ תמיד, גם אם הייתה שגיאה? (מילה אחת באנגלית)</strong></p>
+        <div class="answer-box">
+            <label>התשובה שלך:</label>
+            <input type="text" id="answer-3-2" placeholder="...">
+            <button class="check-btn" onclick="checkAnswer('answer-3-2', ['finally'], 'נכון! finally רץ תמיד — מושלם לניקוי משאבים.', 'רמז: הבלוק שרץ ALWAYS, בלי קשר לשגיאות...')">בדוק תשובה</button>
+            <div class="feedback" id="feedback-3-2"></div>
+        </div>
+    </div>
+
+    <div class="checkpoint">
+        ✅ <strong>עצור!</strong> האם אתה מבין מתי כל חלק רץ? try → except/else → finally.
+    </div>
+
+    <!-- ===== MISSION 4 ===== -->
+    <div class="mission-header">
+        <h2>משימה 4: מודולים וייבוא</h2>
+        <p class="time-estimate">⏱️ 10 דקות</p>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 4.1: דרכי ייבוא</h3>
+<pre>
+# דרך 1: ייבוא המודול כולו
+import math
+print(math.pi)        # 3.141592653589793
+print(math.sqrt(16))  # 4.0
+
+# דרך 2: ייבוא פונקציה ספציפית
+from random import randint, choice
+print(randint(1, 100))
+print(choice(["אבן", "נייר", "מספריים"]))
+
+# דרך 3: ייבוא עם כינוי
+import datetime as dt
+now = dt.datetime.now()
+print(now.strftime("%Y-%m-%d %H:%M"))
+</pre>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 4.2: סיור בספרייה הסטנדרטית</h3>
+<pre>
+# random — מספרים אקראיים
+import random
+print(f"קוביה: {random.randint(1, 6)}")
+print(f"מטבע: {random.choice(['עץ', 'פלי'])}")
+password = ''.join(random.choices('abcdefghijkmnpqrstuvwxyz23456789', k=8))
+print(f"סיסמה: {password}")
+
+# math — מתמטיקה
+import math
+print(f"Pi: {math.pi:.4f}")
+print(f"שורש 144: {math.sqrt(144)}")
+print(f"2^10: {math.pow(2, 10):.0f}")
+
+# datetime — תאריכים
+from datetime import datetime, timedelta
+now = datetime.now()
+print(f"היום: {now.strftime('%d/%m/%Y')}")
+birthday = datetime(2026, 12, 25)
+days_left = (birthday - now).days
+print(f"ימים ליום הולדת: {days_left}")
+
+# os — מערכת הקבצים
+import os
+print(f"תיקייה נוכחית: {os.getcwd()}")
+files = os.listdir(".")
+print(f"קבצים: {files[:5]}")
+</pre>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 4.3: json — עבודה עם נתונים מובנים</h3>
+<pre>
+import json
+
+# שמירת נתונים לקובץ JSON
+data = {
+    "name": "דני",
+    "age": 15,
+    "hobbies": ["תכנות", "משחקים", "קריאה"],
+    "grades": {"math": 92, "english": 88}
+}
+
+with open("data.json", "w", encoding="utf-8") as f:
+    json.dump(data, f, ensure_ascii=False, indent=2)
+
+# קריאת נתונים מ-JSON
+with open("data.json", "r", encoding="utf-8") as f:
+    loaded = json.load(f)
+
+print(f"שם: {loaded['name']}")
+print(f"תחביבים: {', '.join(loaded['hobbies'])}")
+</pre>
+        <div class="what-you-see">
+<pre>שם: דני
+תחביבים: תכנות, משחקים, קריאה</pre>
+        </div>
+    </div>
+
+    <div class="checkpoint">
+        ✅ <strong>עצור!</strong> נסה לייבא ולהשתמש ב-random, math, datetime, os ו-json בעצמך.
+    </div>
+
+    <!-- ===== MISSION 5 ===== -->
+    <div class="mission-header">
+        <h2>משימה 5: pip וחבילות חיצוניות</h2>
+        <p class="time-estimate">⏱️ 7 דקות</p>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 5.1: התקנת חבילות</h3>
+        <ol class="steps">
+            <li>פתח את הטרמינל והרץ:</li>
+        </ol>
+<pre>
+pip install requests
+</pre>
+        <ol class="steps" start="2">
+            <li>עכשיו אפשר להשתמש בחבילה:</li>
+        </ol>
+<pre>
+import requests
+
+response = requests.get("https://httpbin.org/json")
+if response.status_code == 200:
+    data = response.json()
+    print("קיבלנו נתונים מהאינטרנט!")
+    print(data)
+</pre>
+
+        <div class="info-box">
+            <strong>פקודות pip חשובות:</strong>
+            <ul>
+                <li><code>pip install package</code> — התקנה</li>
+                <li><code>pip list</code> — רשימת חבילות מותקנות</li>
+                <li><code>pip uninstall package</code> — הסרה</li>
+                <li><code>pip freeze > requirements.txt</code> — שמירת רשימה</li>
+            </ul>
+        </div>
+
+        <p><strong>מה הפקודה להתקנת חבילה בשם "requests"?</strong></p>
+        <div class="answer-box">
+            <label>התשובה שלך:</label>
+            <input type="text" id="answer-5-1" placeholder="pip ...">
+            <button class="check-btn" onclick="checkAnswer('answer-5-1', ['pip install requests'], 'מצוין! pip install ואז שם החבילה.', 'רמז: pip install + שם החבילה')">בדוק תשובה</button>
+            <div class="feedback" id="feedback-5-1"></div>
+        </div>
+    </div>
+
+    <!-- ===== MISSION 6 ===== -->
+    <div class="mission-header">
+        <h2>משימה 6: פרויקט — מחשבון חסין שגיאות</h2>
+        <p class="time-estimate">⏱️ 10 דקות</p>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 6.1: המחשבון המושלם</h3>
+        <ol class="steps">
+            <li>צור קובץ <code>safe_calc.py</code>:</li>
+        </ol>
+<pre>
+def get_number(prompt):
+    """מבקש מספר מהמשתמש עד שמקבל קלט תקין"""
+    while True:
+        try:
+            return float(input(prompt))
+        except ValueError:
+            print("  זה לא מספר חוקי! נסה שוב.")
+
+def get_operator():
+    """מבקש פעולה חשבונית תקינה"""
+    valid = ['+', '-', '*', '/', '**', '%']
+    while True:
+        op = input(f"פעולה ({', '.join(valid)}): ")
+        if op in valid:
+            return op
+        print(f"  פעולה לא תקינה! בחר מתוך: {', '.join(valid)}")
+
+def calculate(a, op, b):
+    """מבצע חישוב עם טיפול בשגיאות"""
+    try:
+        if op == '+': return a + b
+        elif op == '-': return a - b
+        elif op == '*': return a * b
+        elif op == '/':
+            if b == 0:
+                raise ZeroDivisionError("אי אפשר לחלק באפס!")
+            return a / b
+        elif op == '**': return a ** b
+        elif op == '%': return a % b
+    except OverflowError:
+        print("  התוצאה גדולה מדי!")
+        return None
+
+def save_history(history):
+    """שומר היסטוריה לקובץ"""
+    try:
+        with open("calc_history.txt", "w", encoding="utf-8") as f:
+            for entry in history:
+                f.write(entry + "\n")
+        print(f"  נשמרו {len(history)} חישובים לקובץ.")
+    except IOError as e:
+        print(f"  שגיאה בשמירה: {e}")
+
+# --- תוכנית ראשית ---
+print("=== מחשבון חסין שגיאות ===")
+print("הקלד 'exit' ליציאה, 'history' להיסטוריה\n")
+
+history = []
+
+while True:
+    user_input = input("\n> חישוב חדש (או exit/history): ").strip()
+
+    if user_input.lower() == 'exit':
+        if history:
+            save_history(history)
+        print("להתראות!")
+        break
+    elif user_input.lower() == 'history':
+        if history:
+            print("\n📋 היסטוריה:")
+            for i, h in enumerate(history, 1):
+                print(f"  {i}. {h}")
+        else:
+            print("  אין היסטוריה עדיין.")
+        continue
+
+    a = get_number("מספר ראשון: ")
+    op = get_operator()
+    b = get_number("מספר שני: ")
+
+    try:
+        result = calculate(a, op, b)
+        if result is not None:
+            # עיגול אם צריך
+            if result == int(result):
+                result = int(result)
+            entry = f"{a} {op} {b} = {result}"
+            print(f"\n  ✅ {entry}")
+            history.append(entry)
+    except ZeroDivisionError as e:
+        print(f"\n  ❌ {e}")
+    except Exception as e:
+        print(f"\n  ❌ שגיאה לא צפויה: {e}")
+</pre>
+        <ol class="steps" start="2">
+            <li>הרץ את המחשבון ונסה להכניס קלט לא תקין — הוא לא יקרוס!</li>
+            <li>נסה: חלוקה באפס, הכנסת טקסט במקום מספר, מספר ענק עם **</li>
+        </ol>
+
+        <p><strong>איזה מילת מפתח מעלה (יוצרת) שגיאה בכוונה? (מילה אחת באנגלית)</strong></p>
+        <div class="answer-box">
+            <label>התשובה שלך:</label>
+            <input type="text" id="answer-6-1" placeholder="...">
+            <button class="check-btn" onclick="checkAnswer('answer-6-1', ['raise'], 'נכון! raise יוצר שגיאה בכוונה — שימושי כשאנחנו רוצים לסמן בעיה.', 'רמז: המילה שמ\"זורקת\" שגיאה ב-Python...')">בדוק תשובה</button>
+            <div class="feedback" id="feedback-6-1"></div>
+        </div>
+    </div>
+
+    <div class="mission-complete">
+        <h3>🎉 שיעור 9 הושלם!</h3>
+        <p>למדת: סוגי שגיאות נפוצים, try/except/else/finally, raise, ייבוא מודולים, הספרייה הסטנדרטית, pip, ובנית מחשבון חסין שגיאות!</p>
+        <p style="margin-top: 12px;"><a href="lesson10-oop.html" style="color: #58a6ff; font-weight: bold;">המשך לשיעור 10: תכנות מונחה עצמים →</a></p>
+    </div>
+
+</div>
+
+<!-- Popup Modal -->
+<div class="popup-overlay" id="popup-overlay" onclick="closePopup()">
+    <div class="popup" id="popup" onclick="event.stopPropagation()">
+        <div class="emoji" id="popup-emoji"></div>
+        <h3 id="popup-title"></h3>
+        <p id="popup-message"></p>
+        <button onclick="closePopup()">סגור</button>
+    </div>
+</div>
+
+<script>
+function checkAnswer(inputId, correctAnswers, successMsg, failMsg) {
+    var input = document.getElementById(inputId);
+    var val = input.value.trim();
+    var isCorrect = false;
+    for (var i = 0; i < correctAnswers.length; i++) {
+        if (val === correctAnswers[i] || val.toLowerCase() === correctAnswers[i].toLowerCase()) { isCorrect = true; break; }
+    }
+    var overlay = document.getElementById('popup-overlay');
+    var emoji = document.getElementById('popup-emoji');
+    var title = document.getElementById('popup-title');
+    var message = document.getElementById('popup-message');
+    var popup = document.getElementById('popup');
+    if (isCorrect) { emoji.textContent = '🎉'; title.textContent = 'כל הכבוד!'; message.textContent = successMsg; popup.className = 'popup correct'; }
+    else { emoji.textContent = '🤔'; title.textContent = 'נסה שוב'; message.textContent = failMsg; popup.className = 'popup incorrect'; }
+    overlay.style.display = 'flex';
+}
+function closePopup() { document.getElementById('popup-overlay').style.display = 'none'; }
+</script>
+
+</body>
+</html>

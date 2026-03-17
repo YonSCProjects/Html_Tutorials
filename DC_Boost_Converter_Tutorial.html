@@ -1,0 +1,1764 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מדריך בניית מעגל מגביר מתח DC - Boost Converter</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            line-height: 1.8;
+            padding: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #00e5ff;
+            font-size: 2em;
+            margin-bottom: 10px;
+            text-shadow: 0 0 15px rgba(0, 229, 255, 0.3);
+        }
+
+        h2 {
+            color: #ffab00;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #ffab00;
+            padding-bottom: 8px;
+        }
+
+        h3 {
+            color: #76ff03;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #90a4ae;
+            font-size: 1.1em;
+            margin-bottom: 30px;
+        }
+
+        /* Mission Header */
+        .mission-header {
+            background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%);
+            border: 2px solid #42a5f5;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 30px 0 20px 0;
+            text-align: center;
+        }
+
+        .mission-header h2 {
+            color: #90caf9;
+            border: none;
+            margin: 0;
+            padding: 0;
+            font-size: 1.5em;
+        }
+
+        .time-estimate {
+            display: inline-block;
+            background: #263238;
+            color: #b0bec5;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            margin-top: 8px;
+        }
+
+        /* Exercise Box */
+        .exercise {
+            background: #1a2a1a;
+            border: 2px solid #4caf50;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .exercise h3 {
+            color: #81c784;
+            margin-top: 0;
+        }
+
+        /* Steps */
+        .steps {
+            counter-reset: step-counter;
+            list-style: none;
+            padding: 0;
+            margin: 15px 0;
+        }
+
+        .steps li {
+            counter-increment: step-counter;
+            padding: 8px 0 8px 45px;
+            position: relative;
+            margin-bottom: 5px;
+        }
+
+        .steps li::before {
+            content: counter(step-counter);
+            position: absolute;
+            right: 0;
+            left: auto;
+            top: 8px;
+            width: 30px;
+            height: 30px;
+            background: #1565c0;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        /* What You Should See */
+        .what-you-see {
+            background: #000;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            position: relative;
+        }
+
+        .what-you-see::before {
+            content: "👁️ מה שאתה אמור לראות:";
+            display: block;
+            color: #ff9800;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .what-you-see pre {
+            color: #00e676;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            white-space: pre;
+            overflow-x: auto;
+            direction: ltr;
+            text-align: left;
+        }
+
+        /* Answer Box */
+        .answer-box {
+            border: 2px dashed #546e7a;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            background: #1a1a2e;
+        }
+
+        .answer-box label {
+            color: #80cbc4;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .answer-box input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #37474f;
+            border-radius: 6px;
+            background: #0d1117;
+            color: #e0e0e0;
+            font-size: 1em;
+            margin-bottom: 10px;
+            direction: rtl;
+        }
+
+        .answer-box input[type="text"].ltr-input {
+            direction: ltr;
+            text-align: left;
+        }
+
+        .check-btn {
+            background: linear-gradient(135deg, #2e7d32, #43a047);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .check-btn:hover {
+            background: linear-gradient(135deg, #388e3c, #4caf50);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+        }
+
+        .feedback {
+            display: none;
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+
+        .feedback.correct {
+            display: block;
+            background: #1b5e20;
+            color: #a5d6a7;
+            border: 1px solid #4caf50;
+        }
+
+        .feedback.incorrect {
+            display: block;
+            background: #b71c1c;
+            color: #ef9a9a;
+            border: 1px solid #f44336;
+        }
+
+        /* Checkpoint */
+        .checkpoint {
+            background: #1a2a1a;
+            border-right: 5px solid #4caf50;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        /* Mission Complete */
+        .mission-complete {
+            background: #1a1a2e;
+            border: 2px solid #7c4dff;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 25px 0;
+            text-align: center;
+        }
+
+        .mission-complete h3 {
+            color: #b388ff;
+        }
+
+        /* Warning Box */
+        .warning {
+            background: #2a1a0a;
+            border: 2px solid #ff6f00;
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin: 15px 0;
+        }
+
+        .warning::before {
+            content: "⚠️ אזהרת בטיחות";
+            display: block;
+            color: #ffab00;
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+        }
+
+        /* Info Box */
+        .info-box {
+            background: #0d1b2a;
+            border: 2px solid #0288d1;
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin: 15px 0;
+        }
+
+        .info-box::before {
+            content: "💡 מידע חשוב";
+            display: block;
+            color: #4fc3f7;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        /* Component Box */
+        .component-box {
+            background: #1a1a1a;
+            border: 1px solid #424242;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+
+        .component-box h4 {
+            color: #ffab00;
+            margin-bottom: 8px;
+        }
+
+        /* Diagram Box */
+        .diagram {
+            background: #000;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+
+        .diagram pre {
+            color: #00e5ff;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            line-height: 1.4;
+            white-space: pre;
+            direction: ltr;
+            text-align: left;
+        }
+
+        /* Tool list */
+        .tool-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .tool-item {
+            background: #1a1a2e;
+            border: 1px solid #37474f;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .tool-item .icon {
+            font-size: 1.5em;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        /* BOM Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            direction: rtl;
+        }
+
+        th {
+            background: #1a237e;
+            color: #90caf9;
+            padding: 12px;
+            text-align: right;
+            border: 1px solid #37474f;
+        }
+
+        td {
+            padding: 10px 12px;
+            border: 1px solid #37474f;
+            background: #121212;
+        }
+
+        tr:hover td {
+            background: #1a1a2e;
+        }
+
+        /* Popup */
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popup-overlay.show {
+            display: flex;
+        }
+
+        .popup {
+            background: #1a1a2e;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 400px;
+            text-align: center;
+            animation: popIn 0.3s ease-out;
+        }
+
+        .popup.correct {
+            border: 3px solid #4caf50;
+            box-shadow: 0 0 30px rgba(76, 175, 80, 0.3);
+        }
+
+        .popup.incorrect {
+            border: 3px solid #f44336;
+            box-shadow: 0 0 30px rgba(244, 67, 54, 0.3);
+        }
+
+        .popup .emoji {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .popup h3 {
+            margin-bottom: 10px;
+        }
+
+        .popup p {
+            color: #b0bec5;
+            margin-bottom: 20px;
+        }
+
+        .popup button {
+            background: #1565c0;
+            color: white;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        .popup button:hover {
+            background: #1976d2;
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0.5); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        /* Voltage label colors */
+        .v-in { color: #f44336; font-weight: bold; }
+        .v-out { color: #4caf50; font-weight: bold; }
+        .gnd { color: #616161; font-weight: bold; }
+
+        /* Code inline */
+        code {
+            background: #1a1a1a;
+            color: #80cbc4;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            direction: ltr;
+            display: inline-block;
+        }
+
+        /* Formula */
+        .formula {
+            background: #1a1a2e;
+            border: 1px solid #7c4dff;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            text-align: center;
+            font-size: 1.2em;
+            direction: ltr;
+        }
+
+        .formula .label {
+            color: #b388ff;
+            font-size: 0.8em;
+            display: block;
+            margin-bottom: 5px;
+            direction: rtl;
+        }
+
+        /* Progress tracker */
+        .progress-tracker {
+            background: #121212;
+            border: 1px solid #37474f;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .progress-step {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 5px 0;
+        }
+
+        .progress-step .num {
+            width: 25px;
+            height: 25px;
+            background: #37474f;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 25px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .progress-step.active .num {
+            background: #ffab00;
+            color: #000;
+        }
+
+        .progress-step.done .num {
+            background: #4caf50;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+                font-size: 0.95em;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+
+            .diagram pre {
+                font-size: 0.7em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>מדריך בניית מעגל מגביר מתח DC</h1>
+    <p class="subtitle">Boost Converter - הפוך 3.7V מסוללה ל-5V יציב</p>
+
+    <div class="progress-tracker">
+        <div class="progress-step active"><span class="num">1</span> הבנת העיקרון</div>
+        <div class="progress-step"><span class="num">2</span> הכרת הרכיבים</div>
+        <div class="progress-step"><span class="num">3</span> בניית המעגל על ברדבורד</div>
+        <div class="progress-step"><span class="num">4</span> כיוון המתח</div>
+        <div class="progress-step"><span class="num">5</span> בדיקות ואבחון</div>
+        <div class="progress-step"><span class="num">6</span> הלחמה על PCB</div>
+    </div>
+
+    <!-- ==================== MISSION 1 ==================== -->
+    <div class="mission-header">
+        <h2>משימה 1: מה זה Boost Converter ולמה צריך אותו?</h2>
+        <p class="time-estimate">⏱️ 10 דקות</p>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 1.1: הבעיה - למה לא מספיק המתח מהסוללה?</h3>
+
+        <p>בפרויקט העכבר שלנו, יש לנו סוללת 18650 שנותנת <span class="v-in">3.7V</span>. אבל יש בעיה:</p>
+
+        <ul style="margin: 10px 0;">
+            <li>כשהסוללה מלאה: <strong>4.2V</strong></li>
+            <li>כשהסוללה באמצע: <strong>3.7V</strong></li>
+            <li>כשהסוללה כמעט ריקה: <strong>3.0V</strong></li>
+        </ul>
+
+        <p>הרגולטור AMS1117 צריך לפחות <strong>4.5V</strong> בכניסה כדי לתת <strong>3.3V</strong> יציב ביציאה. זה אומר שרוב הזמן הסוללה לא נותנת מספיק!</p>
+
+        <div class="diagram">
+            <pre>
+  הבעיה:
+
+  סוללה 18650          AMS1117-3.3V          ESP32-S3
+  ┌──────────┐        ┌──────────────┐       ┌─────────┐
+  │          │        │              │       │         │
+  │  3.0V-   │───────►│  צריך 4.5V+  │──??──►│ צריך    │
+  │  4.2V    │        │  בכניסה!     │       │ 3.3V    │
+  │          │        │              │       │         │
+  └──────────┘        └──────────────┘       └─────────┘
+       ▲
+       │
+   רוב הזמן מתחת ל-4.5V!
+   המעגל לא עובד טוב!
+            </pre>
+        </div>
+
+        <p><strong>הפתרון:</strong> מעגל Boost Converter שמגביר את המתח!</p>
+
+        <div class="diagram">
+            <pre>
+  הפתרון:
+
+  סוללה 18650      BOOST CONVERTER      AMS1117       ESP32-S3
+  ┌──────────┐     ┌──────────────┐    ┌──────────┐   ┌─────────┐
+  │          │     │              │    │          │   │         │
+  │  3.0V-   │────►│  מגביר ל-5V  │───►│  5V►3.3V │──►│  3.3V   │
+  │  4.2V    │     │    יציב!     │    │  יציב!   │   │  יציב!  │
+  │          │     │              │    │          │   │         │
+  └──────────┘     └──────────────┘    └──────────┘   └─────────┘
+                          ▲
+                          │
+                  עכשיו תמיד 5V!
+                  לא משנה מצב הסוללה!
+            </pre>
+        </div>
+
+        <p><strong>מה הפתרון לבעיית המתח של הסוללה?</strong></p>
+        <div class="answer-box">
+            <label>התשובה שלך:</label>
+            <input type="text" id="answer-1-1" placeholder="מה צריך להוסיף בין הסוללה לרגולטור?">
+            <button class="check-btn" onclick="checkAnswer('answer-1-1', ['boost', 'בוסט', 'boost converter', 'מגביר מתח', 'ממיר מתח', 'מגביר'], 'מעולה! מעגל Boost Converter מגביר את המתח מהסוללה!', 'נסה שוב - מה סוג המעגל שמגביר מתח DC?')">בדוק תשובה</button>
+            <div class="feedback" id="feedback-1-1"></div>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 1.2: איך זה עובד? העיקרון הפיזיקלי</h3>
+
+        <p>Boost Converter עובד בעזרת 3 רכיבים עיקריים:</p>
+
+        <ol class="steps">
+            <li><strong>סליל (Inductor)</strong> - מאגר אנרגיה בשדה מגנטי</li>
+            <li><strong>טרנזיסטור מתג (MOSFET)</strong> - פותח וסוגר את המעגל מהר מאוד</li>
+            <li><strong>דיודה (Diode)</strong> - מכוונת את הזרם לכיוון אחד בלבד</li>
+        </ol>
+
+        <div class="info-box">
+            <p><strong>איך זה עובד בפשטות:</strong></p>
+            <ol>
+                <li><strong>שלב 1 - טעינה:</strong> המתג נסגר → זרם עובר דרך הסליל → הסליל אוגר אנרגיה מגנטית</li>
+                <li><strong>שלב 2 - שחרור:</strong> המתג נפתח → הסליל "זורק" את האנרגיה → המתח קופץ למעלה!</li>
+                <li><strong>חוזר חלילה:</strong> זה קורה מאות אלפי פעמים בשנייה (500KHz+)</li>
+            </ol>
+        </div>
+
+        <div class="diagram">
+            <pre>
+  שלב 1 - טעינה:                    שלב 2 - שחרור:
+
+      L (סליל)                          L (סליל)
+  Vin──►┤XXXX├──┐                   Vin──►┤XXXX├──┐
+        │       │                         │       │
+        │       │    D (דיודה)            │       │    D (דיודה)
+        │       └──►|──── Vout            │       └──►|──── Vout
+        │       │                         │       │        (מתח גבוה!)
+        │    ┌──┴──┐                      │    ┌──┴──┐
+        │    │ SW  │ ← סגור              │    │ SW  │ ← פתוח
+        │    │(ON) │                      │    │(OFF)│
+        │    └──┬──┘                      │    └──┬──┘
+        │       │                         │       │
+  GND───┴───────┘                   GND───┴───────┘
+
+  הסליל אוגר אנרגיה             הסליל משחרר = מתח עולה!
+            </pre>
+        </div>
+
+        <p><strong>איזה רכיב אוגר אנרגיה מגנטית במעגל Boost?</strong></p>
+        <div class="answer-box">
+            <label>התשובה שלך:</label>
+            <input type="text" id="answer-1-2" placeholder="שם הרכיב באנגלית או בעברית">
+            <button class="check-btn" onclick="checkAnswer('answer-1-2', ['inductor', 'סליל', 'coil', 'אינדוקטור'], 'נכון! הסליל (Inductor) אוגר אנרגיה בשדה מגנטי ומשחרר אותה כמתח גבוה יותר.', 'נסה שוב - זה הרכיב שנראה כמו קפיץ מלופף...')">בדוק תשובה</button>
+            <div class="feedback" id="feedback-1-2"></div>
+        </div>
+    </div>
+
+    <div class="checkpoint">
+        ✅ <strong>עצור!</strong> לפני שממשיכים - וודא שאתה מבין:
+        <ul>
+            <li>למה הסוללה לבד לא מספיקה (מתח יורד מתחת ל-4.5V)</li>
+            <li>Boost Converter מגביר מתח נמוך למתח גבוה יותר</li>
+            <li>העיקרון: סליל אוגר אנרגיה ← מתג משחרר ← מתח עולה</li>
+        </ul>
+    </div>
+
+    <div class="mission-complete">
+        <h3>🎉 משימה 1 הושלמה!</h3>
+        <p>למדת: מה זה Boost Converter, למה צריך אותו, ואיך העיקרון הפיזיקלי עובד</p>
+    </div>
+
+    <!-- ==================== MISSION 2 ==================== -->
+    <div class="mission-header">
+        <h2>משימה 2: הכרת הרכיבים ורשימת חלקים</h2>
+        <p class="time-estimate">⏱️ 15 דקות</p>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 2.1: מודול MT3608 - הלב של המעגל</h3>
+
+        <p>נשתמש במודול <strong>MT3608</strong> - מודול Boost Converter מוכן שמכיל את כל הרכיבים על לוח קטנטן:</p>
+
+        <div class="diagram">
+            <pre>
+  מודול MT3608 - מבט מלמעלה:
+
+  ┌──────────────────────────────────┐
+  │                                  │
+  │   ┌────┐                        │
+  │   │ L  │  סליל 22µH             │
+  │   └────┘                        │
+  │                                  │
+  │   ┌──┐  ┌──┐  ┌──┐  ┌───────┐ │
+  │   │C1│  │D1│  │C2│  │ POT   │ │ ← פוטנציומטר
+  │   └──┘  └──┘  └──┘  │(כיוון)│ │   לכיוון מתח
+  │                      └───────┘ │
+  │   ┌──────────┐                  │
+  │   │  MT3608  │  IC ראשי        │
+  │   └──────────┘                  │
+  │                                  │
+  │  IN+ IN- ─── OUT+ OUT-          │
+  │   ●    ●       ●     ●          │
+  └───┼────┼───────┼─────┼──────────┘
+      │    │       │     │
+      │    │       │     │
+     V+   GND    V+out  GND
+   (כניסה)      (יציאה)
+
+  גודל: ~36mm × 17mm × 14mm
+  מודול קטן ונוח!
+            </pre>
+        </div>
+
+        <div class="component-box">
+            <h4>מפרט MT3608:</h4>
+            <table>
+                <tr><th>פרמטר</th><th>ערך</th></tr>
+                <tr><td>מתח כניסה</td><td>2V - 24V</td></tr>
+                <tr><td>מתח יציאה</td><td>5V - 28V (מתכוונן)</td></tr>
+                <tr><td>זרם יציאה מקסימלי</td><td>2A</td></tr>
+                <tr><td>תדירות מיתוג</td><td>1.2 MHz</td></tr>
+                <tr><td>יעילות</td><td>~93%</td></tr>
+                <tr><td>כיוון מתח</td><td>פוטנציומטר (Trimpot)</td></tr>
+            </table>
+        </div>
+
+        <p><strong>מה טווח מתח הכניסה של MT3608?</strong></p>
+        <div class="answer-box">
+            <label>התשובה שלך:</label>
+            <input type="text" id="answer-2-1" class="ltr-input" placeholder="XV - YV">
+            <button class="check-btn" onclick="checkAnswer('answer-2-1', ['2v-24v', '2-24', '2v - 24v', '2 - 24', '2v to 24v', '2-24v'], 'מעולה! MT3608 מקבל 2V עד 24V בכניסה - מושלם לסוללת 18650!', 'נסה שוב - חפש את טווח Input Voltage בטבלה למעלה')">בדוק תשובה</button>
+            <div class="feedback" id="feedback-2-1"></div>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 2.2: רשימת חלקים מלאה (BOM)</h3>
+
+        <p>אלה כל הרכיבים שצריך לפרויקט:</p>
+
+        <table>
+            <tr>
+                <th>#</th>
+                <th>רכיב</th>
+                <th>כמות</th>
+                <th>הערות</th>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>מודול MT3608 Boost Converter</td>
+                <td>1</td>
+                <td>כולל פוטנציומטר</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>ברדבורד (Breadboard) 400 נקודות</td>
+                <td>1</td>
+                <td>לבדיקה ראשונית</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>חוטי חיבור (Jumper wires)</td>
+                <td>~8</td>
+                <td>זכר-זכר, צבעוניים</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>סוללת 18650 + מחזיק</td>
+                <td>1</td>
+                <td>3.7V, טעונה</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td>מולטימטר דיגיטלי</td>
+                <td>1</td>
+                <td>למדידת מתח</td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td>LED אדום (5mm)</td>
+                <td>1</td>
+                <td>לבדיקה</td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td>נגד 330Ω</td>
+                <td>1</td>
+                <td>להגנה על LED</td>
+            </tr>
+            <tr>
+                <td>8</td>
+                <td>מברג קטן (פיליפס או שטוח)</td>
+                <td>1</td>
+                <td>לכיוון פוטנציומטר</td>
+            </tr>
+            <tr>
+                <td>9</td>
+                <td>קבלים 100µF / 16V (אופציונלי)</td>
+                <td>2</td>
+                <td>לסינון נוסף</td>
+            </tr>
+        </table>
+
+        <div class="info-box">
+            <p><strong>איפה לקנות?</strong> מודול MT3608 זמין ב-AliExpress במחיר של כ-$0.50-$1.00. מומלץ לקנות 3-5 יחידות למקרה של טעות.</p>
+        </div>
+
+        <p><strong>כמה רכיבים עיקריים צריך? (לא כולל כלים)</strong></p>
+        <div class="answer-box">
+            <label>התשובה שלך:</label>
+            <input type="text" id="answer-2-2" placeholder="מספר">
+            <button class="check-btn" onclick="checkNumberRange('answer-2-2', 7, 9, 'נכון! 7-9 רכיבים עיקריים, תלוי אם סופרים את הקבלים האופציונליים.', 'נסה לספור שוב את הרכיבים בטבלה (שורות 1-9)')">בדוק תשובה</button>
+            <div class="feedback" id="feedback-2-2"></div>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 2.3: זיהוי פיני המודול</h3>
+
+        <p>למודול MT3608 יש 4 פינים שצריך לזהות:</p>
+
+        <div class="diagram">
+            <pre>
+  מבט על הפינים (חזית המודול):
+
+    כניסה (INPUT)              יציאה (OUTPUT)
+  ┌──────────────────────────────────────────┐
+  │                                          │
+  │  IN+                            OUT+     │
+  │  (●) ←── מתח חיובי    מתח חיובי ──► (●) │
+  │       מהסוללה           מוגבר!           │
+  │                                          │
+  │  IN-                            OUT-     │
+  │  (●) ←── GND (אדמה)    GND (אדמה) ──► (●) │
+  │                                          │
+  │              ┌───────┐                   │
+  │              │ (POT) │ ← פוטנציומטר     │
+  │              └───────┘   סובב כדי       │
+  │                          לכוון מתח       │
+  └──────────────────────────────────────────┘
+
+  קוד צבעים מומלץ:
+  ● IN+  = חוט אדום (מתח חיובי מסוללה)
+  ● IN-  = חוט שחור (אדמה של סוללה)
+  ● OUT+ = חוט כתום (מתח מוגבר חיובי)
+  ● OUT- = חוט שחור (אדמה יציאה)
+            </pre>
+        </div>
+
+        <p><strong>מה התפקיד של הפוטנציומטר (POT) על המודול?</strong></p>
+        <div class="answer-box">
+            <label>התשובה שלך:</label>
+            <input type="text" id="answer-2-3" placeholder="מה הפוטנציומטר עושה?">
+            <button class="check-btn" onclick="checkAnswer('answer-2-3', ['כיוון מתח', 'לכוון מתח', 'מכוון מתח', 'שינוי מתח', 'לשנות מתח', 'קובע מתח', 'regulate', 'adjust voltage', 'כיוון', 'לכוון את המתח', 'מתח יציאה', 'לכוון מתח יציאה'], 'מצוין! הפוטנציומטר מאפשר לכוון את מתח היציאה לערך הרצוי!', 'רמז: הפוטנציומטר קשור למתח שיוצא מהמודול...')">בדוק תשובה</button>
+            <div class="feedback" id="feedback-2-3"></div>
+        </div>
+    </div>
+
+    <div class="checkpoint">
+        ✅ <strong>עצור!</strong> וודא שיש לך את כל הרכיבים מהרשימה לפני שממשיכים למשימה הבאה!
+    </div>
+
+    <div class="mission-complete">
+        <h3>🎉 משימה 2 הושלמה!</h3>
+        <p>למדת: מפרט MT3608, רשימת חלקים, וזיהוי פינים של המודול</p>
+    </div>
+
+    <!-- ==================== MISSION 3 ==================== -->
+    <div class="mission-header">
+        <h2>משימה 3: בניית המעגל על ברדבורד</h2>
+        <p class="time-estimate">⏱️ 25 דקות</p>
+    </div>
+
+    <div class="warning">
+        <ul>
+            <li>אל תחבר את הסוללה לפני שסיימת את כל החיבורים!</li>
+            <li>בדוק שאין קצר (חוט אדום נוגע בשחור) לפני הפעלה</li>
+            <li>אל תיגע בפינים כשיש מתח - אפשר להישרף!</li>
+            <li>עבוד על משטח יבש ונקי</li>
+        </ul>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 3.1: הכנת הברדבורד</h3>
+
+        <ol class="steps">
+            <li>קח את הברדבורד והנח אותו לפניך, כשהשורות האנכיות מימין ומשמאל</li>
+            <li>זהה את פסי ה-Power בצדדים: <span class="v-in">פס אדום (+)</span> ו<span class="gnd">פס כחול/שחור (-/GND)</span></li>
+            <li>זהה את השורות הממוספרות באמצע (a-e ו-f-j)</li>
+        </ol>
+
+        <div class="diagram">
+            <pre>
+  מבנה ברדבורד:
+
+  Power Rails                   Power Rails
+  (+)(-)                        (+)(-)
+  [R][B]  a  b  c  d  e    f  g  h  i  j  [R][B]
+  [│][│]  1  ●  ●  ●  ●    ●  ●  ●  ●  1  [│][│]
+  [│][│]  2  ●  ●  ●  ●    ●  ●  ●  ●  2  [│][│]
+  [│][│]  3  ●  ●  ●  ●    ●  ●  ●  ●  3  [│][│]
+  [│][│]  4  ●  ●  ●  ●    ●  ●  ●  ●  4  [│][│]
+  [│][│]  5  ●  ●  ●  ●    ●  ●  ●  ●  5  [│][│]
+  ...     ..........................      ...
+  [│][│] 30  ●  ●  ●  ●    ●  ●  ●  ●  30 [│][│]
+
+  [R] = פס אדום (+) - מחובר אנכית
+  [B] = פס כחול (-) - מחובר אנכית
+  ● = נקודות חיבור - מחוברות אופקית (a-e או f-j)
+            </pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 3.2: הנחת המודול על הברדבורד</h3>
+
+        <ol class="steps">
+            <li>הנח את מודול MT3608 על הברדבורד, כשכל פין בשורה נפרדת</li>
+            <li>ודא שפיני IN ופיני OUT לא באותה שורה!</li>
+            <li>לחץ בעדינות עד שהפינים נכנסים לנקודות</li>
+        </ol>
+
+        <div class="diagram">
+            <pre>
+  מיקום המודול על הברדבורד:
+
+  Power Rails
+  (+)(-)  a  b  c  d  e     f  g  h  i  j  (+)(-)
+          5  ●  ●  ●  ●     ●  ●  ●  ●
+          6  ●  ●  ●  ●     ●  ●  ●  ●
+          7  ●  ●  ●  ●     ●  ●  ●  ●
+          8  ●  ● [IN+ ════════ OUT+] ●  ●
+          9  ●  ●  │  MT3608  │  ●  ●  ●
+         10  ●  ● [IN- ════════ OUT-] ●  ●
+         11  ●  ●  ●  ●     ●  ●  ●  ●
+         12  ●  ●  ●  ●     ●  ●  ●  ●
+
+  IN+ בשורה 8, צד שמאל (a-e)
+  IN- בשורה 10, צד שמאל (a-e)
+  OUT+ בשורה 8, צד ימין (f-j)
+  OUT- בשורה 10, צד ימין (f-j)
+            </pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 3.3: חיבור צד הכניסה (Input)</h3>
+
+        <ol class="steps">
+            <li><strong>חוט אדום:</strong> חבר ממחזיק הסוללה (+) → לשורה 8, טור a (אותה שורה כמו IN+)</li>
+            <li><strong>חוט שחור:</strong> חבר ממחזיק הסוללה (-) → לשורה 10, טור a (אותה שורה כמו IN-)</li>
+            <li><strong>אופציונלי:</strong> חבר קבל 100µF בין שורה 8 לשורה 10 (צד הכניסה) - לסינון</li>
+        </ol>
+
+        <div class="warning">
+            <p><strong>שים לב לקוטביות!</strong> הקבל האלקטרוליטי חייב להיות בכיוון הנכון - הרגל הארוכה (+) לשורה 8 (IN+) והרגל הקצרה (-) לשורה 10 (IN-).</p>
+        </div>
+
+        <div class="diagram">
+            <pre>
+  חיבור צד הכניסה:
+
+  מחזיק סוללה 18650
+  ┌─────────────┐
+  │  (+)  (-)   │
+  └──┬─────┬────┘
+     │     │
+     │RED  │BLACK
+     │     │
+  (+)(-)  a  b  c  d  e
+          8  ●──[IN+ ═══
+     └──► ●             ↑ (אופציונלי: קבל
+          9  ●  │       │  100µF בין + ל-)
+         10  ●──[IN- ═══
+     └──► ●
+            </pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 3.4: חיבור צד היציאה (Output)</h3>
+
+        <ol class="steps">
+            <li><strong>חוט כתום/אדום:</strong> חבר מ-OUT+ (שורה 8, צד ימין) → לפס (+) הימני של הברדבורד</li>
+            <li><strong>חוט שחור:</strong> חבר מ-OUT- (שורה 10, צד ימין) → לפס (-) הימני של הברדבורד</li>
+            <li><strong>אופציונלי:</strong> חבר קבל 100µF נוסף בין (+) ל(-) בצד היציאה - לסינון</li>
+        </ol>
+
+        <div class="diagram">
+            <pre>
+  חיבור צד היציאה:
+
+              f  g  h  i  j  (+)(-)
+          ═══ OUT+]──●  ●  ●    │
+                               ├──► פס (+) = 5V מוגבר!
+              │  MT3608  │     │
+          ═══ OUT-]──●  ●  ●    │
+                               └──► פס (-) = GND
+            </pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 3.5: חיבור LED לבדיקה</h3>
+
+        <p>נחבר LED עם נגד כדי לראות שהמעגל עובד:</p>
+
+        <ol class="steps">
+            <li><strong>נגד 330Ω:</strong> חבר רגל אחת לפס (+) הימני, ורגל שנייה לשורה 20</li>
+            <li><strong>LED:</strong> הרגל הארוכה (אנודה, +) לשורה 20. הרגל הקצרה (קתודה, -) לפס (-)</li>
+        </ol>
+
+        <div class="diagram">
+            <pre>
+  מעגל LED לבדיקה:
+
+  פס (+) ──── 330Ω ──── (+)LED(-) ──── פס (-)
+   5V                    │    │          GND
+                    רגל ארוכה רגל קצרה
+
+
+  על הברדבורד:
+
+  (+)(-)
+   │       f  g  h  i  j
+   │  18  ●  ●  ●  ●  ●
+   │  19  ●  ●  ●  ●  ●
+   ├──── [330Ω] ──── ●  ●
+   │  20  ●  ●  [LED+  LED-] ──── (-)
+   │  21  ●  ●  ●  ●  ●           │
+                                    │
+                                    GND
+            </pre>
+        </div>
+
+        <p><strong>למה חשוב לשים נגד לפני ה-LED?</strong></p>
+        <div class="answer-box">
+            <label>התשובה שלך:</label>
+            <input type="text" id="answer-3-5" placeholder="מה יקרה ל-LED בלי נגד?">
+            <button class="check-btn" onclick="checkAnswer('answer-3-5', ['יישרף', 'ישרף', 'הגנה', 'להגן', 'הגבלת זרם', 'להגביל זרם', 'יותר מדי זרם', 'זרם גבוה', 'נשרף', 'ישרוף', 'burn', 'protect', 'current limit'], 'מעולה! בלי נגד, יעבור יותר מדי זרם וה-LED יישרף!', 'רמז: מה קורה כשיש יותר מדי זרם דרך LED?')">בדוק תשובה</button>
+            <div class="feedback" id="feedback-3-5"></div>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 3.6: סכמת המעגל המלאה</h3>
+
+        <p>ככה נראה המעגל המלא על הברדבורד:</p>
+
+        <div class="diagram">
+            <pre>
+  ┌─────────────────────────────────────────────────────────────────┐
+  │                    סכמת חיבור מלאה                              │
+  │                                                                 │
+  │                                                                 │
+  │  סוללת 18650                                                    │
+  │  ┌──────────┐                                                   │
+  │  │(+)  3.7V │                                                   │
+  │  │          │                                                   │
+  │  │(-)  GND  │                                                   │
+  │  └─┬────┬───┘                                                   │
+  │    │RED │BLACK                                                  │
+  │    │    │                                                       │
+  │    │    │         MT3608 Module                                  │
+  │    │    │    ┌───────────────────────┐                           │
+  │    │    │    │                       │                           │
+  │    └────┼───►│ IN+            OUT+ ├────┐                      │
+  │         │    │       [POT]          │    │                      │
+  │         │    │     (כיוון)          │    │                      │
+  │         └───►│ IN-            OUT- ├──┐ │                      │
+  │              │                       │  │ │                      │
+  │              └───────────────────────┘  │ │                      │
+  │                                         │ │                      │
+  │          קבל       ┌────────────────────┘ │ 5V (מתח מוגבר)     │
+  │        100µF       │   קבל                │                      │
+  │       (אופציונלי)  │  100µF               │                      │
+  │       [= =]        │ (אופציונלי)          │                      │
+  │        IN+─IN-     │  [= =]               │                      │
+  │                    │  OUT+─OUT-            │                      │
+  │                    │                       │                      │
+  │                    │   ┌────────┐          │                      │
+  │                    └───┤ 330Ω  ├──────┐   │                      │
+  │                        └────────┘      │   │                      │
+  │                                   ┌────▼───┤                      │
+  │                                   │  LED   │                      │
+  │                                   │  (+)   │                      │
+  │                                   │  (-)   │                      │
+  │                                   └────┬───┘                      │
+  │                                        │                          │
+  │                                        └──── GND ◄───────────── │
+  │                                                                   │
+  └───────────────────────────────────────────────────────────────────┘
+            </pre>
+        </div>
+    </div>
+
+    <div class="checkpoint">
+        ✅ <strong>עצור!</strong> לפני הפעלה, בדוק:
+        <ul>
+            <li>אדום מסוללה → IN+ של MT3608</li>
+            <li>שחור מסוללה → IN- של MT3608</li>
+            <li>OUT+ → פס (+) → נגד → LED (+)</li>
+            <li>OUT- → פס (-) → LED (-)</li>
+            <li>אין חוטים חשופים שנוגעים אחד בשני</li>
+        </ul>
+    </div>
+
+    <div class="mission-complete">
+        <h3>🎉 משימה 3 הושלמה!</h3>
+        <p>למדת: לבנות את מעגל ה-Boost Converter על ברדבורד עם LED לבדיקה</p>
+    </div>
+
+    <!-- ==================== MISSION 4 ==================== -->
+    <div class="mission-header">
+        <h2>משימה 4: הפעלה ראשונה וכיוון המתח</h2>
+        <p class="time-estimate">⏱️ 20 דקות</p>
+    </div>
+
+    <div class="warning">
+        <ul>
+            <li>הכן את המולטימטר לפני ההפעלה!</li>
+            <li>אם משהו מתחמם או מריח שריפה - נתק מיד את הסוללה!</li>
+            <li>סובב את הפוטנציומטר לאט ובעדינות</li>
+        </ul>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 4.1: הכנת המולטימטר</h3>
+
+        <ol class="steps">
+            <li>הדלק את המולטימטר</li>
+            <li>סובב את הבורר למצב <strong>DCV</strong> (מתח ישר) - טווח 20V</li>
+            <li>חבר את הפרוב האדום לשקע <strong>VΩ</strong></li>
+            <li>חבר את הפרוב השחור לשקע <strong>COM</strong></li>
+            <li>בדוק: גע בשני הפרובים זה בזה - צריך לראות <code>0.00V</code></li>
+        </ol>
+
+        <div class="what-you-see">
+            <pre>
+  המולטימטר צריך להראות 0.00V
+  כשהפרובים נוגעים זה בזה
+            </pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 4.2: מדידת מתח הסוללה (לפני חיבור)</h3>
+
+        <ol class="steps">
+            <li>קח את סוללת 18650 <strong>לפני</strong> שמכניסים אותה למחזיק</li>
+            <li>גע בפרוב האדום בקצה (+) של הסוללה</li>
+            <li>גע בפרוב השחור בקצה (-) של הסוללה</li>
+            <li>קרא את המתח - צריך להיות בין <strong>3.0V</strong> ל-<strong>4.2V</strong></li>
+            <li>רשום את הערך: ___V</li>
+        </ol>
+
+        <div class="what-you-see">
+            <pre>
+  מולטימטר: 3.72V  (ערך טיפוסי לסוללה טעונה באמצע)
+
+  אם רואים 4.0V-4.2V = מלאה
+  אם רואים 3.5V-3.8V = באמצע
+  אם רואים מתחת ל-3.0V = צריך להיטען!
+            </pre>
+        </div>
+
+        <p><strong>מה הערך המקסימלי שסוללת 18650 יכולה לתת?</strong></p>
+        <div class="answer-box">
+            <label>התשובה שלך:</label>
+            <input type="text" id="answer-4-2" class="ltr-input" placeholder="X.XV">
+            <button class="check-btn" onclick="checkAnswer('answer-4-2', ['4.2', '4.2v', '4.2V'], 'נכון! 4.2V הוא המתח המקסימלי של סוללת ליתיום-יון 18650 טעונה לגמרי.', 'נסה שוב - מה המתח כשהסוללה טעונה לגמרי?')">בדוק תשובה</button>
+            <div class="feedback" id="feedback-4-2"></div>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 4.3: הפעלה ראשונה!</h3>
+
+        <ol class="steps">
+            <li><strong>בדיקה אחרונה:</strong> עבור על כל החיבורים ווודא שהכל נכון</li>
+            <li><strong>הכנס את הסוללה</strong> למחזיק (שים לב לכיוון + ו-!)</li>
+            <li><strong>מה קורה?</strong> ה-LED אמור לדלוק (אולי חלש, אולי חזק - תלוי בכיוון הפוטנציומטר)</li>
+            <li>אם ה-LED לא דולק - <strong>נתק מיד</strong> את הסוללה ובדוק חיבורים!</li>
+        </ol>
+
+        <div class="what-you-see">
+            <pre>
+  תרחישים אפשריים:
+
+  ✅ LED דולק בהיר    → הכל עובד! מתח היציאה מספיק
+  ✅ LED דולק חלש     → עובד, אבל מתח היציאה נמוך - צריך כיוון
+  ❌ LED לא דולק      → בדוק: קוטביות LED, חיבורי חוטים, סוללה טעונה?
+  ❌ משהו מתחמם      → נתק מיד! יש קצר במעגל!
+            </pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 4.4: כיוון המתח ל-5V</h3>
+
+        <p>זה השלב הכי חשוב! נכוון את מתח היציאה ל-5V בדיוק:</p>
+
+        <ol class="steps">
+            <li><strong>הנח את פרובי המולטימטר:</strong> אדום על OUT+ (או פס +), שחור על OUT- (או פס -)</li>
+            <li><strong>קרא את המתח הנוכחי</strong> על המולטימטר</li>
+            <li><strong>קח מברג קטן</strong> וסובב את הפוטנציומטר (הבורג הקטן על המודול)</li>
+            <li><strong>סובב ימינה (עם כיוון השעון)</strong> → המתח עולה</li>
+            <li><strong>סובב שמאלה (נגד כיוון השעון)</strong> → המתח יורד</li>
+            <li><strong>כוון ל-5.0V</strong> (בין 4.9V ל-5.1V זה מצוין)</li>
+            <li>הסר את המברג ובדוק שהמתח לא השתנה</li>
+        </ol>
+
+        <div class="what-you-see">
+            <pre>
+  מולטימטר בזמן כיוון:
+
+  סובב שמאלה ←  3.2V ... 3.8V ... 4.5V ... 4.9V → סובב ימינה
+                                              ↓
+                                           ► 5.00V ◄  ← המטרה!
+                                              ↓
+                              5.1V ... 5.5V ... 6.0V
+                              (לא לעלות יותר מדי!)
+            </pre>
+        </div>
+
+        <div class="warning">
+            <p><strong>לא לעבור 5.5V!</strong> אם מתכננים לחבר ל-AMS1117 שמוריד ל-3.3V, מתח גבוה מדי יכול להזיק לרכיבים. 5V זה מושלם.</p>
+        </div>
+
+        <p><strong>לאיזה כיוון סובבים את הפוטנציומטר כדי להעלות מתח?</strong></p>
+        <div class="answer-box">
+            <label>התשובה שלך:</label>
+            <input type="text" id="answer-4-4" placeholder="ימינה או שמאלה?">
+            <button class="check-btn" onclick="checkAnswer('answer-4-4', ['ימינה', 'עם כיוון השעון', 'עם השעון', 'clockwise', 'cw', 'ימין'], 'נכון! סיבוב ימינה (עם כיוון השעון) מעלה את המתח.', 'נסה שוב - באיזה כיוון שעון מסתובב?')">בדוק תשובה</button>
+            <div class="feedback" id="feedback-4-4"></div>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 4.5: בדיקת יציבות</h3>
+
+        <p>נבדוק שהמתח יציב ולא משתנה:</p>
+
+        <ol class="steps">
+            <li>השאר את המולטימטר מחובר ליציאה</li>
+            <li>המתן 30 שניות - המתח צריך להישאר יציב (±0.05V)</li>
+            <li>נגע קלות בברדבורד - המתח לא אמור לזוז</li>
+            <li>כסה את החדר (כבה אור) - המתח לא אמור להשתנות</li>
+            <li>אם המתח "קופץ" - יש חיבור רופף!</li>
+        </ol>
+
+        <div class="what-you-see">
+            <pre>
+  ✅ יציבות טובה:    5.00V → 30 שניות → 5.00V     (±0.02V)
+  ⚠️ קצת לא יציב:   5.00V → 30 שניות → 4.95V     (בדוק חיבורים)
+  ❌ לא יציב:        5.00V → 30 שניות → 4.50V     (חיבור רופף!)
+            </pre>
+        </div>
+    </div>
+
+    <div class="checkpoint">
+        ✅ <strong>עצור!</strong> וודא שהתוצאות שלך תקינות:
+        <ul>
+            <li>מתח יציאה: <strong>5.0V ± 0.1V</strong></li>
+            <li>LED דולק בהיר</li>
+            <li>שום רכיב לא מתחמם</li>
+            <li>המתח יציב לאורך זמן</li>
+        </ul>
+    </div>
+
+    <div class="mission-complete">
+        <h3>🎉 משימה 4 הושלמה!</h3>
+        <p>למדת: להפעיל את המעגל, למדוד מתח, ולכוון את ה-Boost Converter ל-5V יציב</p>
+    </div>
+
+    <!-- ==================== MISSION 5 ==================== -->
+    <div class="mission-header">
+        <h2>משימה 5: בדיקות מתקדמות ואבחון תקלות</h2>
+        <p class="time-estimate">⏱️ 20 דקות</p>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 5.1: בדיקת יעילות - מתח כניסה מול יציאה</h3>
+
+        <ol class="steps">
+            <li>מדוד את מתח הכניסה (IN+ ו-IN-): רשום ___V</li>
+            <li>מדוד את מתח היציאה (OUT+ ו-OUT-): רשום ___V</li>
+            <li>חשב: יחס ההגברה = מתח יציאה ÷ מתח כניסה</li>
+        </ol>
+
+        <div class="formula">
+            <span class="label">נוסחת יחס ההגברה:</span>
+            Boost Ratio = V<sub>out</sub> / V<sub>in</sub> = 5.0V / 3.7V ≈ 1.35
+        </div>
+
+        <p>זה אומר שהמעגל מגביר את המתח פי ~1.35 - מ-3.7V ל-5V!</p>
+
+        <p><strong>אם מתח הכניסה הוא 3.5V ומתח היציאה הוא 5V, מה יחס ההגברה? (עגל לשתי ספרות)</strong></p>
+        <div class="answer-box">
+            <label>התשובה שלך:</label>
+            <input type="text" id="answer-5-1" class="ltr-input" placeholder="X.XX">
+            <button class="check-btn" onclick="checkAnswer('answer-5-1', ['1.43', '1.42', '1.4'], 'מצוין! 5.0 / 3.5 = 1.43 - המעגל מגביר את המתח פי 1.43!', 'נסה שוב: חלק 5.0 ב-3.5')">בדוק תשובה</button>
+            <div class="feedback" id="feedback-5-1"></div>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 5.2: בדיקה עם עומס (Load Test)</h3>
+
+        <p>נבדוק שהמתח לא נופל כשמחברים עומס:</p>
+
+        <ol class="steps">
+            <li>מדוד מתח יציאה ללא עומס: ___V</li>
+            <li>חבר LED + נגד (כמו בתרגיל 3.5)</li>
+            <li>מדוד מתח יציאה עם LED: ___V</li>
+            <li>ההפרש צריך להיות קטן מ-0.1V</li>
+        </ol>
+
+        <div class="what-you-see">
+            <pre>
+  ✅ תוצאה טובה:
+     ללא עומס: 5.02V
+     עם LED:   4.98V
+     הפרש:     0.04V  (מצוין!)
+
+  ❌ תוצאה בעייתית:
+     ללא עומס: 5.02V
+     עם LED:   4.50V
+     הפרש:     0.52V  (יש בעיה - חיבורים רופפים?)
+            </pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 5.3: טבלת אבחון תקלות</h3>
+
+        <p>אם משהו לא עובד, השתמש בטבלה הזו:</p>
+
+        <table>
+            <tr>
+                <th>תקלה</th>
+                <th>סיבה אפשרית</th>
+                <th>פתרון</th>
+            </tr>
+            <tr>
+                <td>LED לא דולק בכלל</td>
+                <td>סוללה ריקה / חוט מנותק / LED הפוך</td>
+                <td>בדוק מתח סוללה, חיבורים, כיוון LED</td>
+            </tr>
+            <tr>
+                <td>מתח יציאה 0V</td>
+                <td>MT3608 לא מחובר נכון / IN- לא מחובר</td>
+                <td>בדוק את 4 הפינים של המודול</td>
+            </tr>
+            <tr>
+                <td>מתח יציאה = מתח כניסה</td>
+                <td>המודול לא מגביר - פוטנציומטר על מינימום</td>
+                <td>סובב את הפוטנציומטר ימינה</td>
+            </tr>
+            <tr>
+                <td>מתח לא יציב (קופץ)</td>
+                <td>חיבור רופף / סוללה חלשה</td>
+                <td>הדק חיבורים, טען סוללה</td>
+            </tr>
+            <tr>
+                <td>המודול מתחמם מאוד</td>
+                <td>קצר ביציאה / עומס גבוה מדי</td>
+                <td>נתק מיד! בדוק קצרים</td>
+            </tr>
+            <tr>
+                <td>מתח נופל עם עומס</td>
+                <td>סוללה חלשה / חוטים דקים מדי</td>
+                <td>טען סוללה / השתמש בחוטים עבים יותר</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 5.4: בדיקה עם טמפרטורה</h3>
+
+        <ol class="steps">
+            <li>הפעל את המעגל עם LED דולק</li>
+            <li>המתן 2 דקות</li>
+            <li>גע <strong>בזהירות</strong> במודול MT3608 (לא בפינים!) - הוא צריך להיות חמים קלות</li>
+            <li><strong>נורמלי:</strong> חמים למגע (עד ~40°C)</li>
+            <li><strong>לא נורמלי:</strong> חם מדי ולא ניתן לגעת - יש בעיה!</li>
+        </ol>
+    </div>
+
+    <div class="checkpoint">
+        ✅ <strong>עצור!</strong> וודא:
+        <ul>
+            <li>מתח יציאה יציב: 5.0V ± 0.1V</li>
+            <li>הפרש קטן עם/בלי עומס (פחות מ-0.1V)</li>
+            <li>המודול לא מתחמם יותר מדי</li>
+            <li>אתה מכיר את טבלת אבחון התקלות</li>
+        </ul>
+    </div>
+
+    <div class="mission-complete">
+        <h3>🎉 משימה 5 הושלמה!</h3>
+        <p>למדת: לבדוק יעילות, עומס, טמפרטורה, ולאבחן תקלות נפוצות</p>
+    </div>
+
+    <!-- ==================== MISSION 6 ==================== -->
+    <div class="mission-header">
+        <h2>משימה 6: הלחמה על PCB קבוע (לפרויקט העכבר)</h2>
+        <p class="time-estimate">⏱️ 30 דקות</p>
+    </div>
+
+    <div class="warning">
+        <ul>
+            <li>מלחם חם! היזהר מכוויות - אל תיגע בקצה</li>
+            <li>עבוד באוורור טוב - אדי הלחמה לא בריאים</li>
+            <li>הנח את המלחם על מעמד כשלא בשימוש</li>
+            <li>מומלץ: משקפי הגנה</li>
+        </ul>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 6.1: תכנון המיקום על Proto PCB</h3>
+
+        <p>לפני הלחמה - תכנן את המיקום של כל רכיב על לוח הפרוטו:</p>
+
+        <div class="diagram">
+            <pre>
+  Proto PCB (5×7cm) - מבט מלמעלה:
+
+  ┌────────────────────────────────────────┐
+  │                                        │
+  │  [J7/J8] ← פיני כניסה מסוללה         │
+  │     │                                  │
+  │     │                                  │
+  │     ▼                                  │
+  │  ┌──────────────────────┐              │
+  │  │    MT3608 Module     │              │
+  │  │                      │              │
+  │  │  IN+  [POT]  OUT+   │              │
+  │  │  IN-          OUT-   │              │
+  │  └──────────────────────┘              │
+  │     │                │                 │
+  │     │             ┌──┘                 │
+  │     │             ▼                    │
+  │     │    ┌──────────────────┐          │
+  │     │    │   AMS1117-3.3V   │ [J1]    │
+  │     │    │   IN    OUT      │──► סנסור │
+  │     │    └──────────────────┘          │
+  │     │             │                    │
+  │     │             ▼                    │
+  │     │    ┌──────────────────┐          │
+  │     │    │   ESP32-S3       │          │
+  │     │    │   (vertical)     │          │
+  │     │    └──────────────────┘          │
+  │     │                                  │
+  │  [J2][J3][J4][J5][J6] ← מחברי JST    │
+  └────────────────────────────────────────┘
+
+  זרימת המתח:
+  סוללה 3.7V → MT3608 → 5V → AMS1117 → 3.3V → ESP32
+            </pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 6.2: הלחמת מודול MT3608</h3>
+
+        <ol class="steps">
+            <li><strong>סמן:</strong> סמן עם טוש את מיקום 4 הפינים על ה-PCB</li>
+            <li><strong>הנח:</strong> הנח את המודול על ה-PCB ווודא שהפינים עוברים דרך החורים</li>
+            <li><strong>הפוך:</strong> הפוך את ה-PCB (הצד עם הנחושת למעלה)</li>
+            <li><strong>הלחם:</strong> הלחם כל פין - גע במלחם בפין וב-pad בו-זמנית, הוסף בדיל</li>
+            <li><strong>בדוק:</strong> כל נקודת הלחמה צריכה להיראות כמו "הר געש" קטן ומבריק</li>
+            <li><strong>נקה:</strong> נקה שאריות שרף עם אלכוהול איזופרופילי</li>
+        </ol>
+
+        <div class="what-you-see">
+            <pre>
+  הלחמה טובה:           הלחמה גרועה:
+
+     ╱  ╲                    ●
+    ╱    ╲               ╱      ╲
+   ╱  ☺   ╲             ╱   😟   ╲
+  ════●═════            ════●═══════
+     PIN                   PIN
+
+  מבריקה,               עגולה מדי,
+  בצורת חרוט,           קרה (cold joint),
+  מכסה את ה-pad          לא מחוברת טוב
+            </pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 6.3: חיבור ל-AMS1117</h3>
+
+        <p>חבר את יציאת ה-Boost Converter לכניסת הרגולטור:</p>
+
+        <ol class="steps">
+            <li><strong>חוט אדום (26AWG):</strong> מ-OUT+ של MT3608 → לפין IN של AMS1117</li>
+            <li><strong>חוט שחור (26AWG):</strong> מ-OUT- של MT3608 → ל-GND של AMS1117</li>
+            <li>הלחם את החוטים בשני הצדדים</li>
+            <li>הוסף כיווץ חום על כל חיבור חשוף</li>
+        </ol>
+
+        <div class="diagram">
+            <pre>
+  חיבור MT3608 → AMS1117:
+
+  MT3608                        AMS1117-3.3V
+  ┌──────────────┐             ┌──────────────┐
+  │              │   RED wire  │              │
+  │         OUT+─┼─────────────┼─►IN          │
+  │              │   26AWG     │              │
+  │         OUT-─┼─────────────┼─►GND    OUT──┼──► 3.3V
+  │              │   BLACK     │              │     לרכיבים
+  └──────────────┘   wire      └──────────────┘
+
+  📏 אורך חוט: 15-25mm (הכי קצר שאפשר!)
+            </pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 6.4: בדיקה סופית לפני סגירה</h3>
+
+        <ol class="steps">
+            <li><strong>בדיקת קצר:</strong> מולטימטר על מצב Ω - בין (+) ל(-) צריך להיות ∞ (אין קצר)</li>
+            <li><strong>חבר סוללה</strong></li>
+            <li><strong>מדוד מתח ביציאת MT3608:</strong> צריך להיות 5.0V ± 0.1V</li>
+            <li><strong>מדוד מתח ביציאת AMS1117:</strong> צריך להיות 3.3V ± 0.05V</li>
+            <li><strong>בדוק טמפרטורה:</strong> שני המודולים חמימים אבל לא חמים</li>
+            <li><strong>הפעל ESP32:</strong> צריך לעלות בהצלחה!</li>
+        </ol>
+
+        <div class="what-you-see">
+            <pre>
+  מדידות צפויות (הכל תקין):
+
+  סוללה:            3.7V (טיפוסי)
+  MT3608 OUT:        5.0V ± 0.1V  ✅
+  AMS1117 OUT:       3.3V ± 0.05V ✅
+  ESP32 boots:       כן            ✅
+  טמפרטורה:         חמים, לא חם   ✅
+
+  אם AMS1117 מראה פחות מ-3.25V:
+  → MT3608 לא מכוון ל-5V → כוון פוטנציומטר!
+            </pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 6.5: סכמת זרימת מתח סופית</h3>
+
+        <p>ככה נראית שרשרת המתח המלאה בפרויקט העכבר:</p>
+
+        <div class="diagram">
+            <pre>
+  ╔══════════════════════════════════════════════════════════╗
+  ║              שרשרת המתח המלאה בעכבר                      ║
+  ╚══════════════════════════════════════════════════════════╝
+
+  18650 Battery    MT3608 Boost     AMS1117 LDO      ESP32-S3
+  ┌──────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐
+  │          │    │          │    │          │    │          │
+  │  3.0V-   │──►│  ──► 5V  │──►│  ──►3.3V │──►│  עובד!   │
+  │  4.2V    │    │  (יציב)  │    │  (יציב)  │    │  תמיד!   │
+  │          │    │          │    │          │    │          │
+  └──────────┘    └──────────┘    └──────────┘    └──────────┘
+       │               │               │               │
+     3.7V            5.0V            3.3V          פועל
+    (משתנה)         (קבוע)          (קבוע)         (יציב)
+
+  ╔═══════════════════════════════════════════════════════╗
+  ║  סוללה מלאה:  4.2V → 5.0V → 3.3V → ✅ ESP32 עובד  ║
+  ║  סוללה חצי:   3.7V → 5.0V → 3.3V → ✅ ESP32 עובד  ║
+  ║  סוללה נמוכה: 3.0V → 5.0V → 3.3V → ✅ ESP32 עובד  ║
+  ║                                                       ║
+  ║  בלי Boost:   3.0V → ???  → 2.xV → ❌ ESP32 נכבה!  ║
+  ╚═══════════════════════════════════════════════════════╝
+            </pre>
+        </div>
+
+        <p><strong>מה מתח היציאה של AMS1117 כשמשתמשים ב-Boost Converter?</strong></p>
+        <div class="answer-box">
+            <label>התשובה שלך:</label>
+            <input type="text" id="answer-6-5" class="ltr-input" placeholder="X.XV">
+            <button class="check-btn" onclick="checkAnswer('answer-6-5', ['3.3', '3.3v', '3.3V', '3.30', '3.30v'], 'מושלם! AMS1117 תמיד נותן 3.3V יציב כי הוא מקבל 5V קבוע מה-Boost Converter!', 'נסה שוב - מה המתח שה-AMS1117 אמור להוציא?')">בדוק תשובה</button>
+            <div class="feedback" id="feedback-6-5"></div>
+        </div>
+    </div>
+
+    <div class="checkpoint">
+        ✅ <strong>סיום!</strong> בדיקה אחרונה לפני שמרכיבים את העכבר:
+        <ul>
+            <li>סוללה 3.7V → MT3608 → 5.0V ✓</li>
+            <li>5.0V → AMS1117 → 3.3V ✓</li>
+            <li>ESP32-S3 עולה בהצלחה ✓</li>
+            <li>כל ההלחמות נקיות ומבריקות ✓</li>
+            <li>אין קצרים ✓</li>
+            <li>טמפרטורה תקינה ✓</li>
+        </ul>
+    </div>
+
+    <div class="mission-complete">
+        <h3>🎉 משימה 6 הושלמה!</h3>
+        <p>למדת: להלחים את מעגל ה-Boost Converter על PCB קבוע ולחבר אותו למערכת המתח של פרויקט העכבר</p>
+    </div>
+
+    <!-- ==================== SUMMARY ==================== -->
+    <div style="background: linear-gradient(135deg, #1a237e 0%, #4a148c 100%); border-radius: 15px; padding: 25px; margin-top: 40px; text-align: center;">
+        <h2 style="color: #e1bee7; border: none; margin: 0 0 15px 0;">סיכום - מה למדנו?</h2>
+
+        <table style="text-align: right;">
+            <tr>
+                <th>משימה</th>
+                <th>נושא</th>
+                <th>מה למדנו</th>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>תיאוריה</td>
+                <td>למה צריך Boost Converter ואיך הוא עובד (סליל + מתג + דיודה)</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>רכיבים</td>
+                <td>מודול MT3608, רשימת חלקים, זיהוי פינים</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>בנייה</td>
+                <td>חיבור המעגל על ברדבורד עם LED לבדיקה</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>כיוון</td>
+                <td>הפעלה ראשונה, מדידה עם מולטימטר, כיוון ל-5V</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td>אבחון</td>
+                <td>בדיקת יעילות, עומס, טמפרטורה, ואבחון תקלות</td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td>הלחמה</td>
+                <td>הלחמה על PCB, חיבור ל-AMS1117, שרשרת מתח מלאה</td>
+            </tr>
+        </table>
+
+        <div style="margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 10px;">
+            <h3 style="color: #76ff03;">הנוסחה החשובה:</h3>
+            <p style="font-size: 1.3em; direction: ltr; color: #fff;">
+                Battery (3.0-4.2V) → <span style="color: #ff9800;">MT3608</span> → 5V → <span style="color: #2196f3;">AMS1117</span> → 3.3V → <span style="color: #76ff03;">ESP32</span>
+            </p>
+        </div>
+    </div>
+
+    <!-- Popup Modal -->
+    <div class="popup-overlay" id="popup-overlay" onclick="closePopup()">
+        <div class="popup" id="popup" onclick="event.stopPropagation()">
+            <div class="emoji" id="popup-emoji"></div>
+            <h3 id="popup-title"></h3>
+            <p id="popup-message"></p>
+            <button onclick="closePopup()">סגור</button>
+        </div>
+    </div>
+
+    <script>
+        // Answer checking function
+        function checkAnswer(inputId, correctAnswers, successMsg, failMsg, partialMatch = true) {
+            const input = document.getElementById(inputId);
+            const feedback = document.getElementById('feedback-' + inputId.replace('answer-', ''));
+            const userAnswer = input.value.trim().toLowerCase();
+
+            if (!userAnswer) {
+                showPopup(false, 'אופס!', 'אנא הכנס תשובה לפני הבדיקה');
+                return;
+            }
+
+            let isCorrect = false;
+            for (let answer of correctAnswers) {
+                if (partialMatch) {
+                    if (userAnswer.includes(answer.toLowerCase()) || answer.toLowerCase().includes(userAnswer)) {
+                        isCorrect = true;
+                        break;
+                    }
+                } else {
+                    if (userAnswer === answer.toLowerCase()) {
+                        isCorrect = true;
+                        break;
+                    }
+                }
+            }
+
+            if (isCorrect) {
+                if (feedback) {
+                    feedback.className = 'feedback correct';
+                    feedback.textContent = successMsg;
+                }
+                showPopup(true, 'כל הכבוד!', successMsg);
+            } else {
+                if (feedback) {
+                    feedback.className = 'feedback incorrect';
+                    feedback.textContent = failMsg;
+                }
+                showPopup(false, 'נסה שוב!', failMsg);
+            }
+        }
+
+        // Number range check
+        function checkNumberRange(inputId, min, max, successMsg, failMsg) {
+            const input = document.getElementById(inputId);
+            const feedback = document.getElementById('feedback-' + inputId.replace('answer-', ''));
+            const userAnswer = parseFloat(input.value.trim());
+
+            if (isNaN(userAnswer)) {
+                showPopup(false, 'אופס!', 'אנא הכנס מספר');
+                return;
+            }
+
+            if (userAnswer >= min && userAnswer <= max) {
+                if (feedback) {
+                    feedback.className = 'feedback correct';
+                    feedback.textContent = successMsg;
+                }
+                showPopup(true, 'כל הכבוד!', successMsg);
+            } else {
+                if (feedback) {
+                    feedback.className = 'feedback incorrect';
+                    feedback.textContent = failMsg;
+                }
+                showPopup(false, 'נסה שוב!', failMsg);
+            }
+        }
+
+        // Popup functions
+        function showPopup(isCorrect, title, message) {
+            const overlay = document.getElementById('popup-overlay');
+            const popup = document.getElementById('popup');
+            const emoji = document.getElementById('popup-emoji');
+            const popupTitle = document.getElementById('popup-title');
+            const popupMessage = document.getElementById('popup-message');
+
+            emoji.textContent = isCorrect ? '🎉' : '🤔';
+            popupTitle.textContent = title;
+            popupTitle.style.color = isCorrect ? '#4caf50' : '#f44336';
+            popupMessage.textContent = message;
+            popup.className = 'popup ' + (isCorrect ? 'correct' : 'incorrect');
+
+            overlay.classList.add('show');
+        }
+
+        function closePopup() {
+            document.getElementById('popup-overlay').classList.remove('show');
+        }
+
+        // Close popup on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closePopup();
+        });
+    </script>
+
+</body>
+</html>

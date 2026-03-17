@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>קורס Python - מהתחלה למומחה</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #0d1117 0%, #161b22 50%, #0d1117 100%);
+            color: #c9d1d9;
+            min-height: 100vh;
+        }
+        .hero {
+            text-align: center;
+            padding: 60px 20px 40px;
+            background: linear-gradient(180deg, rgba(55,114,255,0.15) 0%, transparent 100%);
+        }
+        .hero h1 {
+            font-size: 3em;
+            color: #58a6ff;
+            margin-bottom: 10px;
+        }
+        .hero .python-logo {
+            font-size: 4em;
+            margin-bottom: 15px;
+        }
+        .hero p {
+            font-size: 1.3em;
+            color: #8b949e;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        .stat {
+            text-align: center;
+        }
+        .stat .number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #f0883e;
+        }
+        .stat .label {
+            color: #8b949e;
+            font-size: 0.9em;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .section-title {
+            font-size: 1.5em;
+            color: #58a6ff;
+            margin: 40px 0 20px;
+            padding-right: 15px;
+            border-right: 4px solid #f0883e;
+        }
+        .lessons-grid {
+            display: grid;
+            gap: 16px;
+        }
+        .lesson-card {
+            background: #21262d;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .lesson-card:hover {
+            border-color: #58a6ff;
+            transform: translateX(-4px);
+            box-shadow: 0 4px 20px rgba(88,166,255,0.15);
+        }
+        .lesson-number {
+            background: linear-gradient(135deg, #238636, #2ea043);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4em;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        .lesson-card.intermediate .lesson-number {
+            background: linear-gradient(135deg, #1f6feb, #388bfd);
+        }
+        .lesson-card.advanced .lesson-number {
+            background: linear-gradient(135deg, #8957e5, #a371f7);
+        }
+        .lesson-card.expert .lesson-number {
+            background: linear-gradient(135deg, #f0883e, #d29922);
+        }
+        .lesson-info {
+            flex: 1;
+        }
+        .lesson-info h3 {
+            color: #f0f6fc;
+            font-size: 1.15em;
+            margin-bottom: 4px;
+        }
+        .lesson-info p {
+            color: #8b949e;
+            font-size: 0.9em;
+        }
+        .lesson-meta {
+            display: flex;
+            gap: 15px;
+            margin-top: 8px;
+        }
+        .badge {
+            font-size: 0.75em;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+        .badge.beginner { background: rgba(35,134,54,0.2); color: #3fb950; }
+        .badge.intermediate { background: rgba(31,111,235,0.2); color: #58a6ff; }
+        .badge.advanced { background: rgba(137,87,229,0.2); color: #a371f7; }
+        .badge.expert { background: rgba(240,136,62,0.2); color: #f0883e; }
+        .badge.time { background: rgba(139,148,158,0.15); color: #8b949e; }
+        .arrow {
+            color: #484f58;
+            font-size: 1.3em;
+            transition: color 0.3s;
+        }
+        .lesson-card:hover .arrow { color: #58a6ff; }
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: #484f58;
+            font-size: 0.85em;
+        }
+        .footer a { color: #58a6ff; text-decoration: none; }
+        @media (max-width: 600px) {
+            .hero h1 { font-size: 2em; }
+            .stats { gap: 20px; }
+            .lesson-card { padding: 16px; gap: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <div class="python-logo">🐍</div>
+        <h1>קורס Python</h1>
+        <p>מהתחלה למומחה — קורס מעשי עם תרגילים, פרויקטים אמיתיים, והמון כיף</p>
+        <div class="stats">
+            <div class="stat">
+                <div class="number">12</div>
+                <div class="label">שיעורים</div>
+            </div>
+            <div class="stat">
+                <div class="number">50+</div>
+                <div class="label">תרגילים</div>
+            </div>
+            <div class="stat">
+                <div class="number">4</div>
+                <div class="label">פרויקטים</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2 class="section-title">🟢 שלב מתחיל</h2>
+        <div class="lessons-grid">
+            <a href="lesson01-hello-python.html" class="lesson-card">
+                <div class="lesson-number">1</div>
+                <div class="lesson-info">
+                    <h3>שלום Python!</h3>
+                    <p>התקנה, התוכנית הראשונה שלך, print, הערות, ומשחק עם הטרמינל</p>
+                    <div class="lesson-meta">
+                        <span class="badge beginner">מתחיל</span>
+                        <span class="badge time">⏱️ 45 דקות</span>
+                    </div>
+                </div>
+                <span class="arrow">←</span>
+            </a>
+            <a href="lesson02-variables.html" class="lesson-card">
+                <div class="lesson-number">2</div>
+                <div class="lesson-info">
+                    <h3>משתנים וסוגי נתונים</h3>
+                    <p>מחרוזות, מספרים, בוליאנים, המרות — בנה מחשבון גיל</p>
+                    <div class="lesson-meta">
+                        <span class="badge beginner">מתחיל</span>
+                        <span class="badge time">⏱️ 50 דקות</span>
+                    </div>
+                </div>
+                <span class="arrow">←</span>
+            </a>
+            <a href="lesson03-conditions.html" class="lesson-card">
+                <div class="lesson-number">3</div>
+                <div class="lesson-info">
+                    <h3>קלט ותנאים</h3>
+                    <p>input, if/elif/else — בנה חידון אישי ומערכת סיסמאות</p>
+                    <div class="lesson-meta">
+                        <span class="badge beginner">מתחיל</span>
+                        <span class="badge time">⏱️ 55 דקות</span>
+                    </div>
+                </div>
+                <span class="arrow">←</span>
+            </a>
+            <a href="lesson04-loops.html" class="lesson-card">
+                <div class="lesson-number">4</div>
+                <div class="lesson-info">
+                    <h3>לולאות</h3>
+                    <p>for, while, range — בנה משחק ניחוש מספרים ויצירת ASCII Art</p>
+                    <div class="lesson-meta">
+                        <span class="badge beginner">מתחיל</span>
+                        <span class="badge time">⏱️ 60 דקות</span>
+                    </div>
+                </div>
+                <span class="arrow">←</span>
+            </a>
+        </div>
+
+        <h2 class="section-title">🔵 שלב בינוני</h2>
+        <div class="lessons-grid">
+            <a href="lesson05-lists.html" class="lesson-card intermediate">
+                <div class="lesson-number">5</div>
+                <div class="lesson-info">
+                    <h3>רשימות וטאפלים</h3>
+                    <p>יצירה, חיתוך, שיטות, list comprehension — בנה מנהל משימות</p>
+                    <div class="lesson-meta">
+                        <span class="badge intermediate">בינוני</span>
+                        <span class="badge time">⏱️ 60 דקות</span>
+                    </div>
+                </div>
+                <span class="arrow">←</span>
+            </a>
+            <a href="lesson06-dictionaries.html" class="lesson-card intermediate">
+                <div class="lesson-number">6</div>
+                <div class="lesson-info">
+                    <h3>מילונים וסטים</h3>
+                    <p>מפתח-ערך, שיטות, שימושים מעשיים — בנה ספר טלפונים</p>
+                    <div class="lesson-meta">
+                        <span class="badge intermediate">בינוני</span>
+                        <span class="badge time">⏱️ 55 דקות</span>
+                    </div>
+                </div>
+                <span class="arrow">←</span>
+            </a>
+            <a href="lesson07-functions.html" class="lesson-card intermediate">
+                <div class="lesson-number">7</div>
+                <div class="lesson-info">
+                    <h3>פונקציות</h3>
+                    <p>הגדרה, פרמטרים, return, lambda — בנה ארגז כלים אישי</p>
+                    <div class="lesson-meta">
+                        <span class="badge intermediate">בינוני</span>
+                        <span class="badge time">⏱️ 60 דקות</span>
+                    </div>
+                </div>
+                <span class="arrow">←</span>
+            </a>
+        </div>
+
+        <h2 class="section-title">🟣 שלב מתקדם</h2>
+        <div class="lessons-grid">
+            <a href="lesson08-strings-files.html" class="lesson-card advanced">
+                <div class="lesson-number">8</div>
+                <div class="lesson-info">
+                    <h3>מחרוזות וקבצים</h3>
+                    <p>שיטות מחרוזת, f-strings, קריאה וכתיבה לקבצים — בנה יומן אישי</p>
+                    <div class="lesson-meta">
+                        <span class="badge advanced">מתקדם</span>
+                        <span class="badge time">⏱️ 60 דקות</span>
+                    </div>
+                </div>
+                <span class="arrow">←</span>
+            </a>
+            <a href="lesson09-errors-modules.html" class="lesson-card advanced">
+                <div class="lesson-number">9</div>
+                <div class="lesson-info">
+                    <h3>טיפול בשגיאות ומודולים</h3>
+                    <p>try/except, import, pip — גלה ספריות מדהימות</p>
+                    <div class="lesson-meta">
+                        <span class="badge advanced">מתקדם</span>
+                        <span class="badge time">⏱️ 55 דקות</span>
+                    </div>
+                </div>
+                <span class="arrow">←</span>
+            </a>
+            <a href="lesson10-oop.html" class="lesson-card advanced">
+                <div class="lesson-number">10</div>
+                <div class="lesson-info">
+                    <h3>תכנות מונחה עצמים</h3>
+                    <p>מחלקות, אובייקטים, ירושה — בנה משחק RPG פשוט</p>
+                    <div class="lesson-meta">
+                        <span class="badge advanced">מתקדם</span>
+                        <span class="badge time">⏱️ 70 דקות</span>
+                    </div>
+                </div>
+                <span class="arrow">←</span>
+            </a>
+        </div>
+
+        <h2 class="section-title">🟠 שלב מומחה</h2>
+        <div class="lessons-grid">
+            <a href="lesson11-apis.html" class="lesson-card expert">
+                <div class="lesson-number">11</div>
+                <div class="lesson-info">
+                    <h3>APIs ו-Web</h3>
+                    <p>requests, JSON, עבודה עם שירותי אינטרנט — בנה בוט מזג אוויר</p>
+                    <div class="lesson-meta">
+                        <span class="badge expert">מומחה</span>
+                        <span class="badge time">⏱️ 65 דקות</span>
+                    </div>
+                </div>
+                <span class="arrow">←</span>
+            </a>
+            <a href="lesson12-final-projects.html" class="lesson-card expert">
+                <div class="lesson-number">12</div>
+                <div class="lesson-info">
+                    <h3>פרויקטים מסכמים</h3>
+                    <p>מחולל סיסמאות, web scraper, אוטומציה — שלב הכל ביחד!</p>
+                    <div class="lesson-meta">
+                        <span class="badge expert">מומחה</span>
+                        <span class="badge time">⏱️ 90 דקות</span>
+                    </div>
+                </div>
+                <span class="arrow">←</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>נבנה עם ❤️ עבור <a href="https://github.com/YonSCProjects/RoboticsWorkshopTeachnPlay">RoboticStudio Teach & Play</a></p>
+    </div>
+</body>
+</html>

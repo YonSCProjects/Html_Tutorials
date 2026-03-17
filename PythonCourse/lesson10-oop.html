@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>שיעור 10: תכנות מונחה עצמים — קורס Python</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.8;
+            background: #0d1117;
+            color: #c9d1d9;
+            direction: rtl;
+            text-align: right;
+        }
+        h1, h2, h3, h4, h5, h6, p, li, td, th, div, label {
+            direction: rtl;
+            text-align: right;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: #161b22;
+            border-bottom: 1px solid #30363d;
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .navbar a {
+            color: #58a6ff;
+            text-decoration: none;
+            font-size: 0.95em;
+            transition: color 0.2s;
+        }
+        .navbar a:hover { color: #79c0ff; }
+        .nav-center { font-weight: bold; color: #f0f6fc; }
+
+        /* Header */
+        .lesson-hero {
+            background: linear-gradient(180deg, rgba(137,87,229,0.2) 0%, transparent 100%);
+            padding: 50px 20px 30px;
+            text-align: center;
+        }
+        .lesson-hero .icon { font-size: 3.5em; margin-bottom: 10px; }
+        .lesson-hero h1 { color: #a371f7; font-size: 2.4em; margin-bottom: 8px; }
+        .lesson-hero p { color: #8b949e; font-size: 1.15em; max-width: 650px; margin: 0 auto; }
+
+        /* Container */
+        .container { max-width: 850px; margin: 0 auto; padding: 30px 20px; }
+
+        /* Mission Header */
+        .mission-header {
+            background: linear-gradient(135deg, #21262d, #161b22);
+            border: 1px solid #30363d;
+            border-right: 5px solid #a371f7;
+            border-radius: 10px;
+            padding: 20px 25px;
+            margin: 40px 0 20px;
+        }
+        .mission-header h2 { color: #a371f7; font-size: 1.5em; margin-bottom: 4px; }
+        .time-estimate {
+            display: inline-block;
+            background: rgba(139,148,158,0.15);
+            color: #8b949e;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            margin-top: 5px;
+        }
+
+        /* Exercise Box */
+        .exercise {
+            background: #161b22;
+            border: 2px solid #238636;
+            border-radius: 10px;
+            padding: 22px;
+            margin: 18px 0;
+        }
+        .exercise h3 { color: #3fb950; font-size: 1.2em; margin-bottom: 12px; }
+
+        /* Steps */
+        .steps { list-style: none; padding: 0; counter-reset: step-counter; }
+        .steps li {
+            padding: 8px 0 8px 0;
+            padding-right: 40px;
+            position: relative;
+            counter-increment: step-counter;
+        }
+        .steps li::before {
+            content: counter(step-counter);
+            position: absolute;
+            right: 0;
+            top: 8px;
+            background: #1f6feb;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+
+        /* Code Blocks */
+        pre, code {
+            direction: ltr;
+            text-align: left;
+            font-family: 'Consolas', 'Courier New', monospace;
+        }
+        pre {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            margin: 12px 0;
+            font-size: 0.92em;
+            line-height: 1.6;
+        }
+        code {
+            background: rgba(110,118,129,0.2);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        pre code { background: none; padding: 0; }
+        .keyword { color: #ff7b72; }
+        .string { color: #a5d6ff; }
+        .comment { color: #8b949e; }
+        .function { color: #d2a8ff; }
+        .number { color: #79c0ff; }
+
+        /* What You Should See */
+        .what-you-see {
+            background: #000;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 12px 0;
+        }
+        .what-you-see::before {
+            content: "מה שאתה אמור לראות:";
+            display: block;
+            color: #3fb950;
+            font-weight: bold;
+            margin-bottom: 8px;
+            direction: rtl;
+            text-align: right;
+        }
+        .what-you-see pre {
+            background: transparent;
+            border: none;
+            padding: 0;
+            margin: 0;
+            color: #3fb950;
+        }
+
+        /* Answer Box */
+        .answer-box {
+            border: 2px dashed #30363d;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 15px 0;
+            background: #161b22;
+        }
+        .answer-box label { color: #8b949e; font-weight: bold; display: block; margin-bottom: 8px; }
+        .answer-box input[type="text"] {
+            width: 100%;
+            padding: 10px 14px;
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            color: #c9d1d9;
+            font-size: 1em;
+            margin-bottom: 10px;
+            direction: ltr;
+            text-align: left;
+        }
+        .answer-box input:focus { border-color: #58a6ff; outline: none; }
+        .check-btn {
+            background: linear-gradient(135deg, #238636, #2ea043);
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+        .check-btn:hover { transform: scale(1.03); }
+
+        /* Checkpoint */
+        .checkpoint {
+            background: rgba(35,134,54,0.1);
+            border-right: 4px solid #238636;
+            border-radius: 6px;
+            padding: 16px 20px;
+            margin: 20px 0;
+            color: #3fb950;
+        }
+
+        /* Mission Complete */
+        .mission-complete {
+            background: rgba(137,87,229,0.1);
+            border: 2px solid #8957e5;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 25px 0;
+            text-align: center;
+        }
+        .mission-complete h3 { color: #a371f7; margin-bottom: 8px; }
+
+        /* Info Box */
+        .info-box {
+            background: rgba(31,111,235,0.1);
+            border-right: 4px solid #1f6feb;
+            border-radius: 6px;
+            padding: 16px 20px;
+            margin: 15px 0;
+        }
+        .info-box strong { color: #58a6ff; }
+
+        /* Popup */
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+        .popup {
+            background: #21262d;
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            border: 2px solid #30363d;
+        }
+        .popup .emoji { font-size: 3em; margin-bottom: 10px; }
+        .popup h3 { margin-bottom: 8px; color: #f0f6fc; }
+        .popup p { color: #8b949e; margin-bottom: 16px; }
+        .popup button {
+            background: #30363d;
+            color: #f0f6fc;
+            border: none;
+            padding: 8px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        .popup.correct { border-color: #238636; }
+        .popup.correct h3 { color: #3fb950; }
+        .popup.incorrect { border-color: #da3633; }
+        .popup.incorrect h3 { color: #f85149; }
+
+        /* Table of Contents */
+        .toc {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .toc h3 { color: #58a6ff; margin-bottom: 12px; }
+        .toc ul { list-style: none; padding: 0; }
+        .toc li { padding: 6px 0; }
+        .toc a { color: #a371f7; text-decoration: none; }
+        .toc a:hover { text-decoration: underline; }
+
+        @media (max-width: 600px) {
+            .lesson-hero h1 { font-size: 1.8em; }
+            .container { padding: 15px; }
+            .navbar { flex-direction: column; gap: 8px; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="lesson11-apis.html">שיעור 11: APIs ו-Web &larr;</a>
+    <span class="nav-center">שיעור 10 מתוך 12</span>
+    <a href="lesson09-errors-modules.html">&rarr; שיעור 9: שגיאות ומודולים</a>
+</nav>
+
+<div class="lesson-hero">
+    <div class="icon">🏗️</div>
+    <h1>שיעור 10: תכנות מונחה עצמים</h1>
+    <p>מחלקות, אובייקטים, ירושה — בנה משחק RPG פשוט!</p>
+</div>
+
+<div class="container">
+
+    <div class="toc">
+        <h3>תוכן עניינים</h3>
+        <ul>
+            <li><a href="#mission1">משימה 1: מה זה OOP?</a></li>
+            <li><a href="#mission2">משימה 2: __init__ ו-self</a></li>
+            <li><a href="#mission3">משימה 3: מתודות</a></li>
+            <li><a href="#mission4">משימה 4: ירושה</a></li>
+            <li><a href="#mission5">משימה 5: OOP מעשי</a></li>
+            <li><a href="#mission6">משימה 6: מיני פרויקט — משחק RPG</a></li>
+        </ul>
+    </div>
+
+    <!-- ==================== MISSION 1 ==================== -->
+    <div class="mission-header" id="mission1">
+        <h2>משימה 1: מה זה OOP?</h2>
+        <span class="time-estimate">⏱️ 10 דקות</span>
+    </div>
+
+    <p>תכנות מונחה עצמים (Object-Oriented Programming) הוא דרך לארגן קוד לפי "דברים" מהעולם האמיתי.</p>
+
+    <div class="info-box">
+        <strong>אנלוגיה:</strong> חשוב על <strong>מחלקה (class)</strong> כמו <strong>תוכנית בנייה</strong> של בית.
+        התוכנית עצמה היא לא בית — אבל ממנה אפשר לבנות הרבה בתים.
+        כל בית שנבנה מהתוכנית הוא <strong>אובייקט (object)</strong>.
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 1.1: המחלקה הראשונה שלך</h3>
+        <ol class="steps">
+            <li>פתח קובץ חדש בשם <code>oop_intro.py</code></li>
+            <li>כתוב את הקוד הבא:</li>
+        </ol>
+<pre><code><span class="keyword">class</span> <span class="function">Dog</span>:
+    <span class="comment"># This is a class - a blueprint for dogs</span>
+    species = <span class="string">"Canis familiaris"</span>
+
+<span class="comment"># Create objects (instances) from the class</span>
+dog1 = Dog()
+dog2 = Dog()
+
+<span class="keyword">print</span>(<span class="keyword">type</span>(dog1))
+<span class="keyword">print</span>(dog1.species)
+<span class="keyword">print</span>(dog1 <span class="keyword">is</span> dog2)  <span class="comment"># Are they the same object?</span></code></pre>
+
+        <div class="what-you-see">
+<pre>&lt;class '__main__.Dog'&gt;
+Canis familiaris
+False</pre>
+        </div>
+
+        <p><strong>מה יהיה הפלט של <code>dog1 is dog2</code>?</strong></p>
+        <div class="answer-box">
+            <label>התשובה שלך:</label>
+            <input type="text" id="answer-1-1" placeholder="True או False">
+            <button class="check-btn" onclick="checkAnswer('answer-1-1', ['False', 'false'], 'נכון! כל אובייקט הוא ייחודי, גם אם נוצר מאותה מחלקה.', 'לא בדיוק — כל קריאה ל-Dog() יוצרת אובייקט חדש ונפרד.')">בדוק תשובה</button>
+        </div>
+    </div>
+
+    <div class="checkpoint">
+        ✅ <strong>עצור!</strong> אם הצלחת ליצור מחלקה ושני אובייקטים — מעולה, ממשיכים!
+    </div>
+
+    <div class="mission-complete">
+        <h3>🎉 משימה 1 הושלמה!</h3>
+        <p>למדת: מה זה מחלקה, מה זה אובייקט, וההבדל ביניהם</p>
+    </div>
+
+    <!-- ==================== MISSION 2 ==================== -->
+    <div class="mission-header" id="mission2">
+        <h2>משימה 2: __init__ ו-self</h2>
+        <span class="time-estimate">⏱️ 12 דקות</span>
+    </div>
+
+    <p>המתודה <code>__init__</code> היא ה-<strong>constructor</strong> — היא רצה אוטומטית כשיוצרים אובייקט חדש. <code>self</code> מתייחס לאובייקט עצמו.</p>
+
+    <div class="exercise">
+        <h3>תרגיל 2.1: בנאי ותכונות</h3>
+        <ol class="steps">
+            <li>צור קובץ חדש <code>dog_init.py</code></li>
+            <li>כתוב:</li>
+        </ol>
+<pre><code><span class="keyword">class</span> <span class="function">Dog</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, name, age, breed):
+        self.name = name      <span class="comment"># instance attribute</span>
+        self.age = age
+        self.breed = breed
+
+<span class="comment"># Create dogs with different attributes</span>
+rex = Dog(<span class="string">"Rex"</span>, <span class="number">5</span>, <span class="string">"German Shepherd"</span>)
+buddy = Dog(<span class="string">"Buddy"</span>, <span class="number">3</span>, <span class="string">"Golden Retriever"</span>)
+
+<span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"{rex.name} is {rex.age} years old"</span>)
+<span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"{buddy.name} is a {buddy.breed}"</span>)</code></pre>
+
+        <div class="what-you-see">
+<pre>Rex is 5 years old
+Buddy is a Golden Retriever</pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 2.2: חשבון בנק</h3>
+        <ol class="steps">
+            <li>צור קובץ <code>bank.py</code></li>
+            <li>בנה מחלקת BankAccount:</li>
+        </ol>
+<pre><code><span class="keyword">class</span> <span class="function">BankAccount</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, owner, balance=<span class="number">0</span>):
+        self.owner = owner
+        self.balance = balance
+
+    <span class="keyword">def</span> <span class="function">deposit</span>(self, amount):
+        self.balance += amount
+        <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"Deposited {amount}. Balance: {self.balance}"</span>)
+
+    <span class="keyword">def</span> <span class="function">withdraw</span>(self, amount):
+        <span class="keyword">if</span> amount > self.balance:
+            <span class="keyword">print</span>(<span class="string">"Not enough funds!"</span>)
+        <span class="keyword">else</span>:
+            self.balance -= amount
+            <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"Withdrew {amount}. Balance: {self.balance}"</span>)
+
+<span class="comment"># Test it</span>
+acc = BankAccount(<span class="string">"Yoni"</span>, <span class="number">1000</span>)
+acc.deposit(<span class="number">500</span>)
+acc.withdraw(<span class="number">200</span>)
+acc.withdraw(<span class="number">2000</span>)</code></pre>
+
+        <div class="what-you-see">
+<pre>Deposited 500. Balance: 1500
+Withdrew 200. Balance: 1300
+Not enough funds!</pre>
+        </div>
+
+        <p><strong>אם נתחיל עם balance=1000, נפקיד 500, ונמשוך 200 — מה היתרה הסופית?</strong></p>
+        <div class="answer-box">
+            <label>התשובה שלך:</label>
+            <input type="text" id="answer-2-2" placeholder="מספר">
+            <button class="check-btn" onclick="checkAnswer('answer-2-2', ['1300'], 'מדויק! 1000 + 500 - 200 = 1300', 'חשוב שוב: 1000 + 500 - 200 = ?')">בדוק תשובה</button>
+        </div>
+    </div>
+
+    <div class="checkpoint">
+        ✅ <strong>עצור!</strong> ודא שהבנת: <code>__init__</code> רץ אוטומטית, <code>self</code> = האובייקט עצמו.
+    </div>
+
+    <div class="mission-complete">
+        <h3>🎉 משימה 2 הושלמה!</h3>
+        <p>למדת: constructors, instance attributes, ושימוש ב-self</p>
+    </div>
+
+    <!-- ==================== MISSION 3 ==================== -->
+    <div class="mission-header" id="mission3">
+        <h2>משימה 3: מתודות ו-__str__</h2>
+        <span class="time-estimate">⏱️ 12 דקות</span>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 3.1: __str__ להדפסה יפה</h3>
+        <ol class="steps">
+            <li>צור קובץ <code>student_class.py</code></li>
+            <li>כתוב:</li>
+        </ol>
+<pre><code><span class="keyword">class</span> <span class="function">Student</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, name, grades=<span class="keyword">None</span>):
+        self.name = name
+        self.grades = grades <span class="keyword">if</span> grades <span class="keyword">else</span> []
+
+    <span class="keyword">def</span> <span class="function">add_grade</span>(self, grade):
+        self.grades.append(grade)
+
+    <span class="keyword">def</span> <span class="function">average</span>(self):
+        <span class="keyword">if not</span> self.grades:
+            <span class="keyword">return</span> <span class="number">0</span>
+        <span class="keyword">return</span> <span class="keyword">sum</span>(self.grades) / <span class="keyword">len</span>(self.grades)
+
+    <span class="keyword">def</span> <span class="function">__str__</span>(self):
+        <span class="keyword">return</span> <span class="keyword">f</span><span class="string">"Student {self.name}, avg: {self.average():.1f}"</span>
+
+    <span class="keyword">def</span> <span class="function">__repr__</span>(self):
+        <span class="keyword">return</span> <span class="keyword">f</span><span class="string">"Student('{self.name}', {self.grades})"</span>
+
+s = Student(<span class="string">"Dana"</span>)
+s.add_grade(<span class="number">90</span>)
+s.add_grade(<span class="number">85</span>)
+s.add_grade(<span class="number">95</span>)
+<span class="keyword">print</span>(s)          <span class="comment"># uses __str__</span>
+<span class="keyword">print</span>(<span class="keyword">repr</span>(s))   <span class="comment"># uses __repr__</span></code></pre>
+
+        <div class="what-you-see">
+<pre>Student Dana, avg: 90.0
+Student('Dana', [90, 85, 95])</pre>
+        </div>
+
+        <p><strong>מה ההבדל בין __str__ ל-__repr__?</strong></p>
+        <div class="answer-box">
+            <label>התשובה שלך:</label>
+            <input type="text" id="answer-3-1" placeholder="str למשתמש / repr למפתח...">
+            <button class="check-btn" onclick="checkAnswer('answer-3-1', ['str למשתמש repr למפתח', 'str for user repr for developer', 'str user repr developer'], '__str__ מיועד להצגה יפה למשתמש, __repr__ מיועד לייצוג טכני למפתחים.', 'רמז: __str__ = הצגה יפה למשתמש, __repr__ = ייצוג טכני למפתח')">בדוק תשובה</button>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 3.2: חיית מחמד וירטואלית</h3>
+        <ol class="steps">
+            <li>צור קובץ <code>virtual_pet.py</code></li>
+            <li>בנה מחלקת Pet עם מצבי רוח:</li>
+        </ol>
+<pre><code><span class="keyword">class</span> <span class="function">Pet</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, name, pet_type):
+        self.name = name
+        self.pet_type = pet_type
+        self.hunger = <span class="number">50</span>    <span class="comment"># 0 = full, 100 = starving</span>
+        self.happiness = <span class="number">50</span>  <span class="comment"># 0 = sad, 100 = ecstatic</span>
+        self.energy = <span class="number">50</span>     <span class="comment"># 0 = exhausted, 100 = hyper</span>
+
+    <span class="keyword">def</span> <span class="function">feed</span>(self):
+        self.hunger = <span class="keyword">max</span>(<span class="number">0</span>, self.hunger - <span class="number">20</span>)
+        self.happiness += <span class="number">5</span>
+        <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"🍖 {self.name} ate! Hunger: {self.hunger}"</span>)
+
+    <span class="keyword">def</span> <span class="function">play</span>(self):
+        self.happiness = <span class="keyword">min</span>(<span class="number">100</span>, self.happiness + <span class="number">20</span>)
+        self.energy = <span class="keyword">max</span>(<span class="number">0</span>, self.energy - <span class="number">15</span>)
+        self.hunger += <span class="number">10</span>
+        <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"🎾 {self.name} played! Happy: {self.happiness}"</span>)
+
+    <span class="keyword">def</span> <span class="function">sleep</span>(self):
+        self.energy = <span class="keyword">min</span>(<span class="number">100</span>, self.energy + <span class="number">30</span>)
+        <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"💤 {self.name} slept! Energy: {self.energy}"</span>)
+
+    <span class="keyword">def</span> <span class="function">__str__</span>(self):
+        <span class="keyword">return</span> (<span class="keyword">f</span><span class="string">"🐾 {self.name} ({self.pet_type}) | "</span>
+                <span class="keyword">f</span><span class="string">"Hunger: {self.hunger} | Happy: {self.happiness} | "</span>
+                <span class="keyword">f</span><span class="string">"Energy: {self.energy}"</span>)
+
+my_pet = Pet(<span class="string">"Pixel"</span>, <span class="string">"Cat"</span>)
+my_pet.feed()
+my_pet.play()
+my_pet.sleep()
+<span class="keyword">print</span>(my_pet)</code></pre>
+
+        <div class="what-you-see">
+<pre>🍖 Pixel ate! Hunger: 30
+🎾 Pixel played! Happy: 75
+💤 Pixel slept! Energy: 65
+🐾 Pixel (Cat) | Hunger: 40 | Happy: 75 | Energy: 65</pre>
+        </div>
+    </div>
+
+    <div class="mission-complete">
+        <h3>🎉 משימה 3 הושלמה!</h3>
+        <p>למדת: מתודות, __str__, __repr__, ובניית אובייקטים עם התנהגות</p>
+    </div>
+
+    <!-- ==================== MISSION 4 ==================== -->
+    <div class="mission-header" id="mission4">
+        <h2>משימה 4: ירושה (Inheritance)</h2>
+        <span class="time-estimate">⏱️ 15 דקות</span>
+    </div>
+
+    <div class="info-box">
+        <strong>ירושה</strong> מאפשרת למחלקה חדשה (ילד) לקבל תכונות ומתודות ממחלקה קיימת (הורה).
+        כמו שילד יורש תכונות מההורים שלו — אבל יכול גם להיות ייחודי!
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 4.1: הורה וילד</h3>
+        <ol class="steps">
+            <li>צור קובץ <code>inheritance.py</code></li>
+            <li>כתוב:</li>
+        </ol>
+<pre><code><span class="keyword">class</span> <span class="function">Animal</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, name, sound):
+        self.name = name
+        self.sound = sound
+
+    <span class="keyword">def</span> <span class="function">speak</span>(self):
+        <span class="keyword">return</span> <span class="keyword">f</span><span class="string">"{self.name} says {self.sound}!"</span>
+
+<span class="keyword">class</span> <span class="function">Dog</span>(Animal):  <span class="comment"># Dog inherits from Animal</span>
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, name, breed):
+        <span class="keyword">super</span>().__init__(name, <span class="string">"Woof"</span>)  <span class="comment"># Call parent __init__</span>
+        self.breed = breed
+
+    <span class="keyword">def</span> <span class="function">fetch</span>(self):
+        <span class="keyword">return</span> <span class="keyword">f</span><span class="string">"{self.name} fetches the ball!"</span>
+
+<span class="keyword">class</span> <span class="function">Cat</span>(Animal):
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, name, indoor=<span class="keyword">True</span>):
+        <span class="keyword">super</span>().__init__(name, <span class="string">"Meow"</span>)
+        self.indoor = indoor
+
+    <span class="keyword">def</span> <span class="function">speak</span>(self):  <span class="comment"># Override parent method</span>
+        <span class="keyword">return</span> <span class="keyword">f</span><span class="string">"{self.name} purrs softly... {self.sound}"</span>
+
+dog = Dog(<span class="string">"Rex"</span>, <span class="string">"Husky"</span>)
+cat = Cat(<span class="string">"Mimi"</span>)
+
+<span class="keyword">print</span>(dog.speak())    <span class="comment"># Uses Animal's speak</span>
+<span class="keyword">print</span>(dog.fetch())    <span class="comment"># Dog-only method</span>
+<span class="keyword">print</span>(cat.speak())    <span class="comment"># Uses Cat's overridden speak</span>
+<span class="keyword">print</span>(<span class="keyword">isinstance</span>(dog, Animal))  <span class="comment"># True!</span></code></pre>
+
+        <div class="what-you-see">
+<pre>Rex says Woof!
+Rex fetches the ball!
+Mimi purrs softly... Meow
+True</pre>
+        </div>
+
+        <p><strong>מה הפלט של <code>isinstance(dog, Animal)</code>?</strong></p>
+        <div class="answer-box">
+            <label>התשובה שלך:</label>
+            <input type="text" id="answer-4-1" placeholder="True או False">
+            <button class="check-btn" onclick="checkAnswer('answer-4-1', ['True', 'true'], 'נכון! Dog יורש מ-Animal, אז כל Dog הוא גם Animal.', 'חשוב — Dog יורש מ-Animal, אז isinstance מחזיר True.')">בדוק תשובה</button>
+        </div>
+    </div>
+
+    <div class="checkpoint">
+        ✅ <strong>עצור!</strong> ודא שהבנת: <code>super()</code> קורא למתודה של ההורה. דריסת מתודות (override) מאפשרת לשנות התנהגות.
+    </div>
+
+    <div class="mission-complete">
+        <h3>🎉 משימה 4 הושלמה!</h3>
+        <p>למדת: ירושה, super(), דריסת מתודות, isinstance</p>
+    </div>
+
+    <!-- ==================== MISSION 5 ==================== -->
+    <div class="mission-header" id="mission5">
+        <h2>משימה 5: OOP מעשי — אנקפסולציה</h2>
+        <span class="time-estimate">⏱️ 10 דקות</span>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 5.1: הסתרת מידע</h3>
+        <ol class="steps">
+            <li>צור קובץ <code>encapsulation.py</code></li>
+            <li>למד על קידומות _ ו-__:</li>
+        </ol>
+<pre><code><span class="keyword">class</span> <span class="function">SecureAccount</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, owner, password, balance=<span class="number">0</span>):
+        self.owner = owner          <span class="comment"># public</span>
+        self._password = password   <span class="comment"># "private" (convention)</span>
+        self.__balance = balance    <span class="comment"># name-mangled (harder to access)</span>
+
+    <span class="keyword">def</span> <span class="function">get_balance</span>(self, password):
+        <span class="keyword">if</span> password == self._password:
+            <span class="keyword">return</span> self.__balance
+        <span class="keyword">return</span> <span class="string">"Wrong password!"</span>
+
+    <span class="keyword">def</span> <span class="function">deposit</span>(self, amount, password):
+        <span class="keyword">if</span> password == self._password:
+            self.__balance += amount
+            <span class="keyword">return</span> <span class="keyword">f</span><span class="string">"New balance: {self.__balance}"</span>
+        <span class="keyword">return</span> <span class="string">"Wrong password!"</span>
+
+acc = SecureAccount(<span class="string">"Dan"</span>, <span class="string">"secret123"</span>, <span class="number">1000</span>)
+<span class="keyword">print</span>(acc.owner)                        <span class="comment"># Works fine</span>
+<span class="keyword">print</span>(acc.get_balance(<span class="string">"secret123"</span>))     <span class="comment"># Correct password</span>
+<span class="keyword">print</span>(acc.get_balance(<span class="string">"wrong"</span>))         <span class="comment"># Wrong password</span>
+<span class="comment"># print(acc.__balance)  # AttributeError!</span></code></pre>
+
+        <div class="what-you-see">
+<pre>Dan
+1000
+Wrong password!</pre>
+        </div>
+
+        <p><strong>מה קורה אם ננסה לגשת ישירות ל-<code>acc.__balance</code>?</strong></p>
+        <div class="answer-box">
+            <label>התשובה שלך:</label>
+            <input type="text" id="answer-5-1" placeholder="AttributeError / עובד / ...">
+            <button class="check-btn" onclick="checkAnswer('answer-5-1', ['AttributeError', 'attributeerror', 'error', 'שגיאה'], 'מדויק! Python עושה name mangling לתכונות עם __ ולכן לא ניתן לגשת אליהן ישירות.', 'רמז: תכונה עם __ עוברת name mangling ולא נגישה ישירות.')">בדוק תשובה</button>
+        </div>
+    </div>
+
+    <div class="info-box">
+        <strong>מתי להשתמש ב-OOP?</strong><br>
+        - כשיש לך "דברים" עם תכונות והתנהגות (חיות, משתמשים, מוצרים)<br>
+        - כשאתה צריך הרבה אובייקטים דומים אבל שונים<br>
+        - כשהקוד מורכב ואתה רוצה ארגון ברור<br>
+        <strong>מתי פונקציות מספיקות?</strong> לפעולות פשוטות וחד-פעמיות
+    </div>
+
+    <div class="mission-complete">
+        <h3>🎉 משימה 5 הושלמה!</h3>
+        <p>למדת: אנקפסולציה, _ ו-__, מתי להשתמש ב-OOP</p>
+    </div>
+
+    <!-- ==================== MISSION 6 ==================== -->
+    <div class="mission-header" id="mission6">
+        <h2>משימה 6: מיני פרויקט — משחק RPG!</h2>
+        <span class="time-estimate">⏱️ 20 דקות</span>
+    </div>
+
+    <div class="info-box">
+        <strong>המשימה:</strong> נבנה משחק RPG עם דמויות לוחם, קוסם וקשת — כולם יורשים מ-Character!
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 6.1: מחלקת הבסיס Character</h3>
+        <ol class="steps">
+            <li>צור קובץ <code>rpg_game.py</code></li>
+            <li>בנה את מחלקת הבסיס:</li>
+        </ol>
+<pre><code><span class="keyword">import</span> random
+
+<span class="keyword">class</span> <span class="function">Character</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, name, health, attack, defense):
+        self.name = name
+        self.health = health
+        self.max_health = health
+        self.attack = attack
+        self.defense = defense
+        self.is_alive = <span class="keyword">True</span>
+
+    <span class="keyword">def</span> <span class="function">take_damage</span>(self, damage):
+        actual_damage = <span class="keyword">max</span>(<span class="number">1</span>, damage - self.defense)
+        self.health -= actual_damage
+        <span class="keyword">if</span> self.health <= <span class="number">0</span>:
+            self.health = <span class="number">0</span>
+            self.is_alive = <span class="keyword">False</span>
+        <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"  {self.name} takes {actual_damage} damage! HP: {self.health}/{self.max_health}"</span>)
+
+    <span class="keyword">def</span> <span class="function">basic_attack</span>(self, target):
+        damage = random.randint(self.attack - <span class="number">2</span>, self.attack + <span class="number">2</span>)
+        <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"⚔️ {self.name} attacks {target.name}!"</span>)
+        target.take_damage(damage)
+
+    <span class="keyword">def</span> <span class="function">__str__</span>(self):
+        status = <span class="string">"ALIVE"</span> <span class="keyword">if</span> self.is_alive <span class="keyword">else</span> <span class="string">"DEAD"</span>
+        <span class="keyword">return</span> <span class="keyword">f</span><span class="string">"{self.name} | HP: {self.health}/{self.max_health} | ATK: {self.attack} | DEF: {self.defense} | {status}"</span></code></pre>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 6.2: מחלקות הילד</h3>
+        <ol class="steps">
+            <li>הוסף את המחלקות הבאות לקובץ:</li>
+        </ol>
+<pre><code><span class="keyword">class</span> <span class="function">Warrior</span>(Character):
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, name):
+        <span class="keyword">super</span>().__init__(name, health=<span class="number">120</span>, attack=<span class="number">15</span>, defense=<span class="number">8</span>)
+
+    <span class="keyword">def</span> <span class="function">shield_bash</span>(self, target):
+        damage = self.attack + <span class="number">5</span>
+        <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"🛡️ {self.name} SHIELD BASHES {target.name}!"</span>)
+        target.take_damage(damage)
+
+<span class="keyword">class</span> <span class="function">Mage</span>(Character):
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, name):
+        <span class="keyword">super</span>().__init__(name, health=<span class="number">80</span>, attack=<span class="number">20</span>, defense=<span class="number">3</span>)
+        self.mana = <span class="number">100</span>
+
+    <span class="keyword">def</span> <span class="function">fireball</span>(self, target):
+        <span class="keyword">if</span> self.mana >= <span class="number">25</span>:
+            self.mana -= <span class="number">25</span>
+            damage = self.attack + <span class="number">10</span>
+            <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"🔥 {self.name} casts FIREBALL on {target.name}! (Mana: {self.mana})"</span>)
+            target.take_damage(damage)
+        <span class="keyword">else</span>:
+            <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"💨 {self.name} has no mana!"</span>)
+            self.basic_attack(target)
+
+<span class="keyword">class</span> <span class="function">Archer</span>(Character):
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, name):
+        <span class="keyword">super</span>().__init__(name, health=<span class="number">90</span>, attack=<span class="number">18</span>, defense=<span class="number">5</span>)
+        self.arrows = <span class="number">10</span>
+
+    <span class="keyword">def</span> <span class="function">power_shot</span>(self, target):
+        <span class="keyword">if</span> self.arrows > <span class="number">0</span>:
+            self.arrows -= <span class="number">1</span>
+            damage = self.attack + <span class="number">8</span>
+            <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"🏹 {self.name} fires POWER SHOT! (Arrows: {self.arrows})"</span>)
+            target.take_damage(damage)
+        <span class="keyword">else</span>:
+            <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"🏹 {self.name} is out of arrows!"</span>)
+            self.basic_attack(target)</code></pre>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 6.3: מערכת קרב!</h3>
+        <ol class="steps">
+            <li>הוסף את פונקציית הקרב:</li>
+        </ol>
+<pre><code><span class="keyword">def</span> <span class="function">battle</span>(char1, char2):
+    <span class="keyword">print</span>(<span class="string">"=" * 40</span>)
+    <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"⚔️  BATTLE: {char1.name} vs {char2.name}  ⚔️"</span>)
+    <span class="keyword">print</span>(<span class="string">"=" * 40</span>)
+    <span class="keyword">print</span>(char1)
+    <span class="keyword">print</span>(char2)
+    <span class="keyword">print</span>()
+
+    turn = <span class="number">1</span>
+    <span class="keyword">while</span> char1.is_alive <span class="keyword">and</span> char2.is_alive:
+        <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"--- Turn {turn} ---"</span>)
+
+        <span class="comment"># char1 attacks</span>
+        <span class="keyword">if</span> <span class="keyword">isinstance</span>(char1, Warrior) <span class="keyword">and</span> random.random() > <span class="number">0.5</span>:
+            char1.shield_bash(char2)
+        <span class="keyword">elif</span> <span class="keyword">isinstance</span>(char1, Mage):
+            char1.fireball(char2)
+        <span class="keyword">elif</span> <span class="keyword">isinstance</span>(char1, Archer):
+            char1.power_shot(char2)
+        <span class="keyword">else</span>:
+            char1.basic_attack(char2)
+
+        <span class="keyword">if not</span> char2.is_alive:
+            <span class="keyword">break</span>
+
+        <span class="comment"># char2 attacks</span>
+        <span class="keyword">if</span> <span class="keyword">isinstance</span>(char2, Warrior) <span class="keyword">and</span> random.random() > <span class="number">0.5</span>:
+            char2.shield_bash(char1)
+        <span class="keyword">elif</span> <span class="keyword">isinstance</span>(char2, Mage):
+            char2.fireball(char1)
+        <span class="keyword">elif</span> <span class="keyword">isinstance</span>(char2, Archer):
+            char2.power_shot(char1)
+        <span class="keyword">else</span>:
+            char2.basic_attack(char1)
+
+        turn += <span class="number">1</span>
+        <span class="keyword">print</span>()
+
+    winner = char1 <span class="keyword">if</span> char1.is_alive <span class="keyword">else</span> char2
+    <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"\n🏆 {winner.name} WINS!"</span>)
+
+<span class="comment"># Let's battle!</span>
+w = Warrior(<span class="string">"Thorin"</span>)
+m = Mage(<span class="string">"Gandalf"</span>)
+battle(w, m)</code></pre>
+
+        <div class="what-you-see">
+<pre>========================================
+⚔️  BATTLE: Thorin vs Gandalf  ⚔️
+========================================
+Thorin | HP: 120/120 | ATK: 15 | DEF: 8 | ALIVE
+Gandalf | HP: 80/80 | ATK: 20 | DEF: 3 | ALIVE
+
+--- Turn 1 ---
+🛡️ Thorin SHIELD BASHES Gandalf!
+  Gandalf takes 17 damage! HP: 63/80
+🔥 Gandalf casts FIREBALL on Thorin! (Mana: 75)
+  Thorin takes 22 damage! HP: 98/120
+...</pre>
+        </div>
+    </div>
+
+    <div class="checkpoint">
+        ✅ <strong>עצור!</strong> הרץ את המשחק כמה פעמים — התוצאה משתנה כי יש אקראיות!
+    </div>
+
+    <div class="mission-complete">
+        <h3>🎉 משימה 6 הושלמה!</h3>
+        <p>למדת: לבנות מערכת שלמה עם ירושה, מתודות ייחודיות, ואינטראקציה בין אובייקטים. כל הכבוד!</p>
+    </div>
+
+    <div class="info-box">
+        <strong>אתגר בונוס:</strong> הוסף מחלקת Healer שיכולה לרפא את עצמה, או הוסף מערכת inventory לדמויות!
+    </div>
+
+</div>
+
+<!-- Popup Modal -->
+<div class="popup-overlay" id="popup-overlay" onclick="closePopup()">
+    <div class="popup" id="popup" onclick="event.stopPropagation()">
+        <div class="emoji" id="popup-emoji"></div>
+        <h3 id="popup-title"></h3>
+        <p id="popup-message"></p>
+        <button onclick="closePopup()">סגור</button>
+    </div>
+</div>
+
+<script>
+function checkAnswer(inputId, correctAnswers, successMsg, failMsg) {
+    var input = document.getElementById(inputId);
+    var val = input.value.trim();
+    var isCorrect = false;
+    for (var i = 0; i < correctAnswers.length; i++) {
+        if (val === correctAnswers[i] || val.toLowerCase() === correctAnswers[i].toLowerCase()) { isCorrect = true; break; }
+    }
+    var overlay = document.getElementById('popup-overlay');
+    var emoji = document.getElementById('popup-emoji');
+    var title = document.getElementById('popup-title');
+    var message = document.getElementById('popup-message');
+    var popup = document.getElementById('popup');
+    if (isCorrect) { emoji.textContent = '🎉'; title.textContent = 'כל הכבוד!'; message.textContent = successMsg; popup.className = 'popup correct'; }
+    else { emoji.textContent = '🤔'; title.textContent = 'נסה שוב'; message.textContent = failMsg; popup.className = 'popup incorrect'; }
+    overlay.style.display = 'flex';
+}
+function closePopup() { document.getElementById('popup-overlay').style.display = 'none'; }
+</script>
+
+</body>
+</html>

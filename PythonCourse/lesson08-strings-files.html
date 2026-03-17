@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>שיעור 8: מחרוזות וקבצים | קורס Python</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.8;
+            background: #0d1117;
+            color: #c9d1d9;
+            direction: rtl;
+            text-align: right;
+        }
+        .navbar {
+            background: #161b22;
+            border-bottom: 1px solid #30363d;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .navbar a {
+            color: #58a6ff;
+            text-decoration: none;
+            padding: 6px 14px;
+            border-radius: 6px;
+            transition: background 0.2s;
+            font-size: 0.9em;
+        }
+        .navbar a:hover { background: #21262d; }
+        .navbar .current { color: #f0883e; font-weight: bold; }
+        .nav-links { display: flex; gap: 8px; align-items: center; }
+        .lesson-hero {
+            text-align: center;
+            padding: 50px 20px 30px;
+            background: linear-gradient(180deg, rgba(137,87,229,0.15) 0%, transparent 100%);
+        }
+        .lesson-hero .icon { font-size: 3.5em; margin-bottom: 10px; }
+        .lesson-hero h1 { font-size: 2.5em; color: #58a6ff; margin-bottom: 8px; }
+        .lesson-hero p { color: #8b949e; font-size: 1.1em; max-width: 600px; margin: 0 auto; }
+        .container { max-width: 850px; margin: 0 auto; padding: 20px; }
+        .mission-header {
+            background: linear-gradient(135deg, #21262d, #161b22);
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 40px 0 20px;
+        }
+        .mission-header h2 { color: #58a6ff; font-size: 1.6em; margin-bottom: 6px; }
+        .time-estimate {
+            display: inline-block;
+            background: rgba(139,148,158,0.15);
+            color: #8b949e;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+        }
+        .exercise {
+            border: 2px solid #238636;
+            border-radius: 10px;
+            padding: 24px;
+            margin: 20px 0;
+            background: rgba(35,134,54,0.05);
+        }
+        .exercise h3 { color: #3fb950; font-size: 1.2em; margin-bottom: 12px; }
+        .steps { padding-right: 0; list-style: none; counter-reset: step; }
+        .steps li {
+            counter-increment: step;
+            padding: 6px 0 6px 0;
+            padding-right: 36px;
+            position: relative;
+        }
+        .steps li::before {
+            content: counter(step);
+            position: absolute;
+            right: 0;
+            top: 6px;
+            background: #1f6feb;
+            color: white;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        pre {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            margin: 12px 0;
+            direction: ltr;
+            text-align: left;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.92em;
+            color: #e6edf3;
+            line-height: 1.5;
+        }
+        code {
+            background: #161b22;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #f0883e;
+            direction: ltr;
+        }
+        .what-you-see {
+            background: #000;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 12px 0;
+        }
+        .what-you-see::before {
+            content: "מה שאתם אמורים לראות:";
+            display: block;
+            color: #8b949e;
+            font-size: 0.85em;
+            margin-bottom: 8px;
+            direction: rtl;
+            text-align: right;
+        }
+        .what-you-see pre {
+            background: transparent;
+            border: none;
+            padding: 0;
+            margin: 0;
+            color: #4af626;
+        }
+        .answer-box {
+            border: 2px dashed #30363d;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 14px 0;
+            background: rgba(22,27,34,0.5);
+        }
+        .answer-box label {
+            display: block;
+            margin-bottom: 8px;
+            color: #8b949e;
+            font-weight: bold;
+        }
+        .answer-box input {
+            width: 100%;
+            padding: 10px 14px;
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            color: #c9d1d9;
+            font-size: 1em;
+            margin-bottom: 10px;
+            direction: ltr;
+            text-align: left;
+        }
+        .answer-box input:focus { outline: none; border-color: #58a6ff; }
+        .check-btn {
+            background: #238636;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+        .check-btn:hover { background: #2ea043; }
+        .feedback { margin-top: 8px; font-weight: bold; display: none; }
+        .feedback.correct { color: #3fb950; display: block; }
+        .feedback.incorrect { color: #f85149; display: block; }
+        .checkpoint {
+            border-right: 4px solid #238636;
+            background: rgba(35,134,54,0.08);
+            padding: 16px 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .mission-complete {
+            border: 2px solid #8957e5;
+            border-radius: 10px;
+            padding: 24px;
+            margin: 20px 0;
+            background: rgba(137,87,229,0.08);
+            text-align: center;
+        }
+        .mission-complete h3 { color: #a371f7; font-size: 1.3em; margin-bottom: 8px; }
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .popup {
+            background: #21262d;
+            border: 1px solid #30363d;
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+        .popup .emoji { font-size: 3em; margin-bottom: 10px; }
+        .popup h3 { margin-bottom: 8px; font-size: 1.4em; }
+        .popup p { color: #8b949e; margin-bottom: 20px; }
+        .popup button {
+            background: #30363d;
+            color: #c9d1d9;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        .popup button:hover { background: #484f58; }
+        .popup.correct { border-color: #238636; }
+        .popup.correct h3 { color: #3fb950; }
+        .popup.incorrect { border-color: #f85149; }
+        .popup.incorrect h3 { color: #f85149; }
+        .info-box {
+            background: rgba(56,139,253,0.1);
+            border: 1px solid #1f6feb;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 14px 0;
+        }
+        .info-box strong { color: #58a6ff; }
+        .tip-box {
+            background: rgba(240,136,62,0.1);
+            border: 1px solid #f0883e;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 14px 0;
+        }
+        .tip-box strong { color: #f0883e; }
+        h2, h3, h4, h5, h6 { direction: rtl; text-align: right; }
+        p, li, td, th, div { direction: rtl; text-align: right; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0;
+        }
+        th, td {
+            border: 1px solid #30363d;
+            padding: 10px 14px;
+        }
+        th { background: #161b22; color: #58a6ff; }
+        td code { direction: ltr; display: inline-block; }
+        @media (max-width: 600px) {
+            .lesson-hero h1 { font-size: 1.8em; }
+            .container { padding: 12px; }
+            .exercise, .mission-header { padding: 16px; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-links">
+        <a href="index.html">🏠 דף ראשי</a>
+        <a href="lesson07-functions.html">← שיעור 7</a>
+        <span class="current">שיעור 8</span>
+        <a href="lesson09-errors-modules.html">שיעור 9 →</a>
+    </div>
+</nav>
+
+<div class="lesson-hero">
+    <div class="icon">📝</div>
+    <h1>שיעור 8: מחרוזות וקבצים</h1>
+    <p>שליטה במחרוזות, פורמט מתקדם, וקריאה/כתיבה לקבצים — כוחות-על של Python!</p>
+</div>
+
+<div class="container">
+
+    <!-- ===== MISSION 1 ===== -->
+    <div class="mission-header">
+        <h2>משימה 1: שליטה במחרוזות</h2>
+        <p class="time-estimate">⏱️ 12 דקות</p>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 1.1: שיטות מחרוזת חשובות</h3>
+        <ol class="steps">
+            <li>צור קובץ <code>strings_practice.py</code> ונסה את השיטות הבאות:</li>
+        </ol>
+<pre>
+text = "  Hello, World!  "
+
+print(text.upper())        # "  HELLO, WORLD!  "
+print(text.lower())        # "  hello, world!  "
+print(text.strip())        # "Hello, World!"
+print(text.replace("World", "Python"))  # "  Hello, Python!  "
+print(text.strip().split(", "))  # ['Hello', 'World!']
+</pre>
+        <ol class="steps" start="2">
+            <li>עוד שיטות שימושיות:</li>
+        </ol>
+<pre>
+sentence = "python is amazing and python is fun"
+
+print(sentence.count("python"))     # 2
+print(sentence.find("amazing"))     # 10
+print(sentence.startswith("python"))  # True
+print(sentence.endswith("fun"))       # True
+
+words = ["Python", "is", "cool"]
+print(" ".join(words))  # "Python is cool"
+</pre>
+
+        <p><strong>מה מחזיר <code>"hello world".count("o")</code>?</strong></p>
+        <div class="answer-box">
+            <label>התשובה שלך:</label>
+            <input type="text" id="answer-1-1" placeholder="מספר...">
+            <button class="check-btn" onclick="checkAnswer('answer-1-1', ['2'], 'מצוין! יש שני o במחרוזת — אחד ב-hello ואחד ב-world.', 'ספור כמה פעמים האות o מופיעה ב-hello world')">בדוק תשובה</button>
+            <div class="feedback" id="feedback-1-1"></div>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 1.2: טבלת שיטות מחרוזת</h3>
+        <table>
+            <tr><th>שיטה</th><th>מה עושה</th><th>דוגמה</th></tr>
+            <tr><td><code>.upper()</code></td><td>הופך לאותיות גדולות</td><td><code>"hi".upper()</code> → <code>"HI"</code></td></tr>
+            <tr><td><code>.lower()</code></td><td>הופך לאותיות קטנות</td><td><code>"HI".lower()</code> → <code>"hi"</code></td></tr>
+            <tr><td><code>.strip()</code></td><td>מסיר רווחים מהקצוות</td><td><code>" hi ".strip()</code> → <code>"hi"</code></td></tr>
+            <tr><td><code>.split(x)</code></td><td>מפצל לרשימה</td><td><code>"a,b".split(",")</code> → <code>['a','b']</code></td></tr>
+            <tr><td><code>.join(list)</code></td><td>מחבר רשימה למחרוזת</td><td><code>"-".join(['a','b'])</code> → <code>"a-b"</code></td></tr>
+            <tr><td><code>.replace(a,b)</code></td><td>מחליף טקסט</td><td><code>"hi".replace("h","b")</code> → <code>"bi"</code></td></tr>
+            <tr><td><code>.find(x)</code></td><td>מוצא מיקום (או -1)</td><td><code>"hello".find("ll")</code> → <code>2</code></td></tr>
+            <tr><td><code>.count(x)</code></td><td>סופר הופעות</td><td><code>"aaba".count("a")</code> → <code>3</code></td></tr>
+        </table>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 1.3: צופן קיסר</h3>
+        <ol class="steps">
+            <li>בנה מקודד ומפענח צופן קיסר:</li>
+        </ol>
+<pre>
+def caesar_encrypt(text, shift):
+    result = ""
+    for char in text:
+        if char.isalpha():
+            base = ord('A') if char.isupper() else ord('a')
+            shifted = (ord(char) - base + shift) % 26 + base
+            result += chr(shifted)
+        else:
+            result += char
+    return result
+
+def caesar_decrypt(text, shift):
+    return caesar_encrypt(text, -shift)
+
+secret = caesar_encrypt("Hello World", 3)
+print(f"מוצפן: {secret}")
+print(f"מפוענח: {caesar_decrypt(secret, 3)}")
+</pre>
+        <div class="what-you-see">
+<pre>מוצפן: Khoor Zruog
+מפוענח: Hello World</pre>
+        </div>
+
+        <p><strong>מה התוצאה של הצפנת "abc" עם הזזה של 1?</strong></p>
+        <div class="answer-box">
+            <label>התשובה שלך:</label>
+            <input type="text" id="answer-1-3" placeholder="הקלד את התוצאה...">
+            <button class="check-btn" onclick="checkAnswer('answer-1-3', ['bcd'], 'מצוין! כל אות זזה מקום אחד קדימה: a→b, b→c, c→d', 'כל אות זזה מקום אחד קדימה באלפבית')">בדוק תשובה</button>
+            <div class="feedback" id="feedback-1-3"></div>
+        </div>
+    </div>
+
+    <div class="checkpoint">
+        ✅ <strong>עצור!</strong> האם ניסית את כל שיטות המחרוזת? ודא שאתה מבין את ההבדל בין split ו-join.
+    </div>
+
+    <!-- ===== MISSION 2 ===== -->
+    <div class="mission-header">
+        <h2>משימה 2: F-Strings ופורמט מתקדם</h2>
+        <p class="time-estimate">⏱️ 10 דקות</p>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 2.1: f-strings — הדרך המודרנית</h3>
+        <ol class="steps">
+            <li>f-strings הם הדרך הכי נוחה לפרמט מחרוזות:</li>
+        </ol>
+<pre>
+name = "דני"
+age = 15
+grade = 92.567
+
+# בסיסי
+print(f"שם: {name}, גיל: {age}")
+
+# חישובים בתוך הסוגריים
+print(f"בעוד 5 שנים תהיה בן {age + 5}")
+
+# עיגול מספרים
+print(f"ציון: {grade:.1f}")     # 92.6
+print(f"ציון: {grade:.0f}")     # 93
+
+# יישור טקסט
+print(f"{'שם':<10}{'ציון':>5}")
+print(f"{'דני':<10}{92:>5}")
+print(f"{'מיכל':<10}{88:>5}")
+</pre>
+        <div class="what-you-see">
+<pre>שם: דני, גיל: 15
+בעוד 5 שנים תהיה בן 20
+ציון: 92.6
+ציון: 93
+שם             ציון
+דני               92
+מיכל              88</pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 2.2: פורמט מספרים</h3>
+<pre>
+price = 1234567.89
+
+# פסיקים להפרדת אלפים
+print(f"מחיר: {price:,.2f}")  # 1,234,567.89
+
+# אחוזים
+ratio = 0.856
+print(f"ציון: {ratio:.1%}")   # 85.6%
+
+# מילוי באפסים
+for i in range(1, 4):
+    print(f"קובץ_{i:03d}.txt")
+</pre>
+        <div class="what-you-see">
+<pre>מחיר: 1,234,567.89
+ציון: 85.6%
+קובץ_001.txt
+קובץ_002.txt
+קובץ_003.txt</pre>
+        </div>
+    </div>
+
+    <div class="checkpoint">
+        ✅ <strong>עצור!</strong> f-strings הם כלי חזק מאוד. השתמש בהם תמיד במקום + לחיבור מחרוזות.
+    </div>
+
+    <!-- ===== MISSION 3 ===== -->
+    <div class="mission-header">
+        <h2>משימה 3: קריאת קבצים</h2>
+        <p class="time-estimate">⏱️ 12 דקות</p>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 3.1: יצירת קובץ לתרגול</h3>
+        <ol class="steps">
+            <li>ראשית ניצור קובץ טקסט שנעבוד איתו:</li>
+        </ol>
+<pre>
+# יצירת קובץ לתרגול
+with open("sample.txt", "w", encoding="utf-8") as f:
+    f.write("שורה ראשונה\n")
+    f.write("שורה שנייה\n")
+    f.write("שורה שלישית\n")
+    f.write("Python זה כיף!\n")
+
+print("הקובץ נוצר!")
+</pre>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 3.2: דרכים לקרוא קובץ</h3>
+<pre>
+# דרך 1: קריאת הכל בבת אחת
+with open("sample.txt", "r", encoding="utf-8") as f:
+    content = f.read()
+    print("=== read() ===")
+    print(content)
+
+# דרך 2: קריאת שורה אחת
+with open("sample.txt", "r", encoding="utf-8") as f:
+    first_line = f.readline()
+    print(f"שורה ראשונה: {first_line.strip()}")
+
+# דרך 3: קריאת כל השורות לרשימה
+with open("sample.txt", "r", encoding="utf-8") as f:
+    lines = f.readlines()
+    print(f"מספר שורות: {len(lines)}")
+
+# דרך 4: לולאה על שורות (הכי מומלץ!)
+with open("sample.txt", "r", encoding="utf-8") as f:
+    for i, line in enumerate(f, 1):
+        print(f"שורה {i}: {line.strip()}")
+</pre>
+
+        <div class="info-box">
+            <strong>למה <code>with</code>?</strong> הפקודה <code>with</code> סוגרת את הקובץ אוטומטית כשמסיימים, גם אם קרתה שגיאה. תמיד השתמשו ב-with!
+        </div>
+
+        <p><strong>מה עושה <code>f.readlines()</code>? (בחר: "קוראת שורה אחת" / "מחזירה רשימה של שורות" / "כותבת לקובץ")</strong></p>
+        <div class="answer-box">
+            <label>התשובה שלך:</label>
+            <input type="text" id="answer-3-2" placeholder="הקלד...">
+            <button class="check-btn" onclick="checkAnswer('answer-3-2', ['מחזירה רשימה של שורות'], 'נכון! readlines מחזירה רשימה שכל איבר בה הוא שורה מהקובץ.', 'רמז: readlines (ברבים) מחזירה את כל השורות ב...')">בדוק תשובה</button>
+            <div class="feedback" id="feedback-3-2"></div>
+        </div>
+    </div>
+
+    <!-- ===== MISSION 4 ===== -->
+    <div class="mission-header">
+        <h2>משימה 4: כתיבה לקבצים</h2>
+        <p class="time-estimate">⏱️ 10 דקות</p>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 4.1: מצבי כתיבה</h3>
+<pre>
+# "w" — כתיבה (מוחק תוכן קיים!)
+with open("notes.txt", "w", encoding="utf-8") as f:
+    f.write("הערה ראשונה\n")
+
+# "a" — הוספה (append) — מוסיף בסוף הקובץ
+with open("notes.txt", "a", encoding="utf-8") as f:
+    f.write("הערה שנייה\n")
+    f.write("הערה שלישית\n")
+
+# קריאה לבדיקה
+with open("notes.txt", "r", encoding="utf-8") as f:
+    print(f.read())
+</pre>
+        <div class="what-you-see">
+<pre>הערה ראשונה
+הערה שנייה
+הערה שלישית</pre>
+        </div>
+
+        <div class="tip-box">
+            <strong>זהירות!</strong> מצב <code>"w"</code> מוחק את כל התוכן הקיים! אם רוצים להוסיף — השתמשו ב-<code>"a"</code>.
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 4.2: ספירת מילים בקובץ</h3>
+<pre>
+def count_words(filename):
+    with open(filename, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    words = content.split()
+    lines = content.count("\n")
+    chars = len(content)
+
+    print(f"מילים: {len(words)}")
+    print(f"שורות: {lines}")
+    print(f"תווים: {chars}")
+
+count_words("sample.txt")
+</pre>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 4.3: עבודה עם CSV בסיסי</h3>
+<pre>
+# יצירת קובץ CSV
+with open("grades.csv", "w", encoding="utf-8") as f:
+    f.write("שם,מתמטיקה,אנגלית,מדעים\n")
+    f.write("דני,85,90,78\n")
+    f.write("מיכל,92,88,95\n")
+    f.write("אורי,78,82,80\n")
+
+# קריאת CSV
+with open("grades.csv", "r", encoding="utf-8") as f:
+    header = f.readline().strip().split(",")
+    print(f"עמודות: {header}")
+
+    for line in f:
+        parts = line.strip().split(",")
+        name = parts[0]
+        grades = [int(g) for g in parts[1:]]
+        avg = sum(grades) / len(grades)
+        print(f"{name}: ממוצע {avg:.1f}")
+</pre>
+        <div class="what-you-see">
+<pre>עמודות: ['שם', 'מתמטיקה', 'אנגלית', 'מדעים']
+דני: ממוצע 84.3
+מיכל: ממוצע 91.7
+אורי: ממוצע 80.0</pre>
+        </div>
+
+        <p><strong>מה מצב הפתיחה שמוסיף טקסט לסוף קובץ בלי למחוק? (אות אחת)</strong></p>
+        <div class="answer-box">
+            <label>התשובה שלך:</label>
+            <input type="text" id="answer-4-3" placeholder="אות אחת...">
+            <button class="check-btn" onclick="checkAnswer('answer-4-3', ['a'], 'נכון! a = append = הוספה לסוף הקובץ.', 'רמז: קיצור של append...')">בדוק תשובה</button>
+            <div class="feedback" id="feedback-4-3"></div>
+        </div>
+    </div>
+
+    <div class="checkpoint">
+        ✅ <strong>עצור!</strong> ודא שאתה יודע את ההבדל בין "w" (מוחק וכותב מחדש) ו-"a" (מוסיף בסוף).
+    </div>
+
+    <!-- ===== MISSION 5 ===== -->
+    <div class="mission-header">
+        <h2>משימה 5: פרויקט — יומן אישי</h2>
+        <p class="time-estimate">⏱️ 16 דקות</p>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 5.1: אפליקציית יומן מלאה</h3>
+        <ol class="steps">
+            <li>צור קובץ <code>diary.py</code> והעתק את הקוד:</li>
+        </ol>
+<pre>
+from datetime import datetime
+
+DIARY_FILE = "my_diary.txt"
+
+def add_entry():
+    now = datetime.now().strftime("%Y-%m-%d %H:%M")
+    print("כתוב את הרשומה (Enter לסיום):")
+    entry = input("> ")
+
+    with open(DIARY_FILE, "a", encoding="utf-8") as f:
+        f.write(f"\n--- {now} ---\n")
+        f.write(entry + "\n")
+
+    print("הרשומה נשמרה!")
+
+def read_entries():
+    try:
+        with open(DIARY_FILE, "r", encoding="utf-8") as f:
+            content = f.read()
+        if content.strip():
+            print("\n📖 היומן שלך:")
+            print(content)
+        else:
+            print("היומן ריק.")
+    except FileNotFoundError:
+        print("אין עדיין יומן. כתוב רשומה ראשונה!")
+
+def search_entries(keyword):
+    try:
+        with open(DIARY_FILE, "r", encoding="utf-8") as f:
+            lines = f.readlines()
+
+        found = False
+        for i, line in enumerate(lines):
+            if keyword in line:
+                print(f"שורה {i+1}: {line.strip()}")
+                found = True
+
+        if not found:
+            print(f"לא נמצא '{keyword}' ביומן.")
+    except FileNotFoundError:
+        print("אין עדיין יומן.")
+
+# תפריט ראשי
+while True:
+    print("\n=== היומן שלי ===")
+    print("1. כתוב רשומה חדשה")
+    print("2. קרא את היומן")
+    print("3. חפש ביומן")
+    print("4. יציאה")
+
+    choice = input("בחר: ")
+
+    if choice == "1":
+        add_entry()
+    elif choice == "2":
+        read_entries()
+    elif choice == "3":
+        keyword = input("מילת חיפוש: ")
+        search_entries(keyword)
+    elif choice == "4":
+        print("להתראות!")
+        break
+    else:
+        print("בחירה לא תקינה!")
+</pre>
+        <ol class="steps" start="2">
+            <li>הרץ את התוכנית, כתוב כמה רשומות, קרא אותן, וחפש מילה</li>
+            <li>בונוס: הוסף אפשרות למחוק רשומות!</li>
+        </ol>
+    </div>
+
+    <div class="mission-complete">
+        <h3>🎉 שיעור 8 הושלם!</h3>
+        <p>למדת: שיטות מחרוזת, f-strings, פורמט מספרים, קריאה וכתיבה לקבצים, CSV בסיסי, ובנית אפליקציית יומן אישי!</p>
+        <p style="margin-top: 12px;"><a href="lesson09-errors-modules.html" style="color: #58a6ff; font-weight: bold;">המשך לשיעור 9: טיפול בשגיאות ומודולים →</a></p>
+    </div>
+
+</div>
+
+<!-- Popup Modal -->
+<div class="popup-overlay" id="popup-overlay" onclick="closePopup()">
+    <div class="popup" id="popup" onclick="event.stopPropagation()">
+        <div class="emoji" id="popup-emoji"></div>
+        <h3 id="popup-title"></h3>
+        <p id="popup-message"></p>
+        <button onclick="closePopup()">סגור</button>
+    </div>
+</div>
+
+<script>
+function checkAnswer(inputId, correctAnswers, successMsg, failMsg) {
+    var input = document.getElementById(inputId);
+    var val = input.value.trim();
+    var isCorrect = false;
+    for (var i = 0; i < correctAnswers.length; i++) {
+        if (val === correctAnswers[i] || val.toLowerCase() === correctAnswers[i].toLowerCase()) { isCorrect = true; break; }
+    }
+    var overlay = document.getElementById('popup-overlay');
+    var emoji = document.getElementById('popup-emoji');
+    var title = document.getElementById('popup-title');
+    var message = document.getElementById('popup-message');
+    var popup = document.getElementById('popup');
+    if (isCorrect) { emoji.textContent = '🎉'; title.textContent = 'כל הכבוד!'; message.textContent = successMsg; popup.className = 'popup correct'; }
+    else { emoji.textContent = '🤔'; title.textContent = 'נסה שוב'; message.textContent = failMsg; popup.className = 'popup incorrect'; }
+    overlay.style.display = 'flex';
+}
+function closePopup() { document.getElementById('popup-overlay').style.display = 'none'; }
+</script>
+
+</body>
+</html>

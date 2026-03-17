@@ -1,0 +1,1850 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>רחפן ESP32 זעיר - מדריך בנייה</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #e8e8e8;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #00d4ff;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #ff6b35;
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+
+        .intro-box {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(255, 107, 53, 0.1));
+            border: 2px solid #00d4ff;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .intro-box h2 {
+            color: #00d4ff;
+            margin-top: 0;
+        }
+
+        .time-total {
+            background: rgba(255, 107, 53, 0.2);
+            border: 1px solid #ff6b35;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .time-total span {
+            font-size: 1.5em;
+            color: #ff6b35;
+            font-weight: bold;
+        }
+
+        /* Mission Header */
+        .mission-header {
+            background: linear-gradient(90deg, #00d4ff, #0099cc);
+            color: #1a1a2e;
+            padding: 15px 20px;
+            border-radius: 10px 10px 0 0;
+            margin-top: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .mission-header h2 {
+            margin: 0;
+            font-size: 1.4em;
+        }
+
+        .time-estimate {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            color: white;
+        }
+
+        .mission-content {
+            background: rgba(0, 212, 255, 0.05);
+            border: 2px solid #00d4ff;
+            border-top: none;
+            border-radius: 0 0 10px 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        /* Exercise Box */
+        .exercise {
+            background: rgba(0, 255, 136, 0.05);
+            border: 2px solid #00ff88;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .exercise h3 {
+            color: #00ff88;
+            margin-top: 0;
+            border-bottom: 1px solid rgba(0, 255, 136, 0.3);
+            padding-bottom: 10px;
+        }
+
+        .steps {
+            padding-right: 0;
+            padding-left: 0;
+            list-style: none;
+            counter-reset: step-counter;
+        }
+
+        .steps li {
+            counter-increment: step-counter;
+            margin: 12px 0;
+            padding-right: 40px;
+            position: relative;
+        }
+
+        .steps li::before {
+            content: counter(step-counter);
+            position: absolute;
+            right: 0;
+            top: 0;
+            background: #00ff88;
+            color: #1a1a2e;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.85em;
+        }
+
+        /* What You Should See */
+        .what-you-see {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .what-you-see::before {
+            content: "מה אתה אמור לראות:";
+            display: block;
+            color: #58a6ff;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .what-you-see pre {
+            margin: 0;
+            white-space: pre;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            color: #c9d1d9;
+            line-height: 1.4;
+            direction: ltr;
+            text-align: left;
+        }
+
+        /* Diagram Box */
+        .diagram {
+            background: #0d1117;
+            border: 2px solid #ff6b35;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+
+        .diagram-title {
+            color: #ff6b35;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .diagram pre {
+            margin: 0;
+            white-space: pre;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8em;
+            color: #e8e8e8;
+            line-height: 1.3;
+            direction: ltr;
+            text-align: left;
+        }
+
+        /* Warning Box */
+        .warning {
+            background: rgba(255, 193, 7, 0.15);
+            border-right: 4px solid #ffc107;
+            border-left: none;
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 8px 0 0 8px;
+        }
+
+        .warning::before {
+            content: "⚠️ אזהרה: ";
+            font-weight: bold;
+            color: #ffc107;
+        }
+
+        /* Checkpoint */
+        .checkpoint {
+            background: rgba(0, 255, 136, 0.1);
+            border-right: 5px solid #00ff88;
+            border-left: none;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 10px 0 0 10px;
+        }
+
+        .checkpoint strong {
+            color: #00ff88;
+        }
+
+        /* Answer Box */
+        .answer-box {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px dashed #00d4ff;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .answer-box label {
+            display: block;
+            color: #00d4ff;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .answer-box input[type="text"] {
+            width: calc(100% - 120px);
+            padding: 10px 15px;
+            border: 2px solid #444;
+            border-radius: 8px;
+            background: #1a1a2e;
+            color: #e8e8e8;
+            font-size: 1em;
+            margin-left: 10px;
+        }
+
+        .answer-box input[type="text"]:focus {
+            outline: none;
+            border-color: #00d4ff;
+        }
+
+        .answer-box input.ltr {
+            direction: ltr;
+            text-align: left;
+        }
+
+        .check-btn {
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            color: #1a1a2e;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .check-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 212, 255, 0.4);
+        }
+
+        .feedback {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .feedback.correct {
+            display: block;
+            background: rgba(0, 255, 136, 0.2);
+            border: 1px solid #00ff88;
+            color: #00ff88;
+        }
+
+        .feedback.incorrect {
+            display: block;
+            background: rgba(255, 82, 82, 0.2);
+            border: 1px solid #ff5252;
+            color: #ff5252;
+        }
+
+        /* Mission Complete */
+        .mission-complete {
+            background: linear-gradient(135deg, rgba(156, 39, 176, 0.2), rgba(103, 58, 183, 0.2));
+            border: 2px solid #9c27b0;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 25px 0;
+            text-align: center;
+        }
+
+        .mission-complete h3 {
+            color: #e040fb;
+            margin-top: 0;
+            font-size: 1.5em;
+        }
+
+        /* Parts Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th {
+            background: rgba(0, 212, 255, 0.3);
+            color: #00d4ff;
+            padding: 12px;
+            text-align: right;
+        }
+
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Code Block */
+        code {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #ff6b35;
+            direction: ltr;
+        }
+
+        /* Tip Box */
+        .tip {
+            background: rgba(0, 212, 255, 0.1);
+            border-right: 4px solid #00d4ff;
+            border-left: none;
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 8px 0 0 8px;
+        }
+
+        .tip::before {
+            content: "💡 טיפ: ";
+            font-weight: bold;
+            color: #00d4ff;
+        }
+
+        /* Final Section */
+        .final-section {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(255, 107, 53, 0.2));
+            border: 3px solid #00d4ff;
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        .final-section h2 {
+            color: #00d4ff;
+            font-size: 2em;
+            margin-top: 0;
+        }
+
+        /* Popup Modal */
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popup {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border: 3px solid #00d4ff;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 400px;
+            text-align: center;
+            animation: popIn 0.3s ease;
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .popup.correct {
+            border-color: #00ff88;
+        }
+
+        .popup.incorrect {
+            border-color: #ff5252;
+        }
+
+        .popup .emoji {
+            font-size: 4em;
+            margin-bottom: 15px;
+        }
+
+        .popup h3 {
+            color: #00d4ff;
+            margin: 0 0 15px 0;
+        }
+
+        .popup.correct h3 {
+            color: #00ff88;
+        }
+
+        .popup.incorrect h3 {
+            color: #ff5252;
+        }
+
+        .popup button {
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            color: #1a1a2e;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            margin-top: 15px;
+        }
+
+        /* Wiring Checklist */
+        .checklist {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin: 15px 0;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            margin: 8px 0;
+        }
+
+        .checklist-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-left: 12px;
+            margin-right: 0;
+            cursor: pointer;
+        }
+
+        .checklist-item label {
+            cursor: pointer;
+        }
+
+        .checklist-item input:checked + label {
+            text-decoration: line-through;
+            color: #00ff88;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚁 רחפן ESP32 זעיר</h1>
+        <p class="subtitle">בנה רחפן קוואדקופטר נשלט מהסמארטפון שלך</p>
+
+        <div class="intro-box">
+            <h2>מה נבנה</h2>
+            <p>רחפן מיני קוואדקופטר נשלט מהסמארטפון שלך דרך Wi-Fi. הוא משתמש ב:</p>
+            <ul>
+                <li><strong>ESP32-C3 SuperMini</strong> - המוח (מריץ קוד ויוצר נקודת Wi-Fi)</li>
+                <li><strong>MPU6050</strong> - חיישן תנועה (מזהה הטיה לייצוב אוטומטי)</li>
+                <li><strong>בקרי L9110S</strong> - בקרי מנועים (2 בקרים ל-4 מנועים)</li>
+                <li><strong>ממיר MT3608</strong> - מעלה מתח מ-3.7V ל-5V</li>
+                <li><strong>סוללת LiPo</strong> - מקור כוח 600mAh (4-6 דקות טיסה)</li>
+            </ul>
+
+            <div class="time-total">
+                <span>⏱️ זמן בנייה כולל: 4-6 שעות</span>
+                <p>(מומלץ לפרוס על 2-3 מפגשים)</p>
+            </div>
+        </div>
+
+        <!-- משימה 0: חלקים וכלים -->
+        <div class="mission-header">
+            <h2>משימה 0: איסוף חלקים וכלים</h2>
+            <span class="time-estimate">⏱️ 15 דקות</span>
+        </div>
+        <div class="mission-content">
+            <p>לפני שמתחילים, וודא שיש לך הכל מוכן.</p>
+
+            <div class="exercise">
+                <h3>תרגיל 0.1: רשימת חלקים</h3>
+                <p>סמן כל רכיב שמצאת:</p>
+
+                <table>
+                    <tr><th>רכיב</th><th>כמות</th><th>יש?</th></tr>
+                    <tr><td>ESP32-C3 SuperMini</td><td>1</td><td><input type="checkbox"></td></tr>
+                    <tr><td>חיישן MPU6050 (GY-521)</td><td>1</td><td><input type="checkbox"></td></tr>
+                    <tr><td>בקר מנועים L9110S</td><td>2</td><td><input type="checkbox"></td></tr>
+                    <tr><td>ממיר מתח MT3608</td><td>1</td><td><input type="checkbox"></td></tr>
+                    <tr><td>מנועים 8520 (8.5×20mm)</td><td>4</td><td><input type="checkbox"></td></tr>
+                    <tr><td>מדחפים 65mm (2 CW, 2 CCW)</td><td>4</td><td><input type="checkbox"></td></tr>
+                    <tr><td>סוללת LiPo 600mAh 3.7V</td><td>1</td><td><input type="checkbox"></td></tr>
+                    <tr><td>מקלות ארטיק</td><td>2</td><td><input type="checkbox"></td></tr>
+                    <tr><td>סרט ספוג</td><td>רצועה 1</td><td><input type="checkbox"></td></tr>
+                    <tr><td>חוטים (26 & 30 AWG)</td><td>מגוון</td><td><input type="checkbox"></td></tr>
+                    <tr><td>אקדח דבק חם</td><td>1</td><td><input type="checkbox"></td></tr>
+                    <tr><td>רצועת סקוטש</td><td>1</td><td><input type="checkbox"></td></tr>
+                </table>
+            </div>
+
+            <div class="exercise">
+                <h3>תרגיל 0.2: רשימת כלים</h3>
+                <table>
+                    <tr><th>כלי</th><th>יש?</th></tr>
+                    <tr><td>מלחם והלחמה</td><td><input type="checkbox"></td></tr>
+                    <tr><td>מקדחה עם מקדח 7mm</td><td><input type="checkbox"></td></tr>
+                    <tr><td>מפשיט חוטים</td><td><input type="checkbox"></td></tr>
+                    <tr><td>מולטימטר</td><td><input type="checkbox"></td></tr>
+                    <tr><td>מברג קטן</td><td><input type="checkbox"></td></tr>
+                    <tr><td>מחשב עם Arduino IDE</td><td><input type="checkbox"></td></tr>
+                    <tr><td>סמארטפון</td><td><input type="checkbox"></td></tr>
+                </table>
+            </div>
+
+            <div class="checkpoint">
+                ✅ <strong>עצור!</strong> וודא שיש לך את כל החלקים לפני שממשיכים. חלק חסר אחד יעצור את הבנייה.
+            </div>
+
+            <div class="mission-complete">
+                <h3>🎉 משימה 0 הושלמה!</h3>
+                <p>יש לך את כל החלקים והכלים מוכנים. בוא נבנה!</p>
+            </div>
+        </div>
+
+        <!-- משימה 1: בניית השלדה -->
+        <div class="mission-header">
+            <h2>משימה 1: בניית השלדה</h2>
+            <span class="time-estimate">⏱️ 30 דקות</span>
+        </div>
+        <div class="mission-content">
+            <p>השלדה עשויה משני מקלות ארטיק מודבקים בצורת +.</p>
+
+            <div class="exercise">
+                <h3>תרגיל 1.1: סימון המרכזים</h3>
+                <ol class="steps">
+                    <li>קח את שני מקלות הארטיק (12 ס"מ כל אחד)</li>
+                    <li>מדוד 6 ס"מ מכל קצה - זה המרכז</li>
+                    <li>סמן את נקודת המרכז על כל מקל בעיפרון</li>
+                </ol>
+
+                <div class="diagram">
+                    <div class="diagram-title">מדידת מקל ארטיק:</div>
+<pre>
+←────── 12cm total ──────→
+
+←─ 6cm ─→│←─ 6cm ─→
+         ✕
+     center mark
+</pre>
+                </div>
+
+                <p><strong>מה האורך הכולל של כל מקל ארטיק?</strong></p>
+                <div class="answer-box">
+                    <label>התשובה שלך (בס"מ):</label>
+                    <input type="text" id="answer-1-1" placeholder="הכנס מספר...">
+                    <button class="check-btn" onclick="checkAnswer('answer-1-1', ['12', '12cm'], 'נכון! כל מקל הוא 12 ס״מ.', 'לא בדיוק. מדוד מקצה לקצה.')">בדוק</button>
+                    <div class="feedback" id="feedback-1-1"></div>
+                </div>
+            </div>
+
+            <div class="exercise">
+                <h3>תרגיל 1.2: הדבקת הצלב</h3>
+                <ol class="steps">
+                    <li>הנח מקל אחד שטוח על השולחן</li>
+                    <li>הנח את המקל השני בניצב (90°) מעליו</li>
+                    <li>יישר את סימני המרכז בדיוק</li>
+                    <li>השתמש בפינת נייר לבדיקת זווית 90°</li>
+                    <li>מרח דבק חם בנקודת החיבור</li>
+                    <li>החזק 30 שניות עד שהדבק מתקשה</li>
+                    <li>המתן 10 דקות להתייבשות</li>
+                </ol>
+
+                <div class="diagram">
+                    <div class="diagram-title">הרכבת השלדה (מבט מלמעלה):</div>
+<pre>
+              F (Front)
+                 │
+                 │
+    L ───────────╬─────────── R
+   (Left)        │        (Right)
+                 │
+                 │
+              B (Back)
+
+╬ = נקודת הדבקה (מרכז)
+פרישה כוללת: ~12 ס"מ מקצה לקצה
+</pre>
+                </div>
+
+                <div class="tip">השתמש במינימום דבק - טיפה בגודל אפונה מספיקה. יותר מדי דבק מוסיף משקל!</div>
+            </div>
+
+            <div class="exercise">
+                <h3>תרגיל 1.3: סימון הזרועות</h3>
+                <ol class="steps">
+                    <li>בחר איזו זרוע תהיה "קדימה" (לעברך)</li>
+                    <li>כתוב F, R, B, L על כל זרוע בטוש</li>
+                    <li>קדימה וימין יקבלו מנועי CW (עם כיוון השעון)</li>
+                    <li>אחורה ושמאל יקבלו מנועי CCW (נגד כיוון השעון)</li>
+                </ol>
+
+                <div class="warning">תמיד שמור על אותו כיוון! הרחפן לא יתאזן אם תערבב את הזרועות.</div>
+            </div>
+
+            <div class="exercise">
+                <h3>תרגיל 1.4: קידוח חורי המנועים</h3>
+                <ol class="steps">
+                    <li>מדוד 1 ס"מ פנימה מקצה כל זרוע</li>
+                    <li>סמן את נקודות הקידוח</li>
+                    <li>קדח חורים בקוטר 7mm, לעומק כ-9mm</li>
+                    <li>אל תקדח עד הסוף!</li>
+                    <li>נקה שאריות עץ עם אוויר או נפיחה</li>
+                </ol>
+
+                <div class="diagram">
+                    <div class="diagram-title">מיקומי חורי המנועים:</div>
+<pre>
+                 ⊗ (Motor 1)
+                 ↑
+                1cm from tip
+                 │
+     ⊗ ──────────╬────────── ⊗
+  (Motor 4)      │       (Motor 2)
+                 │
+                 ⊗ (Motor 3)
+
+⊗ = קדח חור 7mm, עומק 9mm
+</pre>
+                </div>
+
+                <p><strong>לאיזה עומק צריך לקדח כל חור?</strong></p>
+                <div class="answer-box">
+                    <label>התשובה שלך (ב-mm):</label>
+                    <input type="text" id="answer-1-4" placeholder="הכנס מספר...">
+                    <button class="check-btn" onclick="checkAnswer('answer-1-4', ['9', '9mm'], 'נכון! 9mm מושלם למנוע של 20mm.', 'בדוק שוב את ההוראות - לאיזה עומק?')">בדוק</button>
+                    <div class="feedback" id="feedback-1-4"></div>
+                </div>
+            </div>
+
+            <div class="checkpoint">
+                ✅ <strong>עצור!</strong> בדוק את השלדה שלך:
+                <ul>
+                    <li>הזרועות בדיוק בזווית 90°</li>
+                    <li>כל 4 החורים נקדחו לעומק 9mm</li>
+                    <li>הזרועות מסומנות F, R, B, L</li>
+                    <li>השלדה יציבה (לא רופפת)</li>
+                </ul>
+            </div>
+
+            <div class="mission-complete">
+                <h3>🎉 משימה 1 הושלמה!</h3>
+                <p>בנית את שלדת הרחפן עם 4 חורים להתקנת מנועים.</p>
+            </div>
+        </div>
+
+        <!-- משימה 2: התקנת מנועים -->
+        <div class="mission-header">
+            <h2>משימה 2: התקנת המנועים</h2>
+            <span class="time-estimate">⏱️ 25 דקות</span>
+        </div>
+        <div class="mission-content">
+            <p>התקן את 4 המנועים עם כיווני סיבוב נכונים.</p>
+
+            <div class="exercise">
+                <h3>תרגיל 2.1: הבנת כיווני סיבוב</h3>
+                <p>קוואדקופטרים צריכים מנועים שמסתובבים בכיוונים ספציפיים לאיזון:</p>
+
+                <div class="diagram">
+                    <div class="diagram-title">תבנית סיבוב המנועים:</div>
+<pre>
+         Motor 1 (Front)
+              ⊕
+              ↻ CW (Clockwise)
+              │
+              │
+Motor 4  ─────┼───── Motor 2
+   ⊕          │          ⊕
+ ↺ CCW        │        ↻ CW
+              │
+              ⊕
+         Motor 3 (Back)
+           ↺ CCW
+
+Front + Right = CW (↻) עם כיוון השעון
+Back + Left = CCW (↺) נגד כיוון השעון
+</pre>
+                </div>
+
+                <p><strong>אילו מנועים מסתובבים עם כיוון השעון (CW)?</strong></p>
+                <div class="answer-box">
+                    <label>התשובה שלך:</label>
+                    <input type="text" id="answer-2-1" placeholder="לדוגמה: קדימה ו...">
+                    <button class="check-btn" onclick="checkAnswer('answer-2-1', ['קדימה וימין', 'קדימה, ימין', 'front and right', '1 and 2', '1, 2'], 'נכון! מנועי קדימה וימין מסתובבים עם כיוון השעון.', 'חשוב על הדיאגרמה - אילו שניים מסתובבים CW?')">בדוק</button>
+                    <div class="feedback" id="feedback-2-1"></div>
+                </div>
+            </div>
+
+            <div class="exercise">
+                <h3>תרגיל 2.2: הכנסת המנועים</h3>
+                <ol class="steps">
+                    <li>קח מנוע 8520 (8.5×20mm) אחד</li>
+                    <li>הכנס אותו לחור כשהציר מצביע למעלה</li>
+                    <li>דחוף עד שגוף המנוע בחצי החור</li>
+                    <li>המנוע צריך להיכנס הדוק אבל לא בכוח</li>
+                    <li>חזור על זה לכל 4 המנועים</li>
+                </ol>
+
+                <div class="diagram">
+                    <div class="diagram-title">התקנת מנוע (מבט צד):</div>
+<pre>
+             ↑ Shaft up (for propeller)
+┌────────────┼────────────┐
+│            ╔═╗          │  ← Frame surface
+│            ║ ║          │
+│            ║ ║ ← Motor  │
+│   Glue → ◯╚═╝◯         │     halfway in
+│            hole         │
+└─────────────────────────┘
+
+◯ = מרח טבעת דקה של דבק חם
+</pre>
+                </div>
+
+                <div class="warning">אל תמרח דבק על ציר המנוע או המיסבים! רק דבק סביב השפה שבה המנוע פוגש את העץ.</div>
+            </div>
+
+            <div class="exercise">
+                <h3>תרגיל 2.3: איטום בדבק</h3>
+                <ol class="steps">
+                    <li>מרח טבעת דקה של דבק חם סביב שפת כל מנוע</li>
+                    <li>וודא שהדבק נוגע גם בגוף המנוע וגם בעץ</li>
+                    <li>שמור דבק הרחק מהציר</li>
+                    <li>המתן 24 שעות להתייבשות מלאה לחוזק מקסימלי</li>
+                </ol>
+
+                <div class="tip">אפשר להמשיך עם שלבים אחרים בזמן שהדבק מתייבש - רק תהיה עדין עם השלדה.</div>
+            </div>
+
+            <div class="checkpoint">
+                ✅ <strong>עצור!</strong> סובב כל ציר מנוע עם האצבע:
+                <ul>
+                    <li>כל 4 הצירים צריכים להסתובב בחופשיות</li>
+                    <li>אין שפשוף או התנגדות</li>
+                    <li>המנועים לא מתנועעים בחורים שלהם</li>
+                </ul>
+            </div>
+
+            <div class="mission-complete">
+                <h3>🎉 משימה 2 הושלמה!</h3>
+                <p>כל 4 המנועים מותקנים ומאובטחים.</p>
+            </div>
+        </div>
+
+        <!-- משימה 3: כיוון MT3608 -->
+        <div class="mission-header">
+            <h2>משימה 3: כיוון ממיר המתח</h2>
+            <span class="time-estimate">⏱️ 15 דקות</span>
+        </div>
+        <div class="mission-content">
+            <p>ממיר MT3608 מעלה 3.7V מהסוללה ל-5V עבור האלקטרוניקה.</p>
+
+            <div class="exercise">
+                <h3>תרגיל 3.1: הכנת הבדיקה</h3>
+                <ol class="steps">
+                    <li>הגדר את המולטימטר למתח DC (V⎓)</li>
+                    <li>חבר גששן אדום ל-MT3608 OUT+</li>
+                    <li>חבר גששן שחור ל-MT3608 OUT-</li>
+                    <li>חבר אדום מהסוללה ל-MT3608 IN+</li>
+                    <li>חבר שחור מהסוללה ל-MT3608 IN-</li>
+                </ol>
+
+                <div class="diagram">
+                    <div class="diagram-title">הגדרת כיוון MT3608:</div>
+<pre>
+Battery (3.7V)         Multimeter
+┌─────────┐           ┌──────────┐
+│  +  -   │           │  ?.??V   │
+└──┬──┬───┘           └──┬───┬───┘
+   │  │                  │   │
+ RED BLACK             RED BLACK
+   │  │                  │   │
+   ▼  ▼                  ▼   ▼
+┌─────────────────────────────┐
+│ IN+  IN-       OUT+  OUT-   │
+│                             │
+│       MT3608 Booster        │
+│                             │
+│         ╔═╗ ← Adjustment    │
+│         ║▲║    screw        │
+│         ╚═╝                 │
+└─────────────────────────────┘
+
+סובב: ↻ = מתח גבוה יותר
+      ↺ = מתח נמוך יותר
+</pre>
+                </div>
+            </div>
+
+            <div class="exercise">
+                <h3>תרגיל 3.2: כיוון ל-5.0V</h3>
+                <ol class="steps">
+                    <li>המולטימטר מציג את מתח הפלט הנוכחי</li>
+                    <li>השתמש במברג קטן על בורג הכיוון</li>
+                    <li>סובב עם כיוון השעון (↻) להעלאת מתח</li>
+                    <li>סובב נגד כיוון השעון (↺) להורדת מתח</li>
+                    <li>כוון עד שהמולטימטר מראה 5.0V (±0.1V בסדר)</li>
+                    <li>נתק את הסוללה כשסיימת</li>
+                </ol>
+
+                <div class="what-you-see">
+<pre>
+Multimeter reading: 5.00V
+(מ-4.9V עד 5.1V זה מקובל)
+</pre>
+                </div>
+
+                <p><strong>איזה מתח צריך MT3608 להוציא?</strong></p>
+                <div class="answer-box">
+                    <label>התשובה שלך (ב-V):</label>
+                    <input type="text" id="answer-3-2" placeholder="הכנס מתח...">
+                    <button class="check-btn" onclick="checkAnswer('answer-3-2', ['5', '5.0', '5v', '5.0v'], 'נכון! 5.0V הוא מתח היעד.', 'איזה מתח צריכים ESP32 ו-L9110S?')">בדוק</button>
+                    <div class="feedback" id="feedback-3-2"></div>
+                </div>
+            </div>
+
+            <div class="warning">לעולם אל תעלה מעל 5.5V! מתח גבוה יותר יכול להזיק ל-ESP32.</div>
+
+            <div class="checkpoint">
+                ✅ <strong>עצור!</strong> וודא שפלט MT3608 יציב על 5.0V לפני שממשיכים.
+            </div>
+
+            <div class="mission-complete">
+                <h3>🎉 משימה 3 הושלמה!</h3>
+                <p>ממיר המתח שלך מכוון לפלט 5.0V.</p>
+            </div>
+        </div>
+
+        <!-- משימה 4: התקנת אלקטרוניקה -->
+        <div class="mission-header">
+            <h2>משימה 4: התקנת האלקטרוניקה</h2>
+            <span class="time-estimate">⏱️ 30 דקות</span>
+        </div>
+        <div class="mission-content">
+            <p>חבר את כל הרכיבים האלקטרוניים לשלדה באמצעות סרט.</p>
+
+            <div class="exercise">
+                <h3>תרגיל 4.1: פריסת הרכיבים</h3>
+                <p>למד לאן הולך כל רכיב:</p>
+
+                <div class="diagram">
+                    <div class="diagram-title">פריסת רכיבים (מבט מלמעלה):</div>
+<pre>
+            Motor 1 (Front)
+                 ⊕
+                 │
+                 │
+Motor 4 ─────────┼───────── Motor 2
+    ⊕            │              ⊕
+    │        ┌───┴───┐          │
+    │        │ ESP32 │          │
+    │        │DevKit │          │
+    │        │ USB→  │          │
+    │        └───────┘          │
+    │        ┌──────┐           │
+┌───┴───┐    │MPU   │     ┌─────┴───┐
+│L9110S │    │6050  │     │ L9110S  │
+│Driver2│    │sensor│     │ Driver1 │
+└───────┘    └──────┘     └─────────┘
+(Back+Left) (על ספוג)   (Front+Right)
+    │                          │
+    ⊕
+Motor 3 (Back)
+</pre>
+                </div>
+            </div>
+
+            <div class="exercise">
+                <h3>תרגיל 4.2: התקנת ESP32</h3>
+                <ol class="steps">
+                    <li>הדבק סרט דו-צדדי לתחתית ESP32</li>
+                    <li>הנח במרכז השלדה</li>
+                    <li>יציאת USB צריכה לפנות החוצה (לתכנות קל)</li>
+                    <li>לחץ חזק למשך 10 שניות</li>
+                </ol>
+            </div>
+
+            <div class="exercise">
+                <h3>תרגיל 4.3: התקנת MPU6050 (חשוב!)</h3>
+                <ol class="steps">
+                    <li>השתמש בסרט ספוג (לא סרט רגיל!)</li>
+                    <li>הדבק סרט ספוג לתחתית MPU6050</li>
+                    <li>הנח מאחורי ESP32</li>
+                    <li>לחץ בעדינות (אל תמעך את הספוג)</li>
+                </ol>
+
+                <div class="warning">חובה להשתמש בסרט ספוג ל-MPU6050! הספוג סופג רעידות מנועים. בלעדיו, קריאות החיישן יהיו רועשות והרחפן לא יתייצב.</div>
+
+                <p><strong>למה חייבים להשתמש בסרט ספוג ל-MPU6050?</strong></p>
+                <div class="answer-box">
+                    <label>התשובה שלך:</label>
+                    <input type="text" id="answer-4-3" placeholder="כתוב סיבה...">
+                    <button class="check-btn" onclick="checkAnswer('answer-4-3', ['רעידות', 'רעידה', 'vibration', 'ספוג', 'רעש'], 'נכון! הספוג סופג רעידות מנועים לקריאות חיישן נקיות יותר.', 'חשוב מה מנועים עושים כשהם מסתובבים מהר...')">בדוק</button>
+                    <div class="feedback" id="feedback-4-3"></div>
+                </div>
+            </div>
+
+            <div class="exercise">
+                <h3>תרגיל 4.4: התקנת בקרי L9110S</h3>
+                <ol class="steps">
+                    <li>L9110S #1: התקן על זרוע ימין (שולט במנועי קדימה + ימין)</li>
+                    <li>L9110S #2: התקן על זרוע שמאל (שולט במנועי אחורה + שמאל)</li>
+                    <li>השתמש בסרט דו-צדדי</li>
+                    <li>מקם כך שהפינים נגישים לחיווט</li>
+                </ol>
+            </div>
+
+            <div class="exercise">
+                <h3>תרגיל 4.5: התקנת MT3608 וסוללה</h3>
+                <ol class="steps">
+                    <li>MT3608: הדבק מתחת למרכז השלדה (צד תחתון)</li>
+                    <li>מקם כך שבורג הכיוון נגיש</li>
+                    <li>סוללה: חבר רצועת סקוטש לתחתית השלדה</li>
+                    <li>הסוללה נכנסת לסקוטש (חייבת להיות ניתנת להסרה!)</li>
+                </ol>
+
+                <div class="diagram">
+                    <div class="diagram-title">מבט צד - שכבות אנכיות:</div>
+<pre>
+Propellers (on motors)    ← למעלה
+       │
+   ┌───┴───┐
+   │ ESP32 │              ← אלקטרוניקה
+   ├───────┤
+   │MPU6050│  (על ספוג!)
+═══════════════════       ← שלדה
+   │MT3608 │              ← מתחת לשלדה
+   ├───────┤
+   │Battery│  (סקוטש)     ← למטה
+   └───────┘
+</pre>
+                </div>
+            </div>
+
+            <div class="checkpoint">
+                ✅ <strong>עצור!</strong> בדוק מיקום רכיבים:
+                <ul>
+                    <li>ESP32 במרכז, יציאת USB נגישה</li>
+                    <li>MPU6050 על סרט ספוג מאחורי ESP32</li>
+                    <li>שני בקרי L9110S מותקנים על זרועות צד</li>
+                    <li>MT3608 מתחת לשלדה, בורג נגיש</li>
+                    <li>מחזיק סוללה (סקוטש) מחובר</li>
+                </ul>
+            </div>
+
+            <div class="mission-complete">
+                <h3>🎉 משימה 4 הושלמה!</h3>
+                <p>כל האלקטרוניקה מותקנת וממוקמת.</p>
+            </div>
+        </div>
+
+        <!-- משימה 5: חיווט חשמל -->
+        <div class="mission-header">
+            <h2>משימה 5: חיווט חשמל</h2>
+            <span class="time-estimate">⏱️ 45 דקות</span>
+        </div>
+        <div class="mission-content">
+            <p>חבר את כל חוטי החשמל. השתמש באדום ל-+, שחור ל-GND.</p>
+
+            <div class="exercise">
+                <h3>תרגיל 5.1: סקירת חלוקת חשמל</h3>
+                <div class="diagram">
+                    <div class="diagram-title">זרימת חשמל מלאה:</div>
+<pre>
+Battery (3.7V)
+    │
+    ├── RED ──→ MT3608 IN+
+    └── BLACK → MT3608 IN- (GND)
+                    │
+                    ├── OUT+ (5V) ──┬──→ ESP32 VIN
+                    │               ├──→ L9110S #1 VCC
+                    │               └──→ L9110S #2 VCC
+                    │
+                    └── OUT- (GND) ─┬──→ ESP32 GND
+                                    ├──→ L9110S #1 GND
+                                    ├──→ L9110S #2 GND
+                                    └──→ MPU6050 GND
+
+ESP32 3.3V ──→ MPU6050 VCC (החיישן צריך 3.3V, לא 5V!)
+</pre>
+                </div>
+            </div>
+
+            <div class="exercise">
+                <h3>תרגיל 5.2: סוללה ל-MT3608</h3>
+                <ol class="steps">
+                    <li>הלחם חוט אדום ממחבר הסוללה ל-MT3608 IN+</li>
+                    <li>הלחם חוט שחור ממחבר הסוללה ל-MT3608 IN-</li>
+                </ol>
+
+                <div class="warning">תמיד בדוק קוטביות! אדום ל-+, שחור ל-. קוטביות הפוכה תזיק לרכיבים.</div>
+            </div>
+
+            <div class="exercise">
+                <h3>תרגיל 5.3: MT3608 ל-ESP32</h3>
+                <ol class="steps">
+                    <li>הלחם חוט אדום מ-MT3608 OUT+ לפין VIN של ESP32</li>
+                    <li>הלחם חוט שחור מ-MT3608 OUT- לפין GND של ESP32</li>
+                </ol>
+            </div>
+
+            <div class="exercise">
+                <h3>תרגיל 5.4: MT3608 לבקרי L9110S</h3>
+                <ol class="steps">
+                    <li>MT3608 OUT+ → L9110S #1 VCC (השתמש במפצל או חיבור הלחמה)</li>
+                    <li>MT3608 OUT+ → L9110S #2 VCC</li>
+                    <li>MT3608 OUT- → L9110S #1 GND</li>
+                    <li>MT3608 OUT- → L9110S #2 GND</li>
+                </ol>
+
+                <div class="tip">שני הבקרים מתחברים לאותו מקור חשמל (חיבור מקבילי). השתמש במפצלי חוט לפיצול החשמל.</div>
+            </div>
+
+            <div class="exercise">
+                <h3>תרגיל 5.5: ESP32 ל-MPU6050</h3>
+                <ol class="steps">
+                    <li>פין 3.3V של ESP32 → VCC של MPU6050</li>
+                    <li>GND של ESP32 → GND של MPU6050</li>
+                </ol>
+
+                <div class="warning">MPU6050 צריך 3.3V, לא 5V! שימוש ב-5V יזיק לחיישן. ל-ESP32 יש פלט 3.3V מובנה - השתמש בו.</div>
+
+                <p><strong>איזה מתח צריך חיישן MPU6050?</strong></p>
+                <div class="answer-box">
+                    <label>התשובה שלך (ב-V):</label>
+                    <input type="text" id="answer-5-5" placeholder="הכנס מתח...">
+                    <button class="check-btn" onclick="checkAnswer('answer-5-5', ['3.3', '3.3v'], 'נכון! MPU6050 רץ על 3.3V.', 'זה פחות מ-5V... בדוק את פיני הפלט של ESP32.')">בדוק</button>
+                    <div class="feedback" id="feedback-5-5"></div>
+                </div>
+            </div>
+
+            <div class="exercise">
+                <h3>תרגיל 5.6: רשימת בדיקת חיווט</h3>
+                <div class="checklist">
+                    <div class="checklist-item">
+                        <input type="checkbox" id="p1"><label for="p1">Battery RED → MT3608 IN+</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="p2"><label for="p2">Battery BLACK → MT3608 IN-</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="p3"><label for="p3">MT3608 OUT+ → ESP32 VIN</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="p4"><label for="p4">MT3608 OUT+ → L9110S #1 VCC</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="p5"><label for="p5">MT3608 OUT+ → L9110S #2 VCC</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="p6"><label for="p6">כל GND מחוברים יחד</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="p7"><label for="p7">ESP32 3.3V → MPU6050 VCC</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="checkpoint">
+                ✅ <strong>עצור!</strong> השתמש במולטימטר לוודא:
+                <ul>
+                    <li>אין קצר בין + ל-GND</li>
+                    <li>עם סוללה מחוברת, VIN של ESP32 מראה 5.0V</li>
+                    <li>נורית ESP32 נדלקת כשהסוללה מחוברת</li>
+                </ul>
+            </div>
+
+            <div class="mission-complete">
+                <h3>🎉 משימה 5 הושלמה!</h3>
+                <p>כל חיווט החשמל מחובר. ESP32 אמור להידלק!</p>
+            </div>
+        </div>
+
+        <!-- משימה 6: חיווט מנועים -->
+        <div class="mission-header">
+            <h2>משימה 6: חיווט מנועים</h2>
+            <span class="time-estimate">⏱️ 30 דקות</span>
+        </div>
+        <div class="mission-content">
+            <p>חבר כל מנוע לפלט בקר L9110S שלו.</p>
+
+            <div class="exercise">
+                <h3>תרגיל 6.1: מפת מנוע-לבקר</h3>
+                <div class="diagram">
+                    <div class="diagram-title">מפת חיבור מנועים:</div>
+<pre>
+L9110S Driver #1 (על זרוע ימין):
+├── OUT1A/1B → Motor 1 (Front) RED/BLACK
+└── OUT2A/2B → Motor 2 (Right) RED/BLACK
+
+L9110S Driver #2 (על זרוע שמאל):
+├── OUT1A/1B → Motor 3 (Back) RED/BLACK
+└── OUT2A/2B → Motor 4 (Left) RED/BLACK
+</pre>
+                </div>
+            </div>
+
+            <div class="exercise">
+                <h3>תרגיל 6.2: חבר L9110S #1</h3>
+                <ol class="steps">
+                    <li>חוט אדום מנוע 1 (קדימה) → L9110S #1 OUT1A</li>
+                    <li>חוט שחור מנוע 1 (קדימה) → L9110S #1 OUT1B</li>
+                    <li>חוט אדום מנוע 2 (ימין) → L9110S #1 OUT2A</li>
+                    <li>חוט שחור מנוע 2 (ימין) → L9110S #1 OUT2B</li>
+                </ol>
+            </div>
+
+            <div class="exercise">
+                <h3>תרגיל 6.3: חבר L9110S #2</h3>
+                <ol class="steps">
+                    <li>חוט אדום מנוע 3 (אחורה) → L9110S #2 OUT1A</li>
+                    <li>חוט שחור מנוע 3 (אחורה) → L9110S #2 OUT1B</li>
+                    <li>חוט אדום מנוע 4 (שמאל) → L9110S #2 OUT2A</li>
+                    <li>חוט שחור מנוע 4 (שמאל) → L9110S #2 OUT2B</li>
+                </ol>
+
+                <div class="tip">שמור חוטי מנוע קצרים להפחתת משקל. נתב לאורך זרועות השלדה.</div>
+            </div>
+
+            <div class="checkpoint">
+                ✅ <strong>עצור!</strong> כל 4 המנועים צריכים להיות מחוברים לבקרים שלהם. בדוק שוב כל חיבור לפני שממשיכים.
+            </div>
+
+            <div class="mission-complete">
+                <h3>🎉 משימה 6 הושלמה!</h3>
+                <p>כל 4 המנועים מחוברים לבקרים שלהם.</p>
+            </div>
+        </div>
+
+        <!-- משימה 7: חיווט איתותים -->
+        <div class="mission-header">
+            <h2>משימה 7: חיווט איתותים</h2>
+            <span class="time-estimate">⏱️ 25 דקות</span>
+        </div>
+        <div class="mission-content">
+            <p>חבר איתותי בקרה מ-ESP32 לבקרים ולחיישן.</p>
+
+            <div class="exercise">
+                <h3>תרגיל 7.1: מפת פיני ESP32</h3>
+                <table>
+                    <tr><th>פין ESP32</th><th>מתחבר ל</th><th>מטרה</th></tr>
+                    <tr><td>Pin 25</td><td>L9110S #1 IN1</td><td>בקרת מנוע קדימה</td></tr>
+                    <tr><td>Pin 26</td><td>L9110S #1 IN2</td><td>בקרת מנוע ימין</td></tr>
+                    <tr><td>Pin 14</td><td>L9110S #2 IN3</td><td>בקרת מנוע אחורה</td></tr>
+                    <tr><td>Pin 27</td><td>L9110S #2 IN4</td><td>בקרת מנוע שמאל</td></tr>
+                    <tr><td>Pin 21 (SDA)</td><td>MPU6050 SDA</td><td>נתוני I2C</td></tr>
+                    <tr><td>Pin 22 (SCL)</td><td>MPU6050 SCL</td><td>שעון I2C</td></tr>
+                </table>
+            </div>
+
+            <div class="exercise">
+                <h3>תרגיל 7.2: חוטי בקרת מנועים</h3>
+                <ol class="steps">
+                    <li>ESP32 Pin 25 → L9110S #1 IN1</li>
+                    <li>ESP32 Pin 26 → L9110S #1 IN2</li>
+                    <li>ESP32 Pin 14 → L9110S #2 IN3</li>
+                    <li>ESP32 Pin 27 → L9110S #2 IN4</li>
+                </ol>
+
+                <p><strong>איזה פין ESP32 שולט במנוע הקדמי?</strong></p>
+                <div class="answer-box">
+                    <label>התשובה שלך:</label>
+                    <input type="text" id="answer-7-2" class="ltr" placeholder="מספר פין...">
+                    <button class="check-btn" onclick="checkAnswer('answer-7-2', ['25', 'pin 25', 'gpio 25'], 'נכון! פין 25 שולט במנוע הקדמי.', 'בדוק בטבלה למעלה עבור מנוע קדימה.')">בדוק</button>
+                    <div class="feedback" id="feedback-7-2"></div>
+                </div>
+            </div>
+
+            <div class="exercise">
+                <h3>תרגיל 7.3: חוטי חיישן I2C</h3>
+                <ol class="steps">
+                    <li>ESP32 Pin 21 (SDA) → MPU6050 SDA</li>
+                    <li>ESP32 Pin 22 (SCL) → MPU6050 SCL</li>
+                </ol>
+
+                <div class="tip">I2C משתמש בשני חוטים: SDA (נתונים) ו-SCL (שעון). שניהם נדרשים לתקשורת החיישן.</div>
+            </div>
+
+            <div class="exercise">
+                <h3>תרגיל 7.4: רשימת חיווט מלאה</h3>
+                <div class="checklist">
+                    <div class="checklist-item">
+                        <input type="checkbox" id="s1"><label for="s1">Pin 25 → L9110S #1 IN1 (מנוע קדימה)</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="s2"><label for="s2">Pin 26 → L9110S #1 IN2 (מנוע ימין)</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="s3"><label for="s3">Pin 14 → L9110S #2 IN3 (מנוע אחורה)</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="s4"><label for="s4">Pin 27 → L9110S #2 IN4 (מנוע שמאל)</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="s5"><label for="s5">Pin 21 → MPU6050 SDA</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="s6"><label for="s6">Pin 22 → MPU6050 SCL</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="checkpoint">
+                ✅ <strong>עצור!</strong> כל החיווט הושלם! ספור את החיבורים שלך:
+                <ul>
+                    <li>חיווט חשמל: 7+ חיבורים</li>
+                    <li>חיווט מנועים: 8 חיבורים</li>
+                    <li>חיווט איתותים: 6 חיבורים</li>
+                </ul>
+            </div>
+
+            <div class="mission-complete">
+                <h3>🎉 משימה 7 הושלמה!</h3>
+                <p>כל חיווט האיתותים מחובר. החומרה מוכנה!</p>
+            </div>
+        </div>
+
+        <!-- משימה 8: העלאת קוד -->
+        <div class="mission-header">
+            <h2>משימה 8: העלאת קוד הטיסה</h2>
+            <span class="time-estimate">⏱️ 30 דקות</span>
+        </div>
+        <div class="mission-content">
+            <p>התקן ספריות Arduino והעלה את קוד בקרת הטיסה.</p>
+
+            <div class="exercise">
+                <h3>תרגיל 8.1: התקנת ספריות Arduino</h3>
+                <ol class="steps">
+                    <li>פתח את Arduino IDE</li>
+                    <li>לך ל-Tools → Manage Libraries</li>
+                    <li>חפש "Adafruit MPU6050" → Install</li>
+                    <li>חפש "Adafruit Unified Sensor" → Install</li>
+                </ol>
+
+                <div class="what-you-see">
+<pre>
+Library Manager shows:
+✓ Adafruit MPU6050 - Installed
+✓ Adafruit Unified Sensor - Installed
+</pre>
+                </div>
+            </div>
+
+            <div class="exercise">
+                <h3>תרגיל 8.2: הגדרת Arduino IDE</h3>
+                <ol class="steps">
+                    <li>לך ל-Tools → Board → בחר "ESP32 Dev Module"</li>
+                    <li>לך ל-Tools → Port → בחר את פורט COM של ESP32</li>
+                    <li>לך ל-Tools → Upload Speed → בחר "115200"</li>
+                </ol>
+            </div>
+
+            <div class="exercise">
+                <h3>תרגיל 8.3: יצירת קוד עם AI</h3>
+                <p>השתמש ב-Claude AI או ChatGPT עם הפרומפט הזה:</p>
+
+                <div class="what-you-see">
+<pre>
+I'm building an educational quadcopter with these specs:
+- Board: ESP32-C3 SuperMini
+- Sensors: MPU6050 on pins 8 (SDA) and 9 (SCL)
+- Motors: 4× 8520 via L9110S drivers
+  - Front motor: ESP32 pin 2
+  - Right motor: ESP32 pin 3
+  - Back motor: ESP32 pin 4
+  - Left motor: ESP32 pin 5
+- Control: Wi-Fi web interface at 192.168.4.1
+- Features needed:
+  - Wi-Fi Access Point named "Drone_01" (no password)
+  - Web page with ARM/DISARM buttons and throttle slider (0-70%)
+  - PID stabilization using MPU6050 (Kp=2.0, Kd=0.14)
+  - Max throttle limited to 178/255 (70%) for safety
+  - X-configuration motor mixing (pitch/roll correction)
+
+Generate complete Arduino sketch with comments.
+</pre>
+                </div>
+            </div>
+
+            <div class="exercise">
+                <h3>תרגיל 8.4: העלאת הקוד</h3>
+                <ol class="steps">
+                    <li>העתק את הקוד שנוצר ל-Arduino IDE</li>
+                    <li>לחץ על כפתור Verify (אייקון וי)</li>
+                    <li>חבר ESP32 דרך כבל USB</li>
+                    <li>לחץ על כפתור Upload (אייקון חץ)</li>
+                    <li>המתן להודעה "Hard resetting via RTS pin..."</li>
+                </ol>
+
+                <div class="what-you-see">
+<pre>
+Compiling sketch...
+Uploading...
+Writing at 0x00010000... (100%)
+Hard resetting via RTS pin...
+</pre>
+                </div>
+            </div>
+
+            <div class="checkpoint">
+                ✅ <strong>עצור!</strong> הקוד הועלה? ESP32 אמור כעת להריץ את קוד הטיסה.
+            </div>
+
+            <div class="mission-complete">
+                <h3>🎉 משימה 8 הושלמה!</h3>
+                <p>קוד בקרת הטיסה רץ על ESP32.</p>
+            </div>
+        </div>
+
+        <!-- משימה 9: התקנת מדחפים -->
+        <div class="mission-header">
+            <h2>משימה 9: התקנת מדחפים</h2>
+            <span class="time-estimate">⏱️ 15 דקות</span>
+        </div>
+        <div class="mission-content">
+            <p>חבר מדחפים עם כיווני סיבוב נכונים.</p>
+
+            <div class="exercise">
+                <h3>תרגיל 9.1: מפת סיבוב מדחפים</h3>
+                <div class="diagram">
+                    <div class="diagram-title">התקנת מדחפים:</div>
+<pre>
+              CW Propeller
+                  ↻
+               ┌──┴──┐
+               │  ⊕  │ Front
+               └─────┘
+                  │
+                  │
+CCW ↺             │              ↻ CW
+┌─────┐      ─────┼─────      ┌─────┐
+│  ⊕  │ Left      │    Right  │  ⊕  │
+└─────┘           │           └─────┘
+                  │
+               ┌──┴──┐
+               │  ⊕  │ Back
+               └─────┘
+                  ↺
+              CCW Propeller
+
+מדחפי CW: קדימה וימין
+מדחפי CCW: אחורה ושמאל
+</pre>
+                </div>
+            </div>
+
+            <div class="exercise">
+                <h3>תרגיל 9.2: זיהוי סוגי מדחפים</h3>
+                <p>למדחפי CW ו-CCW יש זוויות להב שונות:</p>
+                <ul>
+                    <li><strong>CW (עם השעון):</strong> קצה להב מוביל נוטה ימינה כשמסתכלים מלמעלה</li>
+                    <li><strong>CCW (נגד השעון):</strong> קצה להב מוביל נוטה שמאלה כשמסתכלים מלמעלה</li>
+                </ul>
+
+                <div class="tip">רוב סטי המדחפים מסומנים או מקודדים בצבעים. בדוק את האריזה!</div>
+            </div>
+
+            <div class="exercise">
+                <h3>תרגיל 9.3: התקנת כל מדחף</h3>
+                <ol class="steps">
+                    <li>מנוע קדימה: לחץ מדחף CW</li>
+                    <li>מנוע ימין: לחץ מדחף CW</li>
+                    <li>מנוע אחורה: לחץ מדחף CCW</li>
+                    <li>מנוע שמאל: לחץ מדחף CCW</li>
+                    <li>דחוף כל מדחף חזק עד שיושב צמוד</li>
+                </ol>
+
+                <div class="warning">מדחפים חייבים להיות הדוקים! מדחף רופף יכול להיעף במהלך טיסה - מסוכן!</div>
+
+                <p><strong>איזה סוג מדחף הולך על מנוע אחורה?</strong></p>
+                <div class="answer-box">
+                    <label>התשובה שלך:</label>
+                    <input type="text" id="answer-9-3" placeholder="CW או CCW?">
+                    <button class="check-btn" onclick="checkAnswer('answer-9-3', ['ccw', 'נגד השעון', 'נגד כיוון השעון'], 'נכון! מנוע אחורה משתמש במדחף CCW.', 'בדוק בדיאגרמה - אחורה ושמאל משתמשים באיזה סוג?')">בדוק</button>
+                    <div class="feedback" id="feedback-9-3"></div>
+                </div>
+            </div>
+
+            <div class="checkpoint">
+                ✅ <strong>עצור!</strong> בדוק מדחפים:
+                <ul>
+                    <li>כל 4 המדחפים מותקנים</li>
+                    <li>קדימה וימין: מדחפי CW</li>
+                    <li>אחורה ושמאל: מדחפי CCW</li>
+                    <li>כולם מסתובבים בחופשיות בלי לפגוע בשלדה</li>
+                    <li>כולם לחוצים חזק על הצירים</li>
+                </ul>
+            </div>
+
+            <div class="mission-complete">
+                <h3>🎉 משימה 9 הושלמה!</h3>
+                <p>מדחפים מותקנים! הרחפן שלך מוכן לבדיקה.</p>
+            </div>
+        </div>
+
+        <!-- משימה 10: טיסה ראשונה -->
+        <div class="mission-header">
+            <h2>משימה 10: טיסה ראשונה!</h2>
+            <span class="time-estimate">⏱️ 20 דקות</span>
+        </div>
+        <div class="mission-content">
+            <p>חבר את הטלפון והטס את הרחפן!</p>
+
+            <div class="exercise">
+                <h3>תרגיל 10.1: בטיחות לפני טיסה</h3>
+                <ol class="steps">
+                    <li>מצא אזור פתוח בפנים (לפחות 2×2 מטר)</li>
+                    <li>הסר חפצים שבירים מהאזור</li>
+                    <li>הכן משקפי מגן (מומלץ)</li>
+                    <li>שמור אצבעות הרחק ממדחפים מסתובבים</li>
+                </ol>
+
+                <div class="warning">לעולם אל תכניס אצבעות ליד מדחפים מסתובבים! הם יכולים לגרום לחתכים.</div>
+            </div>
+
+            <div class="exercise">
+                <h3>תרגיל 10.2: הפעלה</h3>
+                <ol class="steps">
+                    <li>נתק כבל USB מ-ESP32</li>
+                    <li>הנח את הרחפן על משטח ישר</li>
+                    <li>חבר סוללה ל-MT3608</li>
+                    <li>נורית ESP32 צריכה להידלק</li>
+                </ol>
+            </div>
+
+            <div class="exercise">
+                <h3>תרגיל 10.3: חיבור טלפון</h3>
+                <ol class="steps">
+                    <li>בטלפון שלך, פתח הגדרות Wi-Fi</li>
+                    <li>חפש רשת בשם "Drone_01"</li>
+                    <li>התחבר (ללא סיסמה)</li>
+                    <li>פתח דפדפן וגלוש ל: <code>http://192.168.4.1</code></li>
+                </ol>
+
+                <div class="what-you-see">
+<pre>
+Web Control Interface:
+┌─────────────────────────────┐
+│  🚁 Tiny Drone Control      │
+│                             │
+│  ┌─────┐      ┌─────┐      │
+│  │ ARM │      │DISARM│      │
+│  └─────┘      └─────┘      │
+│                             │
+│  Throttle:                  │
+│  ├────────○────────┤ 0%    │
+│  0              70%         │
+└─────────────────────────────┘
+</pre>
+                </div>
+
+                <p><strong>איזו כתובת מקלידים בדפדפן?</strong></p>
+                <div class="answer-box">
+                    <label>התשובה שלך:</label>
+                    <input type="text" id="answer-10-3" class="ltr" placeholder="http://...">
+                    <button class="check-btn" onclick="checkAnswer('answer-10-3', ['192.168.4.1', 'http://192.168.4.1'], 'נכון! זו כתובת ה-IP של נקודת הגישה של ESP32.', 'כתובת ה-IP היא 192.168.4.1')">בדוק</button>
+                    <div class="feedback" id="feedback-10-3"></div>
+                </div>
+            </div>
+
+            <div class="exercise">
+                <h3>תרגיל 10.4: ריחוף ראשון</h3>
+                <ol class="steps">
+                    <li>לחץ על כפתור ARM</li>
+                    <li>הזז את מחוון המצערת לאט למעלה</li>
+                    <li>ב-~30-40%, המנועים יתחילו להסתובב</li>
+                    <li>ב-~50-60%, הרחפן אמור להמריא</li>
+                    <li>שמור גובה נמוך (10-20 ס"מ) לבדיקה ראשונה</li>
+                    <li>לנחיתה: הורד מצערת באיטיות</li>
+                    <li>לחץ DISARM אחרי נחיתה</li>
+                </ol>
+
+                <div class="diagram">
+                    <div class="diagram-title">רמות מצערת:</div>
+<pre>
+ 0%    = מנועים כבויים
+30-40% = מנועים מסתובבים (לא מרימים)
+50-60% = גובה ריחוף
+60-70% = טיסה גבוהה יותר (מקסימום בטוח)
+
+התחל לאט! הגבר מצערת בהדרגה.
+</pre>
+                </div>
+            </div>
+
+            <div class="exercise">
+                <h3>תרגיל 10.5: אחרי הטיסה</h3>
+                <ol class="steps">
+                    <li>הורד מצערת ל-0%</li>
+                    <li>לחץ DISARM</li>
+                    <li>נתק סוללה מיד</li>
+                    <li>בדוק רכיבים חמים (חמים בסדר, לוהטים לא)</li>
+                    <li>טען סוללה אם צריך (אל תשאיר מרוקנת)</li>
+                </ol>
+            </div>
+
+            <div class="checkpoint">
+                ✅ <strong>מזל טוב!</strong> בנית והטסת רחפן משלך!
+            </div>
+
+            <div class="mission-complete">
+                <h3>🎉 משימה 10 הושלמה!</h3>
+                <p>הטסת בהצלחה את הקוואדקופטר ESP32 שלך!</p>
+            </div>
+        </div>
+
+        <!-- נספח א: רשימת חיווט מלאה -->
+        <div class="mission-header" style="background: linear-gradient(90deg, #ff6b35, #cc5500);">
+            <h2>נספח א׳: רשימת חיווט מלאה</h2>
+            <span class="time-estimate">📋 עזר</span>
+        </div>
+        <div class="mission-content" style="border-color: #ff6b35;">
+            <p>רשימה מסודרת של כל החיבורים ברחפן. השתמש ברשימה זו לבדיקה ופתרון בעיות.</p>
+
+            <!-- חיווט חשמל -->
+            <div class="exercise">
+                <h3>א.1: חיווט חשמל (Power)</h3>
+                <table>
+                    <tr><th style="width: 30%;">מקור</th><th style="width: 30%;">יעד</th><th style="width: 20%;">צבע חוט</th><th style="width: 20%;">הערות</th></tr>
+                    <tr><td>סוללה +</td><td>MT3608 IN+</td><td style="color: #ff5252;">🔴 אדום</td><td>3.7V כניסה</td></tr>
+                    <tr><td>סוללה -</td><td>MT3608 IN-</td><td style="color: #444;">⚫ שחור</td><td>GND</td></tr>
+                    <tr><td>MT3608 OUT+</td><td>ESP32 VIN</td><td style="color: #ff5252;">🔴 אדום</td><td>5V יציאה</td></tr>
+                    <tr><td>MT3608 OUT-</td><td>ESP32 GND</td><td style="color: #444;">⚫ שחור</td><td>GND משותף</td></tr>
+                    <tr><td>MT3608 OUT+</td><td>L9110S #1 VCC</td><td style="color: #ff5252;">🔴 אדום</td><td>5V לבקר מנועים</td></tr>
+                    <tr><td>MT3608 OUT-</td><td>L9110S #1 GND</td><td style="color: #444;">⚫ שחור</td><td>GND</td></tr>
+                    <tr><td>MT3608 OUT+</td><td>L9110S #2 VCC</td><td style="color: #ff5252;">🔴 אדום</td><td>5V לבקר מנועים</td></tr>
+                    <tr><td>MT3608 OUT-</td><td>L9110S #2 GND</td><td style="color: #444;">⚫ שחור</td><td>GND</td></tr>
+                    <tr><td>ESP32 3.3V</td><td>MPU6050 VCC</td><td style="color: #ff9800;">🟠 כתום</td><td>⚠️ 3.3V בלבד!</td></tr>
+                    <tr><td>ESP32 GND</td><td>MPU6050 GND</td><td style="color: #444;">⚫ שחור</td><td>GND</td></tr>
+                </table>
+
+                <div class="warning">MPU6050 חייב לקבל 3.3V! חיבור ל-5V יזיק לחיישן.</div>
+            </div>
+
+            <!-- חיווט איתותים I2C -->
+            <div class="exercise">
+                <h3>א.2: חיווט תקשורת I2C (חיישן)</h3>
+                <table>
+                    <tr><th>פין ESP32</th><th>פין MPU6050</th><th>תפקיד</th><th>הערות</th></tr>
+                    <tr><td>GPIO 21</td><td>SDA</td><td>קו נתונים</td><td>I2C Data</td></tr>
+                    <tr><td>GPIO 22</td><td>SCL</td><td>קו שעון</td><td>I2C Clock</td></tr>
+                </table>
+            </div>
+
+            <!-- חיווט בקרת מנועים -->
+            <div class="exercise">
+                <h3>א.3: חיווט בקרת מנועים (איתותים)</h3>
+                <table>
+                    <tr><th>פין ESP32</th><th>פין L9110S</th><th>מנוע</th><th>כיוון סיבוב</th></tr>
+                    <tr><td>GPIO 25</td><td>L9110S #1 IN1</td><td>קדימה (Front)</td><td>↻ CW</td></tr>
+                    <tr><td>GPIO 26</td><td>L9110S #1 IN2</td><td>ימין (Right)</td><td>↻ CW</td></tr>
+                    <tr><td>GPIO 14</td><td>L9110S #2 IN1</td><td>אחורה (Back)</td><td>↺ CCW</td></tr>
+                    <tr><td>GPIO 27</td><td>L9110S #2 IN2</td><td>שמאל (Left)</td><td>↺ CCW</td></tr>
+                </table>
+            </div>
+
+            <!-- חיווט מנועים לבקרים -->
+            <div class="exercise">
+                <h3>א.4: חיווט מנועים לבקרי L9110S</h3>
+                <p><strong>L9110S בקר #1</strong> (מותקן על זרוע ימין):</p>
+                <table>
+                    <tr><th>מנוע</th><th>חוט מנוע</th><th>פין L9110S #1</th></tr>
+                    <tr><td rowspan="2">מנוע קדימה</td><td style="color: #ff5252;">🔴 אדום</td><td>OUT1A</td></tr>
+                    <tr><td style="color: #444;">⚫ שחור</td><td>OUT1B</td></tr>
+                    <tr><td rowspan="2">מנוע ימין</td><td style="color: #ff5252;">🔴 אדום</td><td>OUT2A</td></tr>
+                    <tr><td style="color: #444;">⚫ שחור</td><td>OUT2B</td></tr>
+                </table>
+
+                <p style="margin-top: 20px;"><strong>L9110S בקר #2</strong> (מותקן על זרוע שמאל):</p>
+                <table>
+                    <tr><th>מנוע</th><th>חוט מנוע</th><th>פין L9110S #2</th></tr>
+                    <tr><td rowspan="2">מנוע אחורה</td><td style="color: #ff5252;">🔴 אדום</td><td>OUT1A</td></tr>
+                    <tr><td style="color: #444;">⚫ שחור</td><td>OUT1B</td></tr>
+                    <tr><td rowspan="2">מנוע שמאל</td><td style="color: #ff5252;">🔴 אדום</td><td>OUT2A</td></tr>
+                    <tr><td style="color: #444;">⚫ שחור</td><td>OUT2B</td></tr>
+                </table>
+
+                <div class="tip">אם מנוע מסתובב בכיוון הפוך - החלף בין החוטים האדום והשחור שלו.</div>
+            </div>
+
+            <!-- דיאגרמת חיווט מלאה -->
+            <div class="exercise">
+                <h3>א.5: דיאגרמת חיווט מלאה</h3>
+                <div class="diagram">
+                    <div class="diagram-title">סכמת חיבורים מלאה:</div>
+<pre>
+                        ┌─────────────────┐
+                        │   BATTERY 3.7V  │
+                        │    (LiPo 600mAh)│
+                        └───────┬─┬───────┘
+                             RED│ │BLACK
+                                │ │
+                        ┌───────▼─▼───────┐
+                        │     MT3608      │
+                        │   IN+    IN-    │
+                        │  (3.7V input)   │
+                        │                 │
+                        │  OUT+   OUT-    │
+                        │   (5V output)   │
+                        └───┬─────┬───────┘
+                            │     │
+         ┌──────────────────┼─────┼──────────────────┐
+         │                  │     │                  │
+         ▼                  ▼     ▼                  ▼
+    ┌─────────┐       ┌─────────────────┐      ┌─────────┐
+    │ L9110S  │       │     ESP32       │      │ L9110S  │
+    │   #1    │       │    DevKit       │      │   #2    │
+    │         │       │                 │      │         │
+    │VCC  GND │       │VIN         GND  │      │VCC  GND │
+    │         │       │                 │      │         │
+    │IN1  IN2 │◄──────│GPIO25    GPIO14│──────►│IN1  IN2 │
+    │         │◄──────│GPIO26    GPIO27│──────►│         │
+    │         │       │                 │      │         │
+    │OUT1 OUT2│       │GPIO21    GPIO22│       │OUT1 OUT2│
+    └──┬───┬──┘       │(SDA)     (SCL) │       └──┬───┬──┘
+       │   │          │                 │          │   │
+       │   │          │3.3V        GND  │          │   │
+    ┌──▼┐┌─▼──┐       └──┬──────────┬──┘       ┌──▼┐┌─▼──┐
+    │M1 ││ M2 │          │          │          │M3 ││ M4 │
+    │   ││    │          ▼          ▼          │   ││    │
+    │CW ││ CW │    ┌───────────────────┐       │CCW││CCW │
+    └───┘└────┘    │     MPU6050      │       └───┘└────┘
+  (Front)(Right)   │  VCC SDA SCL GND │     (Back)(Left)
+                   └───────────────────┘
+
+M1 = Motor 1 (Front, CW)    M3 = Motor 3 (Back, CCW)
+M2 = Motor 2 (Right, CW)    M4 = Motor 4 (Left, CCW)
+</pre>
+                </div>
+            </div>
+
+            <!-- רשימת בדיקה מסכמת -->
+            <div class="exercise">
+                <h3>א.6: רשימת בדיקה מסכמת (21 חיבורים)</h3>
+                <p><strong>חיווט חשמל (10 חיבורים):</strong></p>
+                <div class="checklist">
+                    <div class="checklist-item"><input type="checkbox" id="w1"><label for="w1">סוללה RED → MT3608 IN+</label></div>
+                    <div class="checklist-item"><input type="checkbox" id="w2"><label for="w2">סוללה BLACK → MT3608 IN-</label></div>
+                    <div class="checklist-item"><input type="checkbox" id="w3"><label for="w3">MT3608 OUT+ → ESP32 VIN</label></div>
+                    <div class="checklist-item"><input type="checkbox" id="w4"><label for="w4">MT3608 OUT- → ESP32 GND</label></div>
+                    <div class="checklist-item"><input type="checkbox" id="w5"><label for="w5">MT3608 OUT+ → L9110S #1 VCC</label></div>
+                    <div class="checklist-item"><input type="checkbox" id="w6"><label for="w6">MT3608 OUT- → L9110S #1 GND</label></div>
+                    <div class="checklist-item"><input type="checkbox" id="w7"><label for="w7">MT3608 OUT+ → L9110S #2 VCC</label></div>
+                    <div class="checklist-item"><input type="checkbox" id="w8"><label for="w8">MT3608 OUT- → L9110S #2 GND</label></div>
+                    <div class="checklist-item"><input type="checkbox" id="w9"><label for="w9">ESP32 3.3V → MPU6050 VCC</label></div>
+                    <div class="checklist-item"><input type="checkbox" id="w10"><label for="w10">ESP32 GND → MPU6050 GND</label></div>
+                </div>
+
+                <p style="margin-top: 20px;"><strong>חיווט איתותים (6 חיבורים):</strong></p>
+                <div class="checklist">
+                    <div class="checklist-item"><input type="checkbox" id="w11"><label for="w11">ESP32 GPIO21 → MPU6050 SDA</label></div>
+                    <div class="checklist-item"><input type="checkbox" id="w12"><label for="w12">ESP32 GPIO22 → MPU6050 SCL</label></div>
+                    <div class="checklist-item"><input type="checkbox" id="w13"><label for="w13">ESP32 GPIO25 → L9110S #1 IN1</label></div>
+                    <div class="checklist-item"><input type="checkbox" id="w14"><label for="w14">ESP32 GPIO26 → L9110S #1 IN2</label></div>
+                    <div class="checklist-item"><input type="checkbox" id="w15"><label for="w15">ESP32 GPIO14 → L9110S #2 IN1</label></div>
+                    <div class="checklist-item"><input type="checkbox" id="w16"><label for="w16">ESP32 GPIO27 → L9110S #2 IN2</label></div>
+                </div>
+
+                <p style="margin-top: 20px;"><strong>חיווט מנועים (8 חיבורים):</strong></p>
+                <div class="checklist">
+                    <div class="checklist-item"><input type="checkbox" id="w17"><label for="w17">מנוע קדימה → L9110S #1 OUT1A/B</label></div>
+                    <div class="checklist-item"><input type="checkbox" id="w18"><label for="w18">מנוע ימין → L9110S #1 OUT2A/B</label></div>
+                    <div class="checklist-item"><input type="checkbox" id="w19"><label for="w19">מנוע אחורה → L9110S #2 OUT1A/B</label></div>
+                    <div class="checklist-item"><input type="checkbox" id="w20"><label for="w20">מנוע שמאל → L9110S #2 OUT2A/B</label></div>
+                </div>
+            </div>
+
+            <!-- טבלת סיכום מתחים -->
+            <div class="exercise">
+                <h3>א.7: סיכום מתחים</h3>
+                <table>
+                    <tr><th>רכיב</th><th>מתח כניסה</th><th>מקור</th></tr>
+                    <tr><td>MT3608 (כניסה)</td><td>3.7V</td><td>סוללת LiPo</td></tr>
+                    <tr><td>MT3608 (יציאה)</td><td>5.0V ±0.1V</td><td>מכוון ידנית</td></tr>
+                    <tr><td>ESP32-C3 SuperMini</td><td>5V</td><td>MT3608 OUT</td></tr>
+                    <tr><td>L9110S #1 + #2</td><td>5V</td><td>MT3608 OUT</td></tr>
+                    <tr><td>MPU6050</td><td style="color: #00ff88; font-weight: bold;">3.3V</td><td>ESP32 3.3V פין</td></tr>
+                    <tr><td>מנועים 8520</td><td>~5V (PWM)</td><td>L9110S OUT</td></tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- סיום -->
+        <div class="final-section">
+            <h2>🏆 הבנייה הושלמה!</h2>
+            <p>בנית רחפן קוואדקופטר עובד הנשלט דרך Wi-Fi!</p>
+
+            <div class="diagram">
+                <div class="diagram-title">הרחפן המוגמר שלך:</div>
+<pre>
+                ⚭⚭⚭
+               ⚭ │ ⚭  מדחפים
+                 │
+              ┌──┴──┐
+              │  ⊕  │  מנועים
+⚭⚭⚭          ╱│     │╲          ⚭⚭⚭
+⚭ │ ⚭       ╱ │     │ ╲        ⚭ │ ⚭
+   │        ╱  │     │  ╲         │
+   ⊕       ╱   │     │   ╲        ⊕
+          ╱ ┌──┴─────┴──┐ ╲
+         │  │   ESP32   │  │
+         │  ├───────────┤  │  אלקטרוניקה
+         │  │  MPU6050  │  │
+         │  ├───────────┤  │
+         │  │  L9110S   │  │
+         ════════════════════  שלדה
+             │ MT3608 │
+             └────────┘
+            │ סוללה   │
+            └─────────┘
+
+משקל כולל: 42-45 גרם
+זמן טיסה: 4-6 דקות
+שליטה: סמארטפון Wi-Fi
+</pre>
+            </div>
+
+            <h3>מה למדת:</h3>
+            <ul style="text-align: right; display: inline-block;">
+                <li>בניית שלדות מכניות</li>
+                <li>וויסות מתח עם ממירי העלאה</li>
+                <li>בקרי מנועים ושליטת PWM</li>
+                <li>תקשורת חיישני I2C</li>
+                <li>שרת Wi-Fi על ESP32</li>
+                <li>עקרונות ייצוב PID</li>
+            </ul>
+
+            <p style="margin-top: 30px; color: #ff6b35; font-size: 1.2em;">
+                <strong>טיסה מהנה! 🚁</strong>
+            </p>
+        </div>
+    </div>
+
+    <!-- חלון קופץ -->
+    <div class="popup-overlay" id="popup-overlay" onclick="closePopup()">
+        <div class="popup" id="popup" onclick="event.stopPropagation()">
+            <div class="emoji" id="popup-emoji"></div>
+            <h3 id="popup-title"></h3>
+            <p id="popup-message"></p>
+            <button onclick="closePopup()">המשך</button>
+        </div>
+    </div>
+
+    <script>
+        function checkAnswer(inputId, correctAnswers, successMsg, failMsg) {
+            const input = document.getElementById(inputId);
+            const feedback = document.getElementById('feedback-' + inputId.split('-').slice(1).join('-'));
+            const userAnswer = input.value.trim().toLowerCase();
+
+            let isCorrect = false;
+            for (let answer of correctAnswers) {
+                if (userAnswer.includes(answer.toLowerCase())) {
+                    isCorrect = true;
+                    break;
+                }
+            }
+
+            showPopup(isCorrect, isCorrect ? successMsg : failMsg);
+
+            if (feedback) {
+                feedback.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+                feedback.textContent = isCorrect ? '✓ ' + successMsg : '✗ ' + failMsg;
+            }
+        }
+
+        function showPopup(isCorrect, message) {
+            const overlay = document.getElementById('popup-overlay');
+            const popup = document.getElementById('popup');
+            const emoji = document.getElementById('popup-emoji');
+            const title = document.getElementById('popup-title');
+            const msg = document.getElementById('popup-message');
+
+            popup.className = 'popup ' + (isCorrect ? 'correct' : 'incorrect');
+            emoji.textContent = isCorrect ? '🎉' : '🤔';
+            title.textContent = isCorrect ? 'מצוין!' : 'נסה שוב';
+            msg.textContent = message;
+
+            overlay.style.display = 'flex';
+        }
+
+        function closePopup() {
+            document.getElementById('popup-overlay').style.display = 'none';
+        }
+
+        // סגירת חלון קופץ עם Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closePopup();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -69,6 +69,23 @@
   }
   .card-icon.purple { background: #EDE9FE; }
   .card-icon.teal { background: #D1FAE5; }
+  .card-icon.blue { background: #DBEAFE; }
+  .card-icon.red { background: #FEE2E2; }
+  .card-icon.amber { background: #FEF3C7; }
+  .card-icon.green { background: #D1FAE5; }
+  .card-icon.pink { background: #FCE7F3; }
+  .card-icon.sky { background: #E0F2FE; }
+  .card-icon.orange { background: #FFEDD5; }
+  .section-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.9);
+    margin-top: 32px;
+    margin-bottom: 12px;
+    align-self: flex-start;
+    max-width: 620px;
+    width: 100%;
+  }
   .card-text {
     display: flex;
     flex-direction: column;
@@ -88,6 +105,129 @@
 <body>
   <h1>מדריכים</h1>
   <p class="subtitle">בחרו מדריך כדי להתחיל</p>
+  <h2 class="section-title">Arduino</h2>
+  <div class="tutorials">
+    <a class="card" href="arduino-blink-morse-he.html">
+      <div class="card-icon blue">💡</div>
+      <div class="card-text">
+        <span class="card-title">ארדואינו: בלינק ותבניות מורס</span>
+        <span class="card-desc">Arduino · LED · מורס</span>
+      </div>
+    </a>
+    <a class="card" href="arduino-reaction-timer-student-he.html">
+      <div class="card-icon blue">⏱️</div>
+      <div class="card-text">
+        <span class="card-title">Arduino: טיימר תגובה</span>
+        <span class="card-desc">Arduino · תגובה · חיישנים</span>
+      </div>
+    </a>
+    <a class="card" href="reaction-timer-cursor-only-he.html">
+      <div class="card-icon blue">🖱️</div>
+      <div class="card-text">
+        <span class="card-title">טיימר תגובה – בנייה מלאה עם Claude</span>
+        <span class="card-desc">Arduino · Claude · AI</span>
+      </div>
+    </a>
+  </div>
+
+  <h2 class="section-title">ESP32</h2>
+  <div class="tutorials">
+    <a class="card" href="esp32-l298n-dual-motor-wiring-he.html">
+      <div class="card-icon green">🔌</div>
+      <div class="card-text">
+        <span class="card-title">מדריך חיווט ESP32 + L298N לשני מנועים</span>
+        <span class="card-desc">ESP32 · L298N · מנועים</span>
+      </div>
+    </a>
+    <a class="card" href="esp32-cam-tutorial-he.html">
+      <div class="card-icon green">📷</div>
+      <div class="card-text">
+        <span class="card-title">פרויקט מצלמת WiFi עם ESP32-CAM</span>
+        <span class="card-desc">ESP32-CAM · WiFi · מצלמה</span>
+      </div>
+    </a>
+    <a class="card" href="tiny-esp32-drone-tutorial-he.html">
+      <div class="card-icon green">🚁</div>
+      <div class="card-text">
+        <span class="card-title">רחפן ESP32 זעיר - מדריך בנייה</span>
+        <span class="card-desc">ESP32 · רחפן · בנייה</span>
+      </div>
+    </a>
+    <a class="card" href="tiny-esp32-drone-tutorial-en.html">
+      <div class="card-icon green">🚁</div>
+      <div class="card-text">
+        <span class="card-title">Tiny ESP32 Drone - Build Tutorial</span>
+        <span class="card-desc">ESP32 · Drone · English</span>
+      </div>
+    </a>
+  </div>
+
+  <h2 class="section-title">אלקטרוניקה ומעגלים</h2>
+  <div class="tutorials">
+    <a class="card" href="circuits-guide-rtl.html">
+      <div class="card-icon teal">⚡</div>
+      <div class="card-text">
+        <span class="card-title">מדריך מעגלים חשמליים — עקרונות בסיסיים</span>
+        <span class="card-desc">אלקטרוניקה · מעגלים · עקרונות</span>
+      </div>
+    </a>
+    <a class="card" href="DC_Boost_Converter_Tutorial.html">
+      <div class="card-icon amber">🔋</div>
+      <div class="card-text">
+        <span class="card-title">מדריך בניית מעגל מגביר מתח DC - Boost Converter</span>
+        <span class="card-desc">Boost Converter · מתח · DC</span>
+      </div>
+    </a>
+    <a class="card" href="DIY_Charge_Pump_Voltage_Doubler.html">
+      <div class="card-icon amber">⚡</div>
+      <div class="card-text">
+        <span class="card-title">בניית מכפיל מתח DIY - Charge Pump ללא סליל</span>
+        <span class="card-desc">Charge Pump · מכפיל מתח · DIY</span>
+      </div>
+    </a>
+    <a class="card" href="Cockcroft_Walton_Voltage_Multiplier.html">
+      <div class="card-icon amber">🔌</div>
+      <div class="card-text">
+        <span class="card-title">מגביר מתח DC - ממיר 5V ל-17V עם קבלים ודיודות</span>
+        <span class="card-desc">Cockcroft-Walton · קבלים · דיודות</span>
+      </div>
+    </a>
+  </div>
+
+  <h2 class="section-title">רובוטיקה</h2>
+  <div class="tutorials">
+    <a class="card" href="mindstorms-line-follower-he.html">
+      <div class="card-icon purple">🤖</div>
+      <div class="card-text">
+        <span class="card-title">מינדסטורמס: Line Follower</span>
+        <span class="card-desc">Mindstorms · עוקב קו · רובוטיקה</span>
+      </div>
+    </a>
+  </div>
+
+  <h2 class="section-title">פיזיקה</h2>
+  <div class="tutorials">
+    <a class="card" href="Mechanics.html">
+      <div class="card-icon sky">📐</div>
+      <div class="card-text">
+        <span class="card-title">מכניקה 5 יח״ל — קורס עצמי (יחידות 0–2)</span>
+        <span class="card-desc">פיזיקה · מכניקה · 5 יחידות</span>
+      </div>
+    </a>
+  </div>
+
+  <h2 class="section-title">תכנות</h2>
+  <div class="tutorials">
+    <a class="card" href="PythonCourse/PythonTutorial.html">
+      <div class="card-icon orange">🐍</div>
+      <div class="card-text">
+        <span class="card-title">קורס Python - מהתחלה למומחה</span>
+        <span class="card-desc">Python · 12 שיעורים · קורס מלא</span>
+      </div>
+    </a>
+  </div>
+
+  <h2 class="section-title">כללי</h2>
   <div class="tutorials">
     <a class="card" href="MC_Mods.html">
       <div class="card-icon purple">🎮</div>
@@ -96,11 +236,18 @@
         <span class="card-desc">Minecraft · מודים · סקינים</span>
       </div>
     </a>
-    <a class="card" href="circuits-guide-rtl.html">
-      <div class="card-icon teal">⚡</div>
+    <a class="card" href="discord-server-upgrade-guide-he.html">
+      <div class="card-icon pink">💬</div>
       <div class="card-text">
-        <span class="card-title">מדריך מעגלים חשמליים — עקרונות בסיסיים</span>
-        <span class="card-desc">אלקטרוניקה · מעגלים · עקרונות</span>
+        <span class="card-title">מדריך שדרוג שרת דיסקורד</span>
+        <span class="card-desc">Discord · שרת · שדרוג</span>
+      </div>
+    </a>
+    <a class="card" href="ethical-hacking-beginners-guide-he.html">
+      <div class="card-icon red">🔒</div>
+      <div class="card-text">
+        <span class="card-title">האקינג אתי: סדנה מעשית</span>
+        <span class="card-desc">אבטחה · האקינג · סדנה</span>
       </div>
     </a>
   </div>

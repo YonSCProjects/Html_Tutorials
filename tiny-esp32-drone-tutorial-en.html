@@ -1,0 +1,1659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tiny ESP32 Drone - Build Tutorial</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #e8e8e8;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #00d4ff;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #ff6b35;
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+
+        .intro-box {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(255, 107, 53, 0.1));
+            border: 2px solid #00d4ff;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .intro-box h2 {
+            color: #00d4ff;
+            margin-top: 0;
+        }
+
+        .time-total {
+            background: rgba(255, 107, 53, 0.2);
+            border: 1px solid #ff6b35;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .time-total span {
+            font-size: 1.5em;
+            color: #ff6b35;
+            font-weight: bold;
+        }
+
+        /* Mission Header */
+        .mission-header {
+            background: linear-gradient(90deg, #00d4ff, #0099cc);
+            color: #1a1a2e;
+            padding: 15px 20px;
+            border-radius: 10px 10px 0 0;
+            margin-top: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .mission-header h2 {
+            margin: 0;
+            font-size: 1.4em;
+        }
+
+        .time-estimate {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            color: white;
+        }
+
+        .mission-content {
+            background: rgba(0, 212, 255, 0.05);
+            border: 2px solid #00d4ff;
+            border-top: none;
+            border-radius: 0 0 10px 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        /* Exercise Box */
+        .exercise {
+            background: rgba(0, 255, 136, 0.05);
+            border: 2px solid #00ff88;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .exercise h3 {
+            color: #00ff88;
+            margin-top: 0;
+            border-bottom: 1px solid rgba(0, 255, 136, 0.3);
+            padding-bottom: 10px;
+        }
+
+        .steps {
+            padding-left: 0;
+            list-style: none;
+            counter-reset: step-counter;
+        }
+
+        .steps li {
+            counter-increment: step-counter;
+            margin: 12px 0;
+            padding-left: 40px;
+            position: relative;
+        }
+
+        .steps li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: #00ff88;
+            color: #1a1a2e;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.85em;
+        }
+
+        /* What You Should See */
+        .what-you-see {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .what-you-see::before {
+            content: "What you should see:";
+            display: block;
+            color: #58a6ff;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .what-you-see pre {
+            margin: 0;
+            white-space: pre;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            color: #c9d1d9;
+            line-height: 1.4;
+        }
+
+        /* Diagram Box */
+        .diagram {
+            background: #0d1117;
+            border: 2px solid #ff6b35;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+
+        .diagram-title {
+            color: #ff6b35;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .diagram pre {
+            margin: 0;
+            white-space: pre;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8em;
+            color: #e8e8e8;
+            line-height: 1.3;
+        }
+
+        /* Warning Box */
+        .warning {
+            background: rgba(255, 193, 7, 0.15);
+            border-left: 4px solid #ffc107;
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .warning::before {
+            content: "⚠️ Warning: ";
+            font-weight: bold;
+            color: #ffc107;
+        }
+
+        /* Checkpoint */
+        .checkpoint {
+            background: rgba(0, 255, 136, 0.1);
+            border-left: 5px solid #00ff88;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .checkpoint strong {
+            color: #00ff88;
+        }
+
+        /* Answer Box */
+        .answer-box {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px dashed #00d4ff;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .answer-box label {
+            display: block;
+            color: #00d4ff;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .answer-box input[type="text"] {
+            width: calc(100% - 120px);
+            padding: 10px 15px;
+            border: 2px solid #444;
+            border-radius: 8px;
+            background: #1a1a2e;
+            color: #e8e8e8;
+            font-size: 1em;
+            margin-right: 10px;
+        }
+
+        .answer-box input[type="text"]:focus {
+            outline: none;
+            border-color: #00d4ff;
+        }
+
+        .check-btn {
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            color: #1a1a2e;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .check-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 212, 255, 0.4);
+        }
+
+        .feedback {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .feedback.correct {
+            display: block;
+            background: rgba(0, 255, 136, 0.2);
+            border: 1px solid #00ff88;
+            color: #00ff88;
+        }
+
+        .feedback.incorrect {
+            display: block;
+            background: rgba(255, 82, 82, 0.2);
+            border: 1px solid #ff5252;
+            color: #ff5252;
+        }
+
+        /* Mission Complete */
+        .mission-complete {
+            background: linear-gradient(135deg, rgba(156, 39, 176, 0.2), rgba(103, 58, 183, 0.2));
+            border: 2px solid #9c27b0;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 25px 0;
+            text-align: center;
+        }
+
+        .mission-complete h3 {
+            color: #e040fb;
+            margin-top: 0;
+            font-size: 1.5em;
+        }
+
+        /* Parts Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th {
+            background: rgba(0, 212, 255, 0.3);
+            color: #00d4ff;
+            padding: 12px;
+            text-align: left;
+        }
+
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Code Block */
+        code {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #ff6b35;
+        }
+
+        /* Tip Box */
+        .tip {
+            background: rgba(0, 212, 255, 0.1);
+            border-left: 4px solid #00d4ff;
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .tip::before {
+            content: "💡 Tip: ";
+            font-weight: bold;
+            color: #00d4ff;
+        }
+
+        /* Final Section */
+        .final-section {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(255, 107, 53, 0.2));
+            border: 3px solid #00d4ff;
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        .final-section h2 {
+            color: #00d4ff;
+            font-size: 2em;
+            margin-top: 0;
+        }
+
+        /* Popup Modal */
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popup {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border: 3px solid #00d4ff;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 400px;
+            text-align: center;
+            animation: popIn 0.3s ease;
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .popup.correct {
+            border-color: #00ff88;
+        }
+
+        .popup.incorrect {
+            border-color: #ff5252;
+        }
+
+        .popup .emoji {
+            font-size: 4em;
+            margin-bottom: 15px;
+        }
+
+        .popup h3 {
+            color: #00d4ff;
+            margin: 0 0 15px 0;
+        }
+
+        .popup.correct h3 {
+            color: #00ff88;
+        }
+
+        .popup.incorrect h3 {
+            color: #ff5252;
+        }
+
+        .popup button {
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            color: #1a1a2e;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            margin-top: 15px;
+        }
+
+        /* Wiring Checklist */
+        .checklist {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin: 15px 0;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            margin: 8px 0;
+        }
+
+        .checklist-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            cursor: pointer;
+        }
+
+        .checklist-item label {
+            cursor: pointer;
+        }
+
+        .checklist-item input:checked + label {
+            text-decoration: line-through;
+            color: #00ff88;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚁 Tiny ESP32 Drone</h1>
+        <p class="subtitle">Build Your Own Wi-Fi Controlled Quadcopter</p>
+
+        <div class="intro-box">
+            <h2>What You'll Build</h2>
+            <p>A mini quadcopter drone controlled from your smartphone through Wi-Fi. It uses:</p>
+            <ul>
+                <li><strong>ESP32-C3 SuperMini</strong> - The brain (runs code and creates Wi-Fi hotspot)</li>
+                <li><strong>MPU6050</strong> - Motion sensor (detects tilt for auto-stabilization)</li>
+                <li><strong>L9110S drivers</strong> - Motor controllers (2 drivers for 4 motors)</li>
+                <li><strong>MT3608 booster</strong> - Raises battery 3.7V to 5V for electronics</li>
+                <li><strong>LiPo battery</strong> - 600mAh power source (4-6 min flight time)</li>
+            </ul>
+
+            <div class="time-total">
+                <span>⏱️ Total Build Time: 4-6 hours</span>
+                <p>(spread over 2-3 sessions recommended)</p>
+            </div>
+        </div>
+
+        <!-- MISSION 0: Parts & Tools -->
+        <div class="mission-header">
+            <h2>Mission 0: Gather Parts & Tools</h2>
+            <span class="time-estimate">⏱️ 15 min</span>
+        </div>
+        <div class="mission-content">
+            <p>Before starting, make sure you have everything ready.</p>
+
+            <div class="exercise">
+                <h3>Exercise 0.1: Parts Checklist</h3>
+                <p>Check off each component as you find it:</p>
+
+                <table>
+                    <tr><th>Component</th><th>Qty</th><th>Got it?</th></tr>
+                    <tr><td>ESP32-C3 SuperMini</td><td>1</td><td><input type="checkbox"></td></tr>
+                    <tr><td>MPU6050 sensor (GY-521)</td><td>1</td><td><input type="checkbox"></td></tr>
+                    <tr><td>L9110S motor driver</td><td>2</td><td><input type="checkbox"></td></tr>
+                    <tr><td>MT3608 voltage booster</td><td>1</td><td><input type="checkbox"></td></tr>
+                    <tr><td>8520 (8.5×20mm) coreless motors</td><td>4</td><td><input type="checkbox"></td></tr>
+                    <tr><td>65mm propellers (2 CW, 2 CCW)</td><td>4</td><td><input type="checkbox"></td></tr>
+                    <tr><td>600mAh 3.7V LiPo battery</td><td>1</td><td><input type="checkbox"></td></tr>
+                    <tr><td>Popsicle sticks</td><td>2</td><td><input type="checkbox"></td></tr>
+                    <tr><td>Foam tape</td><td>1 strip</td><td><input type="checkbox"></td></tr>
+                    <tr><td>Wires (26 & 30 AWG)</td><td>Assorted</td><td><input type="checkbox"></td></tr>
+                    <tr><td>Hot glue gun</td><td>1</td><td><input type="checkbox"></td></tr>
+                    <tr><td>Velcro strap</td><td>1</td><td><input type="checkbox"></td></tr>
+                </table>
+            </div>
+
+            <div class="exercise">
+                <h3>Exercise 0.2: Tools Checklist</h3>
+                <table>
+                    <tr><th>Tool</th><th>Got it?</th></tr>
+                    <tr><td>Soldering iron & solder</td><td><input type="checkbox"></td></tr>
+                    <tr><td>Drill with 7mm bit</td><td><input type="checkbox"></td></tr>
+                    <tr><td>Wire strippers</td><td><input type="checkbox"></td></tr>
+                    <tr><td>Multimeter</td><td><input type="checkbox"></td></tr>
+                    <tr><td>Small screwdriver</td><td><input type="checkbox"></td></tr>
+                    <tr><td>Computer with Arduino IDE</td><td><input type="checkbox"></td></tr>
+                    <tr><td>Smartphone</td><td><input type="checkbox"></td></tr>
+                </table>
+            </div>
+
+            <div class="checkpoint">
+                ✅ <strong>Stop!</strong> Make sure you have ALL parts before continuing. Missing even one component will stop your build.
+            </div>
+
+            <div class="mission-complete">
+                <h3>🎉 Mission 0 Complete!</h3>
+                <p>You have all the parts and tools ready. Let's build!</p>
+            </div>
+        </div>
+
+        <!-- MISSION 1: Build Frame -->
+        <div class="mission-header">
+            <h2>Mission 1: Build the Frame</h2>
+            <span class="time-estimate">⏱️ 30 min</span>
+        </div>
+        <div class="mission-content">
+            <p>The frame is made from two popsicle sticks glued in a + shape.</p>
+
+            <div class="exercise">
+                <h3>Exercise 1.1: Mark the Centers</h3>
+                <ol class="steps">
+                    <li>Take both popsicle sticks (12cm each)</li>
+                    <li>Measure 6cm from each end - this is the center</li>
+                    <li>Mark the center point on each stick with a pencil</li>
+                </ol>
+
+                <div class="diagram">
+                    <div class="diagram-title">Popsicle Stick Measurement:</div>
+<pre>
+←────── 12cm total ──────→
+
+←─ 6cm ─→│←─ 6cm ─→
+         ✕
+     center mark
+</pre>
+                </div>
+
+                <p><strong>What is the total length of each popsicle stick?</strong></p>
+                <div class="answer-box">
+                    <label>Your answer (in cm):</label>
+                    <input type="text" id="answer-1-1" placeholder="Enter number...">
+                    <button class="check-btn" onclick="checkAnswer('answer-1-1', ['12', '12cm'], 'Correct! Each stick is 12cm long.', 'Not quite. Measure from end to end.')">Check</button>
+                    <div class="feedback" id="feedback-1-1"></div>
+                </div>
+            </div>
+
+            <div class="exercise">
+                <h3>Exercise 1.2: Glue the Cross</h3>
+                <ol class="steps">
+                    <li>Place one stick flat on the table</li>
+                    <li>Place the second stick perpendicular (90°) on top</li>
+                    <li>Align the center marks exactly</li>
+                    <li>Use a paper corner to check the 90° angle</li>
+                    <li>Apply hot glue at the intersection</li>
+                    <li>Hold for 30 seconds until glue sets</li>
+                    <li>Let cure for 10 minutes</li>
+                </ol>
+
+                <div class="diagram">
+                    <div class="diagram-title">Frame Assembly (Top View):</div>
+<pre>
+              F (Front)
+                 │
+                 │
+    L ───────────╬─────────── R
+   (Left)        │        (Right)
+                 │
+                 │
+              B (Back)
+
+╬ = Glue intersection (center)
+Total span: ~12cm tip-to-tip
+</pre>
+                </div>
+
+                <div class="tip">Use minimal glue - a pea-sized drop is enough. Too much glue adds weight!</div>
+            </div>
+
+            <div class="exercise">
+                <h3>Exercise 1.3: Label the Arms</h3>
+                <ol class="steps">
+                    <li>Pick which arm will be "Front" (toward you)</li>
+                    <li>Write F, R, B, L on each arm with a marker</li>
+                    <li>Front and Right will have CW (clockwise) motors</li>
+                    <li>Back and Left will have CCW (counter-clockwise) motors</li>
+                </ol>
+
+                <div class="warning">Always keep the same orientation! The drone won't balance if you mix up the arms.</div>
+            </div>
+
+            <div class="exercise">
+                <h3>Exercise 1.4: Drill Motor Holes</h3>
+                <ol class="steps">
+                    <li>Measure 1cm inward from each arm tip</li>
+                    <li>Mark the drilling points</li>
+                    <li>Drill 7mm diameter holes, about 9mm deep</li>
+                    <li>DO NOT drill all the way through!</li>
+                    <li>Clean out wood debris with compressed air or blowing</li>
+                </ol>
+
+                <div class="diagram">
+                    <div class="diagram-title">Motor Hole Locations:</div>
+<pre>
+                 ⊗ (Motor 1)
+                 ↑
+                1cm from tip
+                 │
+     ⊗ ──────────╬────────── ⊗
+  (Motor 4)      │       (Motor 2)
+                 │
+                 ⊗ (Motor 3)
+
+⊗ = Drill 7mm hole, 9mm deep
+</pre>
+                </div>
+
+                <p><strong>How deep should you drill each hole?</strong></p>
+                <div class="answer-box">
+                    <label>Your answer (in mm):</label>
+                    <input type="text" id="answer-1-4" placeholder="Enter number...">
+                    <button class="check-btn" onclick="checkAnswer('answer-1-4', ['9', '9mm'], 'Correct! 9mm deep is perfect for the 20mm motor.', 'Check the instructions again - how deep?')">Check</button>
+                    <div class="feedback" id="feedback-1-4"></div>
+                </div>
+            </div>
+
+            <div class="checkpoint">
+                ✅ <strong>Stop!</strong> Verify your frame:
+                <ul>
+                    <li>Arms are at exactly 90° angle</li>
+                    <li>All 4 holes are drilled to 9mm depth</li>
+                    <li>Arms are labeled F, R, B, L</li>
+                    <li>Frame feels sturdy (not wobbly)</li>
+                </ul>
+            </div>
+
+            <div class="mission-complete">
+                <h3>🎉 Mission 1 Complete!</h3>
+                <p>You built the drone frame with 4 motor mounting holes.</p>
+            </div>
+        </div>
+
+        <!-- MISSION 2: Mount Motors -->
+        <div class="mission-header">
+            <h2>Mission 2: Mount the Motors</h2>
+            <span class="time-estimate">⏱️ 25 min</span>
+        </div>
+        <div class="mission-content">
+            <p>Install the 4 motors with correct rotation directions.</p>
+
+            <div class="exercise">
+                <h3>Exercise 2.1: Understand Motor Rotation</h3>
+                <p>Quadcopters need motors spinning in specific directions to balance:</p>
+
+                <div class="diagram">
+                    <div class="diagram-title">Motor Rotation Pattern:</div>
+<pre>
+         Motor 1 (Front)
+              ⊕
+              ↻ CW (Clockwise)
+              │
+              │
+Motor 4  ─────┼───── Motor 2
+   ⊕          │          ⊕
+ ↺ CCW        │        ↻ CW
+              │
+              ⊕
+         Motor 3 (Back)
+           ↺ CCW
+
+Front + Right = CW (↻)
+Back + Left = CCW (↺)
+</pre>
+                </div>
+
+                <p><strong>Which motors spin clockwise (CW)?</strong></p>
+                <div class="answer-box">
+                    <label>Your answer:</label>
+                    <input type="text" id="answer-2-1" placeholder="e.g., Front and...">
+                    <button class="check-btn" onclick="checkAnswer('answer-2-1', ['front and right', 'front, right', '1 and 2', '1, 2', 'motor 1 and 2'], 'Correct! Front and Right motors spin clockwise.', 'Think about the diagram - which two spin CW?')">Check</button>
+                    <div class="feedback" id="feedback-2-1"></div>
+                </div>
+            </div>
+
+            <div class="exercise">
+                <h3>Exercise 2.2: Insert Motors</h3>
+                <ol class="steps">
+                    <li>Take one 8520 (8.5×20mm) motor</li>
+                    <li>Insert it into a hole with the shaft pointing UP</li>
+                    <li>Push until the motor body is halfway into the hole</li>
+                    <li>The motor should fit snugly but not forced</li>
+                    <li>Repeat for all 4 motors</li>
+                </ol>
+
+                <div class="diagram">
+                    <div class="diagram-title">Motor Installation (Side View):</div>
+<pre>
+             ↑ Shaft up (for propeller)
+┌────────────┼────────────┐
+│            ╔═╗          │  ← Frame surface
+│            ║ ║          │
+│            ║ ║ ← Motor  │
+│   Glue → ◯╚═╝◯         │     halfway in
+│            hole         │
+└─────────────────────────┘
+
+◯ = Apply thin ring of hot glue
+</pre>
+                </div>
+
+                <div class="warning">Do NOT get glue on the motor shaft or bearings! Only glue around the edge where motor meets wood.</div>
+            </div>
+
+            <div class="exercise">
+                <h3>Exercise 2.3: Secure with Glue</h3>
+                <ol class="steps">
+                    <li>Apply a thin ring of hot glue around each motor edge</li>
+                    <li>Make sure glue touches both motor body and wood</li>
+                    <li>Keep glue AWAY from the shaft</li>
+                    <li>Let cure for 24 hours for maximum strength</li>
+                </ol>
+
+                <div class="tip">You can continue with other steps while the glue cures - just be gentle with the frame.</div>
+            </div>
+
+            <div class="checkpoint">
+                ✅ <strong>Stop!</strong> Spin each motor shaft with your finger:
+                <ul>
+                    <li>All 4 shafts should spin freely</li>
+                    <li>No grinding or resistance</li>
+                    <li>Motors don't wobble in their holes</li>
+                </ul>
+            </div>
+
+            <div class="mission-complete">
+                <h3>🎉 Mission 2 Complete!</h3>
+                <p>All 4 motors are mounted and secured.</p>
+            </div>
+        </div>
+
+        <!-- MISSION 3: Adjust MT3608 -->
+        <div class="mission-header">
+            <h2>Mission 3: Adjust the Voltage Booster</h2>
+            <span class="time-estimate">⏱️ 15 min</span>
+        </div>
+        <div class="mission-content">
+            <p>The MT3608 boosts 3.7V from the battery to 5V for the electronics.</p>
+
+            <div class="exercise">
+                <h3>Exercise 3.1: Set Up the Test</h3>
+                <ol class="steps">
+                    <li>Set your multimeter to DC Voltage (V⎓)</li>
+                    <li>Connect RED probe to MT3608 OUT+ pin</li>
+                    <li>Connect BLACK probe to MT3608 OUT- pin</li>
+                    <li>Connect battery RED to MT3608 IN+</li>
+                    <li>Connect battery BLACK to MT3608 IN-</li>
+                </ol>
+
+                <div class="diagram">
+                    <div class="diagram-title">MT3608 Adjustment Setup:</div>
+<pre>
+Battery (3.7V)         Multimeter
+┌─────────┐           ┌──────────┐
+│  +  -   │           │  ?.??V   │
+└──┬──┬───┘           └──┬───┬───┘
+   │  │                  │   │
+ RED BLACK             RED BLACK
+   │  │                  │   │
+   ▼  ▼                  ▼   ▼
+┌─────────────────────────────┐
+│ IN+  IN-       OUT+  OUT-   │
+│                             │
+│       MT3608 Booster        │
+│                             │
+│         ╔═╗ ← Adjustment    │
+│         ║▲║    screw        │
+│         ╚═╝                 │
+└─────────────────────────────┘
+
+Turn: ↻ = Higher voltage
+      ↺ = Lower voltage
+</pre>
+                </div>
+            </div>
+
+            <div class="exercise">
+                <h3>Exercise 3.2: Adjust to 5.0V</h3>
+                <ol class="steps">
+                    <li>The multimeter shows current output voltage</li>
+                    <li>Use a small screwdriver on the adjustment screw</li>
+                    <li>Turn clockwise (↻) to increase voltage</li>
+                    <li>Turn counter-clockwise (↺) to decrease voltage</li>
+                    <li>Adjust until multimeter reads 5.0V (±0.1V is OK)</li>
+                    <li>Disconnect battery when done</li>
+                </ol>
+
+                <div class="what-you-see">
+<pre>
+Multimeter reading: 5.00V
+(Anywhere from 4.9V to 5.1V is acceptable)
+</pre>
+                </div>
+
+                <p><strong>What voltage should the MT3608 output?</strong></p>
+                <div class="answer-box">
+                    <label>Your answer (in V):</label>
+                    <input type="text" id="answer-3-2" placeholder="Enter voltage...">
+                    <button class="check-btn" onclick="checkAnswer('answer-3-2', ['5', '5.0', '5v', '5.0v', '5 volts'], 'Correct! 5.0V is the target output.', 'What voltage do ESP32 and L9110S need?')">Check</button>
+                    <div class="feedback" id="feedback-3-2"></div>
+                </div>
+            </div>
+
+            <div class="warning">Never exceed 5.5V! Higher voltage can damage the ESP32.</div>
+
+            <div class="checkpoint">
+                ✅ <strong>Stop!</strong> Verify MT3608 output is stable at 5.0V before continuing.
+            </div>
+
+            <div class="mission-complete">
+                <h3>🎉 Mission 3 Complete!</h3>
+                <p>Your voltage booster is calibrated to 5.0V output.</p>
+            </div>
+        </div>
+
+        <!-- MISSION 4: Mount Electronics -->
+        <div class="mission-header">
+            <h2>Mission 4: Mount the Electronics</h2>
+            <span class="time-estimate">⏱️ 30 min</span>
+        </div>
+        <div class="mission-content">
+            <p>Attach all electronic components to the frame using tape.</p>
+
+            <div class="exercise">
+                <h3>Exercise 4.1: Component Layout</h3>
+                <p>Study where each component goes:</p>
+
+                <div class="diagram">
+                    <div class="diagram-title">Component Layout (Top View):</div>
+<pre>
+            Motor 1 (Front)
+                 ⊕
+                 │
+                 │
+Motor 4 ─────────┼───────── Motor 2
+    ⊕            │              ⊕
+    │        ┌───┴───┐          │
+    │        │ ESP32 │          │
+    │        │DevKit │          │
+    │        │ USB→  │          │
+    │        └───────┘          │
+    │        ┌──────┐           │
+┌───┴───┐    │MPU   │     ┌─────┴───┐
+│L9110S │    │6050  │     │ L9110S  │
+│Driver2│    │sensor│     │ Driver1 │
+└───────┘    └──────┘     └─────────┘
+(Back+Left) (on foam)   (Front+Right)
+    │                          │
+    ⊕
+Motor 3 (Back)
+</pre>
+                </div>
+            </div>
+
+            <div class="exercise">
+                <h3>Exercise 4.2: Mount ESP32</h3>
+                <ol class="steps">
+                    <li>Apply double-sided tape to the bottom of ESP32</li>
+                    <li>Place at center of frame</li>
+                    <li>USB port should face outward (for easy programming)</li>
+                    <li>Press firmly for 10 seconds</li>
+                </ol>
+            </div>
+
+            <div class="exercise">
+                <h3>Exercise 4.3: Mount MPU6050 (IMPORTANT!)</h3>
+                <ol class="steps">
+                    <li>Use FOAM TAPE (not regular tape!)</li>
+                    <li>Apply foam tape to bottom of MPU6050</li>
+                    <li>Place behind ESP32</li>
+                    <li>Press gently (don't crush the foam)</li>
+                </ol>
+
+                <div class="warning">You MUST use foam tape for MPU6050! The foam absorbs motor vibrations. Without it, your sensor readings will be noisy and the drone won't stabilize.</div>
+
+                <p><strong>Why must you use foam tape for the MPU6050?</strong></p>
+                <div class="answer-box">
+                    <label>Your answer:</label>
+                    <input type="text" id="answer-4-3" placeholder="Type reason...">
+                    <button class="check-btn" onclick="checkAnswer('answer-4-3', ['vibration', 'vibrations', 'absorb', 'noise', 'motor vibration'], 'Correct! Foam absorbs motor vibrations for cleaner sensor readings.', 'Think about what motors do when spinning fast...')">Check</button>
+                    <div class="feedback" id="feedback-4-3"></div>
+                </div>
+            </div>
+
+            <div class="exercise">
+                <h3>Exercise 4.4: Mount L9110S Drivers</h3>
+                <ol class="steps">
+                    <li>L9110S #1: Mount on RIGHT arm (controls Front + Right motors)</li>
+                    <li>L9110S #2: Mount on LEFT arm (controls Back + Left motors)</li>
+                    <li>Use double-sided tape</li>
+                    <li>Position with pins accessible for wiring</li>
+                </ol>
+            </div>
+
+            <div class="exercise">
+                <h3>Exercise 4.5: Mount MT3608 and Battery</h3>
+                <ol class="steps">
+                    <li>MT3608: Tape under the frame center (bottom side)</li>
+                    <li>Position so adjustment screw is accessible</li>
+                    <li>Battery: Attach velcro strap to frame bottom</li>
+                    <li>Battery slides into velcro (must be removable!)</li>
+                </ol>
+
+                <div class="diagram">
+                    <div class="diagram-title">Side View - Vertical Stack:</div>
+<pre>
+Propellers (on motors)    ← Top
+       │
+   ┌───┴───┐
+   │ ESP32 │              ← Electronics
+   ├───────┤
+   │MPU6050│  (on foam!)
+═══════════════════       ← Frame
+   │MT3608 │              ← Under frame
+   ├───────┤
+   │Battery│  (velcro)    ← Bottom
+   └───────┘
+</pre>
+                </div>
+            </div>
+
+            <div class="checkpoint">
+                ✅ <strong>Stop!</strong> Verify component placement:
+                <ul>
+                    <li>ESP32 centered, USB port accessible</li>
+                    <li>MPU6050 on FOAM tape behind ESP32</li>
+                    <li>Both L9110S drivers mounted on side arms</li>
+                    <li>MT3608 under frame, screw accessible</li>
+                    <li>Battery holder (velcro) attached</li>
+                </ul>
+            </div>
+
+            <div class="mission-complete">
+                <h3>🎉 Mission 4 Complete!</h3>
+                <p>All electronics are mounted and positioned.</p>
+            </div>
+        </div>
+
+        <!-- MISSION 5: Power Wiring -->
+        <div class="mission-header">
+            <h2>Mission 5: Power Wiring</h2>
+            <span class="time-estimate">⏱️ 45 min</span>
+        </div>
+        <div class="mission-content">
+            <p>Connect all power wires. Use RED for positive (+), BLACK for ground (-).</p>
+
+            <div class="exercise">
+                <h3>Exercise 5.1: Power Distribution Overview</h3>
+                <div class="diagram">
+                    <div class="diagram-title">Complete Power Flow:</div>
+<pre>
+Battery (3.7V)
+    │
+    ├── RED ──→ MT3608 IN+
+    └── BLACK → MT3608 IN- (GND)
+                    │
+                    ├── OUT+ (5V) ──┬──→ ESP32 VIN
+                    │               ├──→ L9110S #1 VCC
+                    │               └──→ L9110S #2 VCC
+                    │
+                    └── OUT- (GND) ─┬──→ ESP32 GND
+                                    ├──→ L9110S #1 GND
+                                    ├──→ L9110S #2 GND
+                                    └──→ MPU6050 GND
+
+ESP32 3.3V ──→ MPU6050 VCC (sensor needs 3.3V, not 5V!)
+</pre>
+                </div>
+            </div>
+
+            <div class="exercise">
+                <h3>Exercise 5.2: Battery to MT3608</h3>
+                <ol class="steps">
+                    <li>Solder RED wire from battery connector to MT3608 IN+</li>
+                    <li>Solder BLACK wire from battery connector to MT3608 IN-</li>
+                </ol>
+
+                <div class="warning">Always check polarity! RED to +, BLACK to -. Reversed polarity will damage components.</div>
+            </div>
+
+            <div class="exercise">
+                <h3>Exercise 5.3: MT3608 to ESP32</h3>
+                <ol class="steps">
+                    <li>Solder RED wire from MT3608 OUT+ to ESP32 VIN pin</li>
+                    <li>Solder BLACK wire from MT3608 OUT- to ESP32 GND pin</li>
+                </ol>
+            </div>
+
+            <div class="exercise">
+                <h3>Exercise 5.4: MT3608 to L9110S Drivers</h3>
+                <ol class="steps">
+                    <li>MT3608 OUT+ → L9110S #1 VCC (use wire splitter or solder joint)</li>
+                    <li>MT3608 OUT+ → L9110S #2 VCC</li>
+                    <li>MT3608 OUT- → L9110S #1 GND</li>
+                    <li>MT3608 OUT- → L9110S #2 GND</li>
+                </ol>
+
+                <div class="tip">Both drivers connect to the SAME power source (parallel connection). Use wire splitters to split the power.</div>
+            </div>
+
+            <div class="exercise">
+                <h3>Exercise 5.5: ESP32 to MPU6050</h3>
+                <ol class="steps">
+                    <li>ESP32 3.3V pin → MPU6050 VCC</li>
+                    <li>ESP32 GND → MPU6050 GND</li>
+                </ol>
+
+                <div class="warning">The MPU6050 needs 3.3V, NOT 5V! Using 5V will damage the sensor. The ESP32 has a built-in 3.3V output - use that.</div>
+
+                <p><strong>What voltage does the MPU6050 sensor need?</strong></p>
+                <div class="answer-box">
+                    <label>Your answer (in V):</label>
+                    <input type="text" id="answer-5-5" placeholder="Enter voltage...">
+                    <button class="check-btn" onclick="checkAnswer('answer-5-5', ['3.3', '3.3v', '3.3 volts'], 'Correct! MPU6050 runs on 3.3V.', 'It is less than 5V... check the ESP32 output pins.')">Check</button>
+                    <div class="feedback" id="feedback-5-5"></div>
+                </div>
+            </div>
+
+            <div class="exercise">
+                <h3>Exercise 5.6: Wiring Checklist</h3>
+                <div class="checklist">
+                    <div class="checklist-item">
+                        <input type="checkbox" id="p1"><label for="p1">Battery RED → MT3608 IN+</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="p2"><label for="p2">Battery BLACK → MT3608 IN-</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="p3"><label for="p3">MT3608 OUT+ → ESP32 VIN</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="p4"><label for="p4">MT3608 OUT+ → L9110S #1 VCC</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="p5"><label for="p5">MT3608 OUT+ → L9110S #2 VCC</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="p6"><label for="p6">All GND connected together</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="p7"><label for="p7">ESP32 3.3V → MPU6050 VCC</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="checkpoint">
+                ✅ <strong>Stop!</strong> Use multimeter to verify:
+                <ul>
+                    <li>No short between any + and GND</li>
+                    <li>With battery connected, ESP32 VIN reads 5.0V</li>
+                    <li>ESP32 LED lights up when battery connected</li>
+                </ul>
+            </div>
+
+            <div class="mission-complete">
+                <h3>🎉 Mission 5 Complete!</h3>
+                <p>All power wiring is connected. The ESP32 should power on!</p>
+            </div>
+        </div>
+
+        <!-- MISSION 6: Motor Wiring -->
+        <div class="mission-header">
+            <h2>Mission 6: Motor Wiring</h2>
+            <span class="time-estimate">⏱️ 30 min</span>
+        </div>
+        <div class="mission-content">
+            <p>Connect each motor to its L9110S driver output.</p>
+
+            <div class="exercise">
+                <h3>Exercise 6.1: Motor-to-Driver Map</h3>
+                <div class="diagram">
+                    <div class="diagram-title">Motor Connection Map:</div>
+<pre>
+L9110S Driver #1 (on right arm):
+├── OUT1A/1B → Motor 1 (Front) RED/BLACK
+└── OUT2A/2B → Motor 2 (Right) RED/BLACK
+
+L9110S Driver #2 (on left arm):
+├── OUT1A/1B → Motor 3 (Back) RED/BLACK
+└── OUT2A/2B → Motor 4 (Left) RED/BLACK
+</pre>
+                </div>
+            </div>
+
+            <div class="exercise">
+                <h3>Exercise 6.2: Wire L9110S #1</h3>
+                <ol class="steps">
+                    <li>Motor 1 (Front) RED wire → L9110S #1 OUT1A</li>
+                    <li>Motor 1 (Front) BLACK wire → L9110S #1 OUT1B</li>
+                    <li>Motor 2 (Right) RED wire → L9110S #1 OUT2A</li>
+                    <li>Motor 2 (Right) BLACK wire → L9110S #1 OUT2B</li>
+                </ol>
+            </div>
+
+            <div class="exercise">
+                <h3>Exercise 6.3: Wire L9110S #2</h3>
+                <ol class="steps">
+                    <li>Motor 3 (Back) RED wire → L9110S #2 OUT1A</li>
+                    <li>Motor 3 (Back) BLACK wire → L9110S #2 OUT1B</li>
+                    <li>Motor 4 (Left) RED wire → L9110S #2 OUT2A</li>
+                    <li>Motor 4 (Left) BLACK wire → L9110S #2 OUT2B</li>
+                </ol>
+
+                <div class="tip">Keep motor wires short to reduce weight. Route along the frame arms.</div>
+            </div>
+
+            <div class="checkpoint">
+                ✅ <strong>Stop!</strong> All 4 motors should be connected to their drivers. Double-check each connection before continuing.
+            </div>
+
+            <div class="mission-complete">
+                <h3>🎉 Mission 6 Complete!</h3>
+                <p>All 4 motors are wired to their drivers.</p>
+            </div>
+        </div>
+
+        <!-- MISSION 7: Signal Wiring -->
+        <div class="mission-header">
+            <h2>Mission 7: Signal Wiring</h2>
+            <span class="time-estimate">⏱️ 25 min</span>
+        </div>
+        <div class="mission-content">
+            <p>Connect control signals from ESP32 to drivers and sensor.</p>
+
+            <div class="exercise">
+                <h3>Exercise 7.1: ESP32 Pin Reference</h3>
+                <table>
+                    <tr><th>ESP32 Pin</th><th>Connects To</th><th>Purpose</th></tr>
+                    <tr><td>Pin 25</td><td>L9110S #1 IN1</td><td>Front motor control</td></tr>
+                    <tr><td>Pin 26</td><td>L9110S #1 IN2</td><td>Right motor control</td></tr>
+                    <tr><td>Pin 14</td><td>L9110S #2 IN3</td><td>Back motor control</td></tr>
+                    <tr><td>Pin 27</td><td>L9110S #2 IN4</td><td>Left motor control</td></tr>
+                    <tr><td>Pin 21 (SDA)</td><td>MPU6050 SDA</td><td>I2C data</td></tr>
+                    <tr><td>Pin 22 (SCL)</td><td>MPU6050 SCL</td><td>I2C clock</td></tr>
+                </table>
+            </div>
+
+            <div class="exercise">
+                <h3>Exercise 7.2: Motor Control Wires</h3>
+                <ol class="steps">
+                    <li>ESP32 Pin 25 → L9110S #1 IN1</li>
+                    <li>ESP32 Pin 26 → L9110S #1 IN2</li>
+                    <li>ESP32 Pin 14 → L9110S #2 IN3</li>
+                    <li>ESP32 Pin 27 → L9110S #2 IN4</li>
+                </ol>
+
+                <p><strong>Which ESP32 pin controls the Front motor?</strong></p>
+                <div class="answer-box">
+                    <label>Your answer:</label>
+                    <input type="text" id="answer-7-2" placeholder="Pin number...">
+                    <button class="check-btn" onclick="checkAnswer('answer-7-2', ['25', 'pin 25', 'gpio 25'], 'Correct! Pin 25 controls the Front motor.', 'Check the table above for Front motor.')">Check</button>
+                    <div class="feedback" id="feedback-7-2"></div>
+                </div>
+            </div>
+
+            <div class="exercise">
+                <h3>Exercise 7.3: I2C Sensor Wires</h3>
+                <ol class="steps">
+                    <li>ESP32 Pin 21 (SDA) → MPU6050 SDA</li>
+                    <li>ESP32 Pin 22 (SCL) → MPU6050 SCL</li>
+                </ol>
+
+                <div class="tip">I2C uses two wires: SDA (data) and SCL (clock). Both are needed for the sensor to communicate.</div>
+            </div>
+
+            <div class="exercise">
+                <h3>Exercise 7.4: Complete Wiring Checklist</h3>
+                <div class="checklist">
+                    <div class="checklist-item">
+                        <input type="checkbox" id="s1"><label for="s1">Pin 25 → L9110S #1 IN1 (Front motor)</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="s2"><label for="s2">Pin 26 → L9110S #1 IN2 (Right motor)</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="s3"><label for="s3">Pin 14 → L9110S #2 IN3 (Back motor)</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="s4"><label for="s4">Pin 27 → L9110S #2 IN4 (Left motor)</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="s5"><label for="s5">Pin 21 → MPU6050 SDA</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="s6"><label for="s6">Pin 22 → MPU6050 SCL</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="checkpoint">
+                ✅ <strong>Stop!</strong> All wiring complete! Count your connections:
+                <ul>
+                    <li>Power wiring: 7+ connections</li>
+                    <li>Motor wiring: 8 connections</li>
+                    <li>Signal wiring: 6 connections</li>
+                </ul>
+            </div>
+
+            <div class="mission-complete">
+                <h3>🎉 Mission 7 Complete!</h3>
+                <p>All signal wiring is connected. Hardware is done!</p>
+            </div>
+        </div>
+
+        <!-- MISSION 8: Upload Code -->
+        <div class="mission-header">
+            <h2>Mission 8: Upload the Flight Code</h2>
+            <span class="time-estimate">⏱️ 30 min</span>
+        </div>
+        <div class="mission-content">
+            <p>Install Arduino libraries and upload the flight control code.</p>
+
+            <div class="exercise">
+                <h3>Exercise 8.1: Install Arduino Libraries</h3>
+                <ol class="steps">
+                    <li>Open Arduino IDE</li>
+                    <li>Go to Tools → Manage Libraries</li>
+                    <li>Search "Adafruit MPU6050" → Install</li>
+                    <li>Search "Adafruit Unified Sensor" → Install</li>
+                </ol>
+
+                <div class="what-you-see">
+<pre>
+Library Manager shows:
+✓ Adafruit MPU6050 - Installed
+✓ Adafruit Unified Sensor - Installed
+</pre>
+                </div>
+            </div>
+
+            <div class="exercise">
+                <h3>Exercise 8.2: Configure Arduino IDE</h3>
+                <ol class="steps">
+                    <li>Go to Tools → Board → Select "ESP32 Dev Module"</li>
+                    <li>Go to Tools → Port → Select the ESP32's COM port</li>
+                    <li>Go to Tools → Upload Speed → Select "115200"</li>
+                </ol>
+            </div>
+
+            <div class="exercise">
+                <h3>Exercise 8.3: Generate Code with AI</h3>
+                <p>Share this tutorial URL with Claude and ask him with this prompt:</p>
+
+                <div class="what-you-see">
+<pre>
+I'm building an educational quadcopter with these specs:
+- Board: ESP32-C3 SuperMini
+- Sensors: MPU6050 on pins 8 (SDA) and 9 (SCL)
+- Motors: 4× 8520 via L9110S drivers
+  - Front motor: ESP32 pin 2
+  - Right motor: ESP32 pin 3
+  - Back motor: ESP32 pin 4
+  - Left motor: ESP32 pin 5
+- Control: Wi-Fi web interface at 192.168.4.1
+- Features needed:
+  - Wi-Fi Access Point named "Drone_01" (no password)
+  - Web page with ARM/DISARM buttons and throttle slider (0-70%)
+  - PID stabilization using MPU6050 (Kp=2.0, Kd=0.14)
+  - Max throttle limited to 178/255 (70%) for safety
+  - X-configuration motor mixing (pitch/roll correction)
+
+Generate complete Arduino sketch with comments.
+</pre>
+                </div>
+            </div>
+
+            <div class="exercise">
+                <h3>Exercise 8.4: Upload Code</h3>
+                <ol class="steps">
+                    <li>Copy the generated code into Arduino IDE</li>
+                    <li>Click the Verify button (checkmark icon)</li>
+                    <li>Connect ESP32 via USB cable</li>
+                    <li>Click the Upload button (arrow icon)</li>
+                    <li>Wait for "Hard resetting via RTS pin..." message</li>
+                </ol>
+
+                <div class="what-you-see">
+<pre>
+Compiling sketch...
+Uploading...
+Writing at 0x00010000... (100%)
+Hard resetting via RTS pin...
+</pre>
+                </div>
+            </div>
+
+            <div class="checkpoint">
+                ✅ <strong>Stop!</strong> Code uploaded? ESP32 should now be running the flight code.
+            </div>
+
+            <div class="mission-complete">
+                <h3>🎉 Mission 8 Complete!</h3>
+                <p>Flight control code is running on ESP32.</p>
+            </div>
+        </div>
+
+        <!-- MISSION 9: Install Propellers -->
+        <div class="mission-header">
+            <h2>Mission 9: Install Propellers</h2>
+            <span class="time-estimate">⏱️ 15 min</span>
+        </div>
+        <div class="mission-content">
+            <p>Attach propellers with correct rotation directions.</p>
+
+            <div class="exercise">
+                <h3>Exercise 9.1: Propeller Rotation Map</h3>
+                <div class="diagram">
+                    <div class="diagram-title">Propeller Installation:</div>
+<pre>
+              CW Propeller
+                  ↻
+               ┌──┴──┐
+               │  ⊕  │ Front
+               └─────┘
+                  │
+                  │
+CCW ↺             │              ↻ CW
+┌─────┐      ─────┼─────      ┌─────┐
+│  ⊕  │ Left      │    Right  │  ⊕  │
+└─────┘           │           └─────┘
+                  │
+               ┌──┴──┐
+               │  ⊕  │ Back
+               └─────┘
+                  ↺
+              CCW Propeller
+
+CW props: Front & Right
+CCW props: Back & Left
+</pre>
+                </div>
+            </div>
+
+            <div class="exercise">
+                <h3>Exercise 9.2: Identify Propeller Types</h3>
+                <p>CW and CCW propellers have different blade angles:</p>
+                <ul>
+                    <li><strong>CW (Clockwise):</strong> Blade leading edge tilts RIGHT when viewed from above</li>
+                    <li><strong>CCW (Counter-Clockwise):</strong> Blade leading edge tilts LEFT when viewed from above</li>
+                </ul>
+
+                <div class="tip">Most propeller sets are labeled or color-coded. Check your packaging!</div>
+            </div>
+
+            <div class="exercise">
+                <h3>Exercise 9.3: Install Each Propeller</h3>
+                <ol class="steps">
+                    <li>Front motor: Press on CW propeller</li>
+                    <li>Right motor: Press on CW propeller</li>
+                    <li>Back motor: Press on CCW propeller</li>
+                    <li>Left motor: Press on CCW propeller</li>
+                    <li>Push each propeller firmly until seated flush</li>
+                </ol>
+
+                <div class="warning">Propellers must be tight! A loose propeller can fly off during flight - dangerous!</div>
+
+                <p><strong>What type of propeller goes on the Back motor?</strong></p>
+                <div class="answer-box">
+                    <label>Your answer:</label>
+                    <input type="text" id="answer-9-3" placeholder="CW or CCW?">
+                    <button class="check-btn" onclick="checkAnswer('answer-9-3', ['ccw', 'counter-clockwise', 'counter clockwise', 'counterclockwise'], 'Correct! Back motor uses CCW propeller.', 'Check the diagram - Back and Left use which type?')">Check</button>
+                    <div class="feedback" id="feedback-9-3"></div>
+                </div>
+            </div>
+
+            <div class="checkpoint">
+                ✅ <strong>Stop!</strong> Verify propellers:
+                <ul>
+                    <li>All 4 propellers installed</li>
+                    <li>Front & Right: CW propellers</li>
+                    <li>Back & Left: CCW propellers</li>
+                    <li>All spin freely without hitting frame</li>
+                    <li>All are firmly pressed onto shafts</li>
+                </ul>
+            </div>
+
+            <div class="mission-complete">
+                <h3>🎉 Mission 9 Complete!</h3>
+                <p>Propellers installed! Your drone is ready for testing.</p>
+            </div>
+        </div>
+
+        <!-- MISSION 10: First Flight -->
+        <div class="mission-header">
+            <h2>Mission 10: First Flight!</h2>
+            <span class="time-estimate">⏱️ 20 min</span>
+        </div>
+        <div class="mission-content">
+            <p>Connect your phone and fly the drone!</p>
+
+            <div class="exercise">
+                <h3>Exercise 10.1: Pre-Flight Safety</h3>
+                <ol class="steps">
+                    <li>Find a clear indoor area (at least 2×2 meters)</li>
+                    <li>Remove breakable objects from the area</li>
+                    <li>Have safety glasses ready (recommended)</li>
+                    <li>Keep fingers away from spinning propellers</li>
+                </ol>
+
+                <div class="warning">Never put fingers near spinning propellers! They can cause cuts.</div>
+            </div>
+
+            <div class="exercise">
+                <h3>Exercise 10.2: Power Up</h3>
+                <ol class="steps">
+                    <li>Disconnect USB cable from ESP32</li>
+                    <li>Place drone on a flat surface</li>
+                    <li>Connect battery to MT3608</li>
+                    <li>ESP32 LED should light up</li>
+                </ol>
+            </div>
+
+            <div class="exercise">
+                <h3>Exercise 10.3: Connect Phone</h3>
+                <ol class="steps">
+                    <li>On your phone, open Wi-Fi settings</li>
+                    <li>Look for network named "Drone_01"</li>
+                    <li>Connect (no password needed)</li>
+                    <li>Open browser and go to: <code>http://192.168.4.1</code></li>
+                </ol>
+
+                <div class="what-you-see">
+<pre>
+Web Control Interface:
+┌─────────────────────────────┐
+│  🚁 Tiny Drone Control      │
+│                             │
+│  ┌─────┐      ┌─────┐      │
+│  │ ARM │      │DISARM│      │
+│  └─────┘      └─────┘      │
+│                             │
+│  Throttle:                  │
+│  ├────────○────────┤ 0%    │
+│  0              70%         │
+└─────────────────────────────┘
+</pre>
+                </div>
+
+                <p><strong>What URL do you enter in the browser?</strong></p>
+                <div class="answer-box">
+                    <label>Your answer:</label>
+                    <input type="text" id="answer-10-3" placeholder="http://...">
+                    <button class="check-btn" onclick="checkAnswer('answer-10-3', ['192.168.4.1', 'http://192.168.4.1'], 'Correct! That is the ESP32 access point IP.', 'The IP address is 192.168.4.1')">Check</button>
+                    <div class="feedback" id="feedback-10-3"></div>
+                </div>
+            </div>
+
+            <div class="exercise">
+                <h3>Exercise 10.4: First Hover</h3>
+                <ol class="steps">
+                    <li>Click the ARM button</li>
+                    <li>SLOWLY move the throttle slider up</li>
+                    <li>At ~30-40%, motors will start spinning</li>
+                    <li>At ~50-60%, drone should lift off</li>
+                    <li>Keep it low (10-20cm) for first test</li>
+                    <li>To land: slowly reduce throttle</li>
+                    <li>Click DISARM after landing</li>
+                </ol>
+
+                <div class="diagram">
+                    <div class="diagram-title">Throttle Levels:</div>
+<pre>
+ 0%    = Motors OFF
+30-40% = Motors spinning (not lifting)
+50-60% = Hover height
+60-70% = Higher flight (max safe)
+
+Start slow! Increase throttle gradually.
+</pre>
+                </div>
+            </div>
+
+            <div class="exercise">
+                <h3>Exercise 10.5: Post-Flight</h3>
+                <ol class="steps">
+                    <li>Reduce throttle to 0%</li>
+                    <li>Click DISARM</li>
+                    <li>Disconnect battery immediately</li>
+                    <li>Check for hot components (warm is OK, hot is not)</li>
+                    <li>Charge battery if needed (don't leave drained)</li>
+                </ol>
+            </div>
+
+            <div class="checkpoint">
+                ✅ <strong>Congratulations!</strong> You've built and flown your own drone!
+            </div>
+
+            <div class="mission-complete">
+                <h3>🎉 Mission 10 Complete!</h3>
+                <p>You successfully flew your ESP32 quadcopter!</p>
+            </div>
+        </div>
+
+        <!-- Final Section -->
+        <div class="final-section">
+            <h2>🏆 Build Complete!</h2>
+            <p>You've built a working Wi-Fi controlled quadcopter drone!</p>
+
+            <div class="diagram">
+                <div class="diagram-title">Your Completed Drone:</div>
+<pre>
+                ⚭⚭⚭
+               ⚭ │ ⚭  Propellers
+                 │
+              ┌──┴──┐
+              │  ⊕  │  Motors
+⚭⚭⚭          ╱│     │╲          ⚭⚭⚭
+⚭ │ ⚭       ╱ │     │ ╲        ⚭ │ ⚭
+   │        ╱  │     │  ╲         │
+   ⊕       ╱   │     │   ╲        ⊕
+          ╱ ┌──┴─────┴──┐ ╲
+         │  │   ESP32   │  │
+         │  ├───────────┤  │  Electronics
+         │  │  MPU6050  │  │
+         │  ├───────────┤  │
+         │  │  L9110S   │  │
+         ════════════════════  Frame
+             │ MT3608 │
+             └────────┘
+            │ Battery │
+            └─────────┘
+
+Total weight: 42-45g
+Flight time: 4-6 minutes
+Control: Wi-Fi smartphone
+</pre>
+            </div>
+
+            <h3>What You Learned:</h3>
+            <ul style="text-align: left; display: inline-block;">
+                <li>Building mechanical frames</li>
+                <li>Voltage regulation with boost converters</li>
+                <li>Motor drivers and PWM control</li>
+                <li>I2C sensor communication</li>
+                <li>Wi-Fi web server on ESP32</li>
+                <li>PID stabilization concepts</li>
+            </ul>
+
+            <p style="margin-top: 30px; color: #ff6b35; font-size: 1.2em;">
+                <strong>Happy Flying! 🚁</strong>
+            </p>
+        </div>
+    </div>
+
+    <!-- Popup Modal -->
+    <div class="popup-overlay" id="popup-overlay" onclick="closePopup()">
+        <div class="popup" id="popup" onclick="event.stopPropagation()">
+            <div class="emoji" id="popup-emoji"></div>
+            <h3 id="popup-title"></h3>
+            <p id="popup-message"></p>
+            <button onclick="closePopup()">Continue</button>
+        </div>
+    </div>
+
+    <script>
+        function checkAnswer(inputId, correctAnswers, successMsg, failMsg) {
+            const input = document.getElementById(inputId);
+            const feedback = document.getElementById('feedback-' + inputId.split('-').slice(1).join('-'));
+            const userAnswer = input.value.trim().toLowerCase();
+
+            let isCorrect = false;
+            for (let answer of correctAnswers) {
+                if (userAnswer.includes(answer.toLowerCase())) {
+                    isCorrect = true;
+                    break;
+                }
+            }
+
+            showPopup(isCorrect, isCorrect ? successMsg : failMsg);
+
+            if (feedback) {
+                feedback.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+                feedback.textContent = isCorrect ? '✓ ' + successMsg : '✗ ' + failMsg;
+            }
+        }
+
+        function showPopup(isCorrect, message) {
+            const overlay = document.getElementById('popup-overlay');
+            const popup = document.getElementById('popup');
+            const emoji = document.getElementById('popup-emoji');
+            const title = document.getElementById('popup-title');
+            const msg = document.getElementById('popup-message');
+
+            popup.className = 'popup ' + (isCorrect ? 'correct' : 'incorrect');
+            emoji.textContent = isCorrect ? '🎉' : '🤔';
+            title.textContent = isCorrect ? 'Excellent!' : 'Try Again';
+            msg.textContent = message;
+
+            overlay.style.display = 'flex';
+        }
+
+        function closePopup() {
+            document.getElementById('popup-overlay').style.display = 'none';
+        }
+
+        // Close popup with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closePopup();
+            }
+        });
+    </script>
+</body>
+</html>

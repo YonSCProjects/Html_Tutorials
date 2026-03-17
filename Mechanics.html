@@ -1,0 +1,1764 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>מכניקה 5 יח״ל — קורס עצמי (יחידות 0–2)</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #121a33;
+      --panel2: #0f1730;
+      --text: #e9ecff;
+      --muted: #b7bee8;
+      --accent: #7dd3fc;
+      --accent2: #a78bfa;
+      --good: #34d399;
+      --warn: #fbbf24;
+      --bad: #fb7185;
+      --border: rgba(255,255,255,.10);
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 18px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      --sans: system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans Hebrew", Arial, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: var(--sans);
+      background: radial-gradient(1200px 800px at 85% 10%, rgba(125,211,252,.18), transparent 60%),
+                  radial-gradient(1100px 700px at 15% 35%, rgba(167,139,250,.16), transparent 62%),
+                  linear-gradient(180deg, #070a14, var(--bg));
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    a { color: var(--accent); }
+    a:hover { opacity: .9; }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(7,10,20,.7);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 16px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 220px;
+    }
+
+    .logo {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(125,211,252,.85), rgba(167,139,250,.85));
+      box-shadow: var(--shadow);
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      color: #061026;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 16px;
+      line-height: 1.25;
+    }
+
+    .brand .sub {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .chip {
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      padding: 8px 10px;
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 12px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .btn {
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding: 9px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .btn:hover { background: rgba(255,255,255,.10); }
+
+    .btn.primary {
+      background: linear-gradient(135deg, rgba(125,211,252,.25), rgba(167,139,250,.25));
+      border-color: rgba(125,211,252,.35);
+    }
+
+    .layout {
+      max-width: 1200px;
+      margin: 16px auto 60px;
+      padding: 0 16px;
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 980px) {
+      .layout { grid-template-columns: 1fr; }
+      nav { position: static !important; }
+      .brand { min-width: auto; }
+    }
+
+    nav {
+      position: sticky;
+      top: 76px;
+      align-self: start;
+      background: rgba(18,26,51,.72);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .navHead {
+      padding: 14px 14px 10px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), transparent);
+    }
+
+    .progressWrap {
+      margin-top: 10px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .progressBar {
+      width: 100%;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.08);
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .progressBar > div {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, rgba(52,211,153,.95), rgba(125,211,252,.95), rgba(167,139,250,.95));
+    }
+
+    .navList {
+      list-style: none;
+      margin: 0;
+      padding: 10px;
+    }
+
+    .navList li { margin: 6px 0; }
+
+    .navLink {
+      width: 100%;
+      text-align: right;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 10px;
+      border-radius: 14px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .navLink:hover { background: rgba(255,255,255,.06); }
+
+    .navLink.active {
+      background: rgba(125,211,252,.12);
+      border-color: rgba(125,211,252,.25);
+    }
+
+    .badge {
+      font-size: 11px;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      padding: 2px 8px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .check {
+      width: 18px;
+      height: 18px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      display: grid;
+      place-items: center;
+      font-size: 12px;
+      color: rgba(255,255,255,.6);
+      flex: 0 0 auto;
+    }
+
+    .check.done {
+      border-color: rgba(52,211,153,.4);
+      background: rgba(52,211,153,.14);
+      color: var(--good);
+    }
+
+    main {
+      background: rgba(18,26,51,.52);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .content {
+      padding: 18px 18px 24px;
+    }
+
+    .hero {
+      padding: 18px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(135deg, rgba(125,211,252,.10), rgba(167,139,250,.08));
+    }
+
+    .hero h2 {
+      margin: 0 0 6px;
+      font-size: 18px;
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .card {
+      background: rgba(15,23,48,.75);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px;
+      margin: 14px 0;
+      box-shadow: 0 8px 22px rgba(0,0,0,.25);
+    }
+
+    .grid2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    @media (max-width: 820px) {
+      .grid2 { grid-template-columns: 1fr; }
+    }
+
+    h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+    }
+
+    h4 {
+      margin: 14px 0 6px;
+      font-size: 14px;
+      color: var(--accent);
+    }
+
+    .muted { color: var(--muted); }
+
+    .pill {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      color: var(--muted);
+      font-size: 12px;
+      margin: 0 0 10px;
+    }
+
+    .formula {
+      font-family: var(--mono);
+      background: rgba(255,255,255,.06);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      overflow: auto;
+      direction: ltr;
+      text-align: left;
+      color: #f6f7ff;
+    }
+
+    /* עיצוב למונחים טכניים באנגלית בתוך טקסט עברי */
+    .ltr {
+      direction: ltr;
+      display: inline-block;
+      unicode-bidi: isolate;
+    }
+
+    .callout {
+      border: 1px solid rgba(125,211,252,.28);
+      background: rgba(125,211,252,.08);
+      border-radius: var(--radius);
+      padding: 12px;
+      margin: 12px 0;
+    }
+
+    .callout.warn {
+      border-color: rgba(251,191,36,.35);
+      background: rgba(251,191,36,.10);
+    }
+
+    .callout.good {
+      border-color: rgba(52,211,153,.35);
+      background: rgba(52,211,153,.10);
+    }
+
+    .list {
+      margin: 8px 0 0;
+      padding-right: 18px;
+    }
+
+    .q {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px;
+      margin: 12px 0;
+      background: rgba(255,255,255,.03);
+    }
+
+    .q .qtitle {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .q .qtitle strong { font-size: 14px; }
+
+    details {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 10px 12px;
+      background: rgba(255,255,255,.02);
+    }
+
+    details summary {
+      cursor: pointer;
+      color: var(--accent);
+    }
+
+    .mc {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .opt {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 10px;
+      background: rgba(255,255,255,.02);
+      cursor: pointer;
+    }
+
+    .opt input { margin-top: 3px; }
+
+    .opt.correct {
+      border-color: rgba(52,211,153,.35);
+      background: rgba(52,211,153,.08);
+    }
+
+    .opt.wrong {
+      border-color: rgba(251,113,133,.35);
+      background: rgba(251,113,133,.08);
+    }
+
+    .small { font-size: 12px; }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+      flex: 1 1 160px;
+      min-width: 160px;
+    }
+
+    .field label {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    input[type="number"],
+    input[type="text"],
+    select {
+      width: 100%;
+      padding: 10px 10px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      color: var(--text);
+      outline: none;
+    }
+
+    input::placeholder { color: rgba(233,236,255,.45); }
+
+    .result {
+      margin-top: 10px;
+      border: 1px dashed rgba(255,255,255,.18);
+      border-radius: 14px;
+      padding: 10px;
+      color: var(--muted);
+    }
+
+    .kbd {
+      font-family: var(--mono);
+      font-size: 12px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      padding: 2px 8px;
+      border-radius: 10px;
+      color: #f3f5ff;
+      direction: ltr;
+      display: inline-block;
+    }
+
+    .footerNav {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      border-top: 1px solid var(--border);
+      padding: 12px 18px;
+      background: rgba(255,255,255,.03);
+    }
+
+    canvas {
+      width: 100%;
+      height: 260px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,.18);
+    }
+
+    .note {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo">F</div>
+      <div>
+        <h1>מכניקה 5 יח״ל — קורס עצמי</h1>
+        <p class="sub">יחידות 0–2: פתיחה, קינמטיקה בקו ישר, תנועה בשני ממדים</p>
+      </div>
+    </div>
+
+    <div class="actions">
+      <div class="chip" title="ההתקדמות נשמרת על המכשיר שלך (LocalStorage)">
+        🧠 <span id="progressText">התקדמות: 0%</span>
+      </div>
+      <button class="btn primary" id="markDoneBtn">סמן יחידה כהושלמה ✅</button>
+      <button class="btn" id="resetBtn">איפוס התקדמות</button>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <nav>
+    <div class="navHead">
+      <div class="pill">🧭 ניווט מהיר</div>
+      <div class="progressWrap">
+        <div class="progressBar"><div id="progressFill"></div></div>
+        <div class="small muted">טיפ: סמן יחידה כהושלמה כשסיימת. אפשר לחזור בכל רגע.</div>
+      </div>
+    </div>
+    <ul class="navList" id="navList"></ul>
+  </nav>
+
+  <main>
+    <div class="hero">
+      <h2 id="pageTitle">טוען...</h2>
+      <p id="pageSubtitle" class="muted">טוען...</p>
+    </div>
+    <div class="content" id="content"></div>
+
+    <div class="footerNav">
+      <button class="btn" id="prevBtn">◀ הקודם</button>
+      <button class="btn primary" id="nextBtn">הבא ▶</button>
+    </div>
+  </main>
+</div>
+
+<script>
+// ============================
+// Data model: lessons (units)
+// ============================
+const LESSONS = [
+  {
+    id: "u0",
+    title: "יחידה 0 — פתיחה: למה מכניקה זה מגניב?",
+    subtitle: "מה לומדים פה, איך לומדים לבד, ואיך לחשוב כמו פיזיקאי (בלי להיבהל).",
+    est: "20–35 דק׳",
+    html: `
+      <div class="card">
+        <div class="pill">🎯 מטרות היחידה</div>
+        <ul class="list">
+          <li>להבין מה זה "מודל פיזיקלי" ולמה הוא תמיד קירוב.</li>
+          <li>להכיר את 3 הכלים הכי חשובים בבגרות במכניקה: <b>גרפים</b>, <b>שרטוט כוחות</b>, <b>שימור</b>.</li>
+          <li>ללמוד שיטת פתרון קבועה לשאלות.</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>איך ללמוד כאן לבד (שיטה של 5 צעדים)</h3>
+        <ol class="list">
+          <li><b>סיפור → ציור:</b> מציירים מצב (סקיצה) ומסמנים נתונים.</li>
+          <li><b>בחירת מודל:</b> "ללא חיכוך", "כוח קבוע", "תאוצה קבועה"...</li>
+          <li><b>בחירת כלי:</b> קינמטיקה / ניוטון / אנרגיה / תנע (ביחידות הבאות).</li>
+          <li><b>פתרון מסודר:</b> משוואות + יחידות + בדיקת היגיון.</li>
+          <li><b>בדיקת מציאות:</b> האם התוצאה הגיונית? האם הכיוונים נכונים?</li>
+        </ol>
+
+        <div class="callout warn">
+          <b>כלל זהב:</b> בבגרות כמעט תמיד יש "מוקש" קטן. אם אתה מרגיש שהכול קל מדי — עצור ובדוק יחידות/סימנים.
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>מושגים בסיסיים (חובה לפני קינמטיקה)</h3>
+        <div class="grid2">
+          <div class="callout">
+            <b>סקאלר</b> — גודל בלי כיוון (זמן, מסה, אנרגיה).
+            <p style="margin: 8px 0; font-size: 14px;">דמיינו שאתם שוקלים תפוח במשקל — המספר שמופיע (למשל 150 גרם) הוא <b>סקאלר</b>. לא משנה לאיזה כיוון התפוח מופנה, המסה שלו תמיד אותו מספר. אותו דבר לגבי זמן: אם עברו 3 שניות, זה 3 שניות — אין לזמן "כיוון". גדלים סקאלריים נוחים לעבוד איתם כי פשוט מחברים ומחסרים מספרים רגילים.</p>
+            <div class="formula">t = 3 s</div>
+          </div>
+          <div class="callout">
+            <b>וקטור</b> — גודל עם כיוון (העתק, מהירות, תאוצה, כוח).
+            <p style="margin: 8px 0; font-size: 14px;">דמיינו שאתם נותנים הוראות הגעה לחבר: "לך 100 מטר צפונה". המספר לבד (100 מטר) לא מספיק — חייבים גם לציין <b>לאן</b>. זה וקטור: גודל + כיוון. בפיזיקה, כוח הוא וקטור כי חשוב לאן הוא דוחף; מהירות היא וקטור כי חשוב לאן נעים. כשעובדים עם וקטורים, לא מספיק לחבר מספרים — צריך להתחשב בכיוונים!</p>
+            <div class="formula">v⃗ = 5 m/s east</div>
+            <div class="note">כאן נכתוב וקטורים במילים/צירים, לא צריך LaTeX אמיתי.</div>
+          </div>
+        </div>
+
+        <h4>דרך vs העתק (מוקש קלאסי)</h4>
+        <p style="margin: 8px 0; font-size: 14px;">זה אחד ההבדלים הכי חשובים בפיזיקה, וגם אחד הכי מבלבלים:</p>
+        <ul class="list">
+          <li><b>דרך</b> — כמה הלכת בפועל (תמיד חיובי). דמיינו מד צעדים או מונה קילומטרים — הוא סופר כל מטר שעברתם, לא משנה לאן. אם הלכתם 10 מטר קדימה ו-10 מטר אחורה, הדרך היא 20 מטר.</li>
+          <li><b>העתק</b> — שינוי מיקום (יכול להיות 0 גם אם הלכת הרבה). זה כמו לשאול "כמה התרחקת מנקודת ההתחלה ולאיזה כיוון?". אם יצאת מהבית וחזרת לבית — ההעתק שלך הוא 0, גם אם הלכת קילומטרים! העתק הוא <b>וקטור</b> — יש לו גודל וכיוון.</li>
+        </ul>
+        <div class="callout warn" style="margin-top: 12px;">
+          <b>למה זה חשוב?</b> בבגרות רוב הנוסחאות עובדות עם <b>העתק</b>, לא עם דרך. אם תחשבו דרך במקום העתק, התשובה תהיה שגויה!
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>משימת "חימום מוח" (אינטראקטיבית)</h3>
+        <p class="muted">בחר את התשובה הנכונה ואז לחץ "בדיקה".</p>
+
+        <div class="q" data-quiz="u0q1">
+          <div class="qtitle">
+            <strong>1) הלכת 10 מטר קדימה ואז 10 מטר אחורה. מה ההעתק שלך?</strong>
+            <span class="badge">רב-ברירה</span>
+          </div>
+          <div class="mc">
+            <label class="opt"><input type="radio" name="u0q1" value="A"><span>A) 20 מ׳</span></label>
+            <label class="opt"><input type="radio" name="u0q1" value="B"><span>B) 0 מ׳</span></label>
+            <label class="opt"><input type="radio" name="u0q1" value="C"><span>C) 10 מ׳</span></label>
+            <label class="opt"><input type="radio" name="u0q1" value="D"><span>D) אי אפשר לדעת</span></label>
+          </div>
+          <div class="row" style="margin-top:10px">
+            <button class="btn" onclick="checkMC('u0q1','B')">בדיקה</button>
+            <span class="small muted" id="u0q1_msg"></span>
+          </div>
+          <details style="margin-top:10px">
+            <summary>הסבר מלא</summary>
+            <p>העתק = מיקום סופי − מיקום התחלתי. חזרת לנקודת ההתחלה, לכן ההעתק <b>0</b>. הדרך שעברת היא 20 מ׳.</p>
+          </details>
+        </div>
+
+        <div class="q" data-quiz="u0q2">
+          <div class="qtitle">
+            <strong>2) למה בפיזיקה "מזניחים חיכוך" לפעמים?</strong>
+            <span class="badge">רב-ברירה</span>
+          </div>
+          <div class="mc">
+            <label class="opt"><input type="radio" name="u0q2" value="A"><span>A) כי חיכוך לא קיים בטבע</span></label>
+            <label class="opt"><input type="radio" name="u0q2" value="B"><span>B) כי זה קירוב שמקל על המודל, כשחיכוך קטן יחסית</span></label>
+            <label class="opt"><input type="radio" name="u0q2" value="C"><span>C) כי בבגרות אסור חיכוך</span></label>
+            <label class="opt"><input type="radio" name="u0q2" value="D"><span>D) כי חיכוך תמיד שווה 0</span></label>
+          </div>
+          <div class="row" style="margin-top:10px">
+            <button class="btn" onclick="checkMC('u0q2','B')">בדיקה</button>
+            <span class="small muted" id="u0q2_msg"></span>
+          </div>
+          <details style="margin-top:10px">
+            <summary>הסבר מלא</summary>
+            <p>חיכוך קיים, אבל לפעמים הוא <b>קטן</b> ביחס לכוחות אחרים או שאין לנו נתונים עליו, ואז בוחרים מודל פשוט שמאפשר פתרון. בבגרות יגידו לך במפורש אם להזניח או לתת <span class="ltr">μ</span>.</p>
+          </details>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>קישורים מומלצים (לא חובה, אבל כיף)</h3>
+        <ul class="list">
+          <li><a href="https://phet.colorado.edu/" target="_blank" rel="noopener">PhET — סימולציות פיזיקה (בחר "Motion" / "Forces")</a></li>
+          <li><a href="https://www.khanacademy.org/science/physics" target="_blank" rel="noopener">Khan Academy Physics (אנגלית, חזק מאוד)</a></li>
+        </ul>
+        <div class="callout good">
+          <b>מטרה לסיום היחידה:</b> אם אתה יודע להסביר בקול "מה ההבדל בין דרך והעתק" + "למה מזניחים חיכוך" — אתה מוכן ליחידה 1.
+        </div>
+      </div>
+    `
+  },
+
+  {
+    id: "u1",
+    title: "יחידה 1 — קינמטיקה בקו ישר (תנועה במימד אחד)",
+    subtitle: "מיקום, מהירות, תאוצה, גרפים, ומשוואות תנועה בתאוצה קבועה.",
+    est: "70–120 דק׳",
+    html: `
+      <div class="card">
+        <div class="pill">🧠 מה תדע בסוף היחידה?</div>
+        <ul class="list">
+          <li>לקרוא ולבנות גרפים <span class="ltr">x(t)</span>, <span class="ltr">v(t)</span>, <span class="ltr">a(t)</span>.</li>
+          <li>להשתמש במשוואות תנועה בתאוצה קבועה באופן בטוח.</li>
+          <li>להבחין בין <b>מהירות</b> ל<b>מהירות ממוצעת</b> ולבצע בדיקות היגיון.</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>1) מושגים בסיסיים (עם יחידות)</h3>
+        <div class="grid2">
+          <div class="callout">
+            <b>מיקום</b> <span class="ltr">x</span> (במטרים)
+            <p style="margin: 8px 0; font-size: 14px;">המיקום הוא פשוט "איפה אתה נמצא" ביחס לנקודה שבחרנו כנקודת אפס. דמיינו סרגל ענק מונח על הרצפה: אם אתם עומדים במטר ה-12, המיקום שלכם הוא 12 מטר. שימו לב: המיקום יכול להיות גם שלילי — אם עברתם "לצד השני" של נקודת האפס.</p>
+            <div class="formula">x = 12 m</div>
+            <div class="note">בוחרים ציר: ימינה חיובי / שמאלה שלילי (או להפך), אבל חייבים עקביות.</div>
+          </div>
+          <div class="callout">
+            <b>מהירות</b> <span class="ltr">v</span> (מטר לשנייה)
+            <p style="margin: 8px 0; font-size: 14px;">המהירות אומרת לנו <b>כמה מהר</b> משתנה המיקום שלכם. אם עברתם 10 מטר ב-2 שניות, המהירות הממוצעת היא 5 מטר לשנייה. הסימן חשוב: מהירות חיובית = נעים בכיוון החיובי של הציר, מהירות שלילית = נעים לכיוון ההפוך. זו הסיבה שמהירות היא <b>וקטור</b> — היא אומרת גם כמה מהר וגם לאן.</p>
+            <div class="formula">v = Δx / Δt</div>
+            <div class="note">סימן המהירות אומר כיוון.</div>
+          </div>
+          <div class="callout">
+            <b>תאוצה</b> <span class="ltr">a</span> (מטר לשנייה בריבוע)
+            <p style="margin: 8px 0; font-size: 14px;">התאוצה אומרת לנו <b>כמה מהר משתנה המהירות</b>. אם התחלתם ב-0 והגעתם ל-10 מ/ש תוך 5 שניות, התאוצה היא 2 מ/ש². תאוצה חיובית לא תמיד אומרת "מאיצים" במובן היומיומי — היא רק אומרת שהמהירות משתנה לכיוון החיובי. אפשר "להאט" עם תאוצה חיובית אם נעים בכיוון השלילי!</p>
+            <div class="formula">a = Δv / Δt</div>
+            <div class="note">תאוצה יכולה להיות "שלילית" גם כשמגבירים מהירות — תלוי בכיוון.</div>
+          </div>
+          <div class="callout warn">
+            <b>מוקש:</b> "מאיץ" בשפה יומיומית ≠ "תאוצה חיובית" בפיזיקה.
+            <p style="margin: 8px 0; font-size: 14px;">בחיי היומיום, "להאיץ" אומר לנסוע יותר מהר. אבל בפיזיקה, הסימן של התאוצה תלוי בציר שבחרתם. אם מכונית נוסעת שמאלה (כיוון שלילי) ומגבירה מהירות, התאוצה שלילית — למרות שהיא "מאיצה"! הכלל: תמיד תסתכלו על הכיוונים, לא על מילים מהשפה היומיומית.</p>
+            <div class="note">אם בחרת ימינה חיובי, ואז הגוף זז שמאלה ומגדיל מהירות — התאוצה תהיה שלילית.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>2) גרפים — כלי הבגרות הכי חשוב בקינמטיקה</h3>
+        <div class="callout">
+          <b>כללי על:</b>
+          <ul class="list">
+            <li>בגרף <span class="ltr">v(t)</span>: השטח מתחת לגרף = <b>העתק</b>.</li>
+            <li>בגרף <span class="ltr">a(t)</span>: השטח מתחת לגרף = <b>שינוי במהירות</b> (<span class="ltr">Δv</span>).</li>
+            <li>השיפוע של <span class="ltr">x(t)</span> = <span class="ltr">v</span>, והשיפוע של <span class="ltr">v(t)</span> = <span class="ltr">a</span>.</li>
+          </ul>
+        </div>
+
+        <!-- ========== גרפים ויזואליים אינטראקטיביים ========== -->
+        <h4>📊 המחשה ויזואלית: שלושת הגרפים</h4>
+        <p class="muted small">לחץ על כפתור כדי לראות את הקשר בין הגרפים בסוגי תנועה שונים:</p>
+
+        <div class="row" style="margin-bottom: 15px; justify-content: center; gap: 8px;">
+          <button class="btn primary" onclick="showGraphType('constant')" id="btn-constant">מהירות קבועה</button>
+          <button class="btn" onclick="showGraphType('accelerate')" id="btn-accelerate">תאוצה חיובית</button>
+          <button class="btn" onclick="showGraphType('decelerate')" id="btn-decelerate">בלימה</button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+          <!-- גרף x(t) - מיקום -->
+          <div style="text-align: center;">
+            <div class="badge" style="margin-bottom: 8px; background: rgba(125,211,252,.15);">מיקום <span class="ltr">x(t)</span></div>
+            <svg id="graph-xt" viewBox="0 0 200 150" style="width: 100%; max-width: 200px; background: rgba(0,0,0,.3); border-radius: 12px; border: 1px solid var(--border);">
+              <!-- Grid -->
+              <line x1="30" y1="30" x2="30" y2="120" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
+              <line x1="70" y1="30" x2="70" y2="120" stroke="rgba(255,255,255,.05)" stroke-width="1"/>
+              <line x1="110" y1="30" x2="110" y2="120" stroke="rgba(255,255,255,.05)" stroke-width="1"/>
+              <line x1="150" y1="30" x2="150" y2="120" stroke="rgba(255,255,255,.05)" stroke-width="1"/>
+              <line x1="30" y1="120" x2="180" y2="120" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
+              <line x1="30" y1="90" x2="180" y2="90" stroke="rgba(255,255,255,.05)" stroke-width="1"/>
+              <line x1="30" y1="60" x2="180" y2="60" stroke="rgba(255,255,255,.05)" stroke-width="1"/>
+              <!-- Axes -->
+              <line x1="30" y1="120" x2="185" y2="120" stroke="rgba(255,255,255,.4)" stroke-width="1.5"/>
+              <line x1="30" y1="125" x2="30" y2="25" stroke="rgba(255,255,255,.4)" stroke-width="1.5"/>
+              <!-- Arrow heads -->
+              <polygon points="185,120 178,116 178,124" fill="rgba(255,255,255,.4)"/>
+              <polygon points="30,25 26,32 34,32" fill="rgba(255,255,255,.4)"/>
+              <!-- Labels -->
+              <text x="175" y="138" fill="var(--muted)" font-size="11" font-family="var(--mono)">t</text>
+              <text x="12" y="30" fill="var(--muted)" font-size="11" font-family="var(--mono)">x</text>
+              <!-- Graph line - will be updated by JS -->
+              <path id="line-xt" d="M 30 100 L 170 40" stroke="var(--accent)" stroke-width="3" fill="none" stroke-linecap="round"/>
+            </svg>
+            <div class="note" style="color: var(--accent);">שיפוע = מהירות</div>
+          </div>
+
+          <!-- גרף v(t) - מהירות -->
+          <div style="text-align: center;">
+            <div class="badge" style="margin-bottom: 8px; background: rgba(52,211,153,.15);">מהירות <span class="ltr">v(t)</span></div>
+            <svg id="graph-vt" viewBox="0 0 200 150" style="width: 100%; max-width: 200px; background: rgba(0,0,0,.3); border-radius: 12px; border: 1px solid var(--border);">
+              <!-- Grid -->
+              <line x1="30" y1="30" x2="30" y2="120" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
+              <line x1="70" y1="30" x2="70" y2="120" stroke="rgba(255,255,255,.05)" stroke-width="1"/>
+              <line x1="110" y1="30" x2="110" y2="120" stroke="rgba(255,255,255,.05)" stroke-width="1"/>
+              <line x1="150" y1="30" x2="150" y2="120" stroke="rgba(255,255,255,.05)" stroke-width="1"/>
+              <line x1="30" y1="120" x2="180" y2="120" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
+              <line x1="30" y1="90" x2="180" y2="90" stroke="rgba(255,255,255,.05)" stroke-width="1"/>
+              <line x1="30" y1="60" x2="180" y2="60" stroke="rgba(255,255,255,.05)" stroke-width="1"/>
+              <!-- Axes -->
+              <line x1="30" y1="120" x2="185" y2="120" stroke="rgba(255,255,255,.4)" stroke-width="1.5"/>
+              <line x1="30" y1="125" x2="30" y2="25" stroke="rgba(255,255,255,.4)" stroke-width="1.5"/>
+              <!-- Arrow heads -->
+              <polygon points="185,120 178,116 178,124" fill="rgba(255,255,255,.4)"/>
+              <polygon points="30,25 26,32 34,32" fill="rgba(255,255,255,.4)"/>
+              <!-- Labels -->
+              <text x="175" y="138" fill="var(--muted)" font-size="11" font-family="var(--mono)">t</text>
+              <text x="12" y="30" fill="var(--muted)" font-size="11" font-family="var(--mono)">v</text>
+              <!-- Area fill - will be updated by JS -->
+              <path id="area-vt" d="M 30 120 L 30 60 L 170 60 L 170 120 Z" fill="rgba(52,211,153,.2)" stroke="none"/>
+              <!-- Graph line - will be updated by JS -->
+              <path id="line-vt" d="M 30 60 L 170 60" stroke="var(--good)" stroke-width="3" fill="none" stroke-linecap="round"/>
+              <!-- Area label -->
+              <text id="area-label-vt" x="100" y="95" fill="var(--good)" font-size="10" text-anchor="middle" font-weight="bold">שטח = Δx</text>
+            </svg>
+            <div class="note" style="color: var(--good);">שטח = העתק</div>
+          </div>
+
+          <!-- גרף a(t) - תאוצה -->
+          <div style="text-align: center;">
+            <div class="badge" style="margin-bottom: 8px; background: rgba(167,139,250,.15);">תאוצה <span class="ltr">a(t)</span></div>
+            <svg id="graph-at" viewBox="0 0 200 150" style="width: 100%; max-width: 200px; background: rgba(0,0,0,.3); border-radius: 12px; border: 1px solid var(--border);">
+              <!-- Grid -->
+              <line x1="30" y1="30" x2="30" y2="120" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
+              <line x1="70" y1="30" x2="70" y2="120" stroke="rgba(255,255,255,.05)" stroke-width="1"/>
+              <line x1="110" y1="30" x2="110" y2="120" stroke="rgba(255,255,255,.05)" stroke-width="1"/>
+              <line x1="150" y1="30" x2="150" y2="120" stroke="rgba(255,255,255,.05)" stroke-width="1"/>
+              <!-- Zero line -->
+              <line x1="30" y1="75" x2="180" y2="75" stroke="rgba(255,255,255,.15)" stroke-width="1"/>
+              <text x="22" y="78" fill="var(--muted)" font-size="8">0</text>
+              <!-- Axes -->
+              <line x1="30" y1="120" x2="185" y2="120" stroke="rgba(255,255,255,.4)" stroke-width="1.5"/>
+              <line x1="30" y1="125" x2="30" y2="25" stroke="rgba(255,255,255,.4)" stroke-width="1.5"/>
+              <!-- Arrow heads -->
+              <polygon points="185,120 178,116 178,124" fill="rgba(255,255,255,.4)"/>
+              <polygon points="30,25 26,32 34,32" fill="rgba(255,255,255,.4)"/>
+              <!-- Labels -->
+              <text x="175" y="138" fill="var(--muted)" font-size="11" font-family="var(--mono)">t</text>
+              <text x="12" y="30" fill="var(--muted)" font-size="11" font-family="var(--mono)">a</text>
+              <!-- Area fill -->
+              <rect id="area-at" x="30" y="75" width="140" height="0" fill="rgba(167,139,250,.2)"/>
+              <!-- Graph line - will be updated by JS -->
+              <path id="line-at" d="M 30 75 L 170 75" stroke="var(--accent2)" stroke-width="3" fill="none" stroke-linecap="round"/>
+              <!-- Value label -->
+              <text id="value-at" x="100" y="68" fill="var(--accent2)" font-size="10" text-anchor="middle" font-weight="bold">a = 0</text>
+            </svg>
+            <div class="note" style="color: var(--accent2);">שטח = שינוי מהירות</div>
+          </div>
+        </div>
+
+        <!-- הסבר דינמי -->
+        <div class="callout" id="graph-explanation" style="margin-top: 15px;">
+          <b>🔍 מהירות קבועה:</b>
+          <p id="explanation-text" class="muted" style="margin: 8px 0 0; font-size: 13px;">
+            • המיקום <span class="ltr">x(t)</span> עולה בקו ישר (שיפוע קבוע = מהירות קבועה)<br>
+            • המהירות <span class="ltr">v(t)</span> קו אופקי (מהירות לא משתנה)<br>
+            • התאוצה <span class="ltr">a(t)</span> שווה אפס (אין שינוי במהירות)
+          </p>
+        </div>
+
+        <!-- ========== המחשה ויזואלית של שיפוע ושטח ========== -->
+        <h4 style="margin-top: 20px;">📐 הקשר בין שיפוע לשטח</h4>
+        <div class="grid2">
+          <div class="callout" style="text-align: center; padding: 15px;">
+            <b style="color: var(--warn);">⬈ שיפוע = נגזרת</b>
+            <svg viewBox="0 0 180 130" style="width: 100%; max-width: 180px; margin: 12px auto; display: block;">
+              <defs>
+                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                  <polygon points="0 0, 10 3.5, 0 7" fill="var(--warn)"/>
+                </marker>
+              </defs>
+              <!-- Axes -->
+              <line x1="20" y1="105" x2="170" y2="105" stroke="rgba(255,255,255,.3)" stroke-width="1"/>
+              <line x1="20" y1="105" x2="20" y2="15" stroke="rgba(255,255,255,.3)" stroke-width="1"/>
+              <!-- Curve x(t) -->
+              <path d="M 25 95 Q 70 90 95 55 T 160 25" stroke="var(--accent)" stroke-width="2.5" fill="none"/>
+              <!-- Tangent line at point -->
+              <line x1="55" y1="100" x2="135" y2="35" stroke="var(--warn)" stroke-width="2" stroke-dasharray="5,3"/>
+              <!-- Point on curve -->
+              <circle cx="95" cy="67" r="5" fill="var(--warn)"/>
+              <!-- Slope triangle -->
+              <line x1="70" y1="82" x2="120" y2="82" stroke="var(--warn)" stroke-width="1.5"/>
+              <line x1="120" y1="82" x2="120" y2="52" stroke="var(--warn)" stroke-width="1.5"/>
+              <text x="95" y="96" fill="var(--warn)" font-size="9" text-anchor="middle">Δt</text>
+              <text x="130" y="70" fill="var(--warn)" font-size="9">Δx</text>
+              <!-- Labels -->
+              <text x="165" y="25" fill="var(--accent)" font-size="10">x(t)</text>
+            </svg>
+            <p class="small muted" style="margin: 0;">השיפוע בכל נקודה = המהירות באותו רגע</p>
+            <div class="formula" style="font-size: 12px; padding: 8px 12px; margin-top: 8px;">v = Δx/Δt = שיפוע</div>
+          </div>
+
+          <div class="callout" style="text-align: center; padding: 15px;">
+            <b style="color: var(--good);">▤ שטח = אינטגרל</b>
+            <svg viewBox="0 0 180 130" style="width: 100%; max-width: 180px; margin: 12px auto; display: block;">
+              <!-- Axes -->
+              <line x1="20" y1="105" x2="170" y2="105" stroke="rgba(255,255,255,.3)" stroke-width="1"/>
+              <line x1="20" y1="105" x2="20" y2="15" stroke="rgba(255,255,255,.3)" stroke-width="1"/>
+              <!-- Area (trapezoid for accelerating motion) -->
+              <path d="M 40 105 L 40 75 L 140 45 L 140 105 Z" fill="rgba(52,211,153,.35)" stroke="none"/>
+              <!-- Line v(t) -->
+              <line x1="40" y1="75" x2="140" y2="45" stroke="var(--good)" stroke-width="2.5"/>
+              <!-- Vertical lines -->
+              <line x1="40" y1="75" x2="40" y2="105" stroke="var(--good)" stroke-width="1.5" stroke-dasharray="4"/>
+              <line x1="140" y1="45" x2="140" y2="105" stroke="var(--good)" stroke-width="1.5" stroke-dasharray="4"/>
+              <!-- Area label -->
+              <text x="90" y="82" fill="#fff" font-size="11" text-anchor="middle" font-weight="bold">שטח = Δx</text>
+              <!-- Time labels -->
+              <text x="40" y="118" fill="var(--muted)" font-size="9" text-anchor="middle">t₁</text>
+              <text x="140" y="118" fill="var(--muted)" font-size="9" text-anchor="middle">t₂</text>
+              <!-- Labels -->
+              <text x="150" y="42" fill="var(--good)" font-size="10">v(t)</text>
+            </svg>
+            <p class="small muted" style="margin: 0;">השטח מתחת לגרף = ההעתק</p>
+            <div class="formula" style="font-size: 12px; padding: 8px 12px; margin-top: 8px;">Δx = ∫v dt = שטח</div>
+          </div>
+        </div>
+
+        <!-- סיכום חזותי של הקשרים -->
+        <div class="callout good" style="margin-top: 15px; text-align: center;">
+          <b>🔗 שרשרת הקשרים:</b>
+          <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 10px; flex-wrap: wrap;">
+            <span style="background: rgba(125,211,252,.2); padding: 6px 12px; border-radius: 8px; font-weight: bold;">x(t)</span>
+            <span style="color: var(--warn);">← שיפוע →</span>
+            <span style="background: rgba(52,211,153,.2); padding: 6px 12px; border-radius: 8px; font-weight: bold;">v(t)</span>
+            <span style="color: var(--warn);">← שיפוע →</span>
+            <span style="background: rgba(167,139,250,.2); padding: 6px 12px; border-radius: 8px; font-weight: bold;">a(t)</span>
+          </div>
+          <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 8px; flex-wrap: wrap;">
+            <span style="background: rgba(125,211,252,.2); padding: 6px 12px; border-radius: 8px; font-weight: bold;">x(t)</span>
+            <span style="color: var(--good);">→ שטח ←</span>
+            <span style="background: rgba(52,211,153,.2); padding: 6px 12px; border-radius: 8px; font-weight: bold;">v(t)</span>
+            <span style="color: var(--good);">→ שטח ←</span>
+            <span style="background: rgba(167,139,250,.2); padding: 6px 12px; border-radius: 8px; font-weight: bold;">a(t)</span>
+          </div>
+        </div>
+
+        <div class="grid2" style="margin-top: 15px;">
+          <div>
+            <h4>דוגמה מהירה (מילולית)</h4>
+            <p>אם <span class="ltr">v(t)</span> קו עולה ישר — התאוצה קבועה וחיובית. אם <span class="ltr">v(t)</span> יורד ישר — תאוצה קבועה ושלילית.</p>
+            <p class="muted small">טיפ: תמיד שאל את עצמך "מה השיפוע?" ו"מה השטח?"</p>
+          </div>
+          <div>
+            <h4>מיני-אימון: מה השטח?</h4>
+            <div class="q" data-quiz="u1q_area">
+              <div class="qtitle">
+                <strong>גוף נע 4 שניות במהירות קבועה <span class="ltr">3 m/s</span>. מה ההעתק?</strong>
+                <span class="badge">חימום</span>
+              </div>
+              <div class="row">
+                <div class="field">
+                  <label>ענה (במטרים)</label>
+                  <input type="number" id="u1_area_in" placeholder="למשל 12">
+                </div>
+                <button class="btn" onclick="checkNumeric('u1_area_in', 12, 'u1_area_msg')">בדיקה</button>
+              </div>
+              <div class="result" id="u1_area_msg">רמז: העתק = שטח = <span class="ltr">v·t</span></div>
+              <details style="margin-top:10px">
+                <summary>פתרון</summary>
+                <p><span class="ltr">v = 3 m/s</span>, <span class="ltr">t = 4 s</span> ⇒ העתק = <span class="ltr">3·4</span> = <b>12 m</b>.</p>
+              </details>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>3) תנועה שוות תאוצה (<span class="ltr">a</span> קבוע) — משוואות חובה</h3>
+        <p class="muted">אלו המשוואות שמשתמשים בהן כש-<span class="ltr">a</span> קבועה (לא בהכרח חיובית):</p>
+
+        <div class="grid2">
+          <div class="callout" style="text-align: center;">
+            <div class="formula" style="font-size: 18px; margin-bottom: 8px;">v = v₀ + a·t</div>
+            <p style="margin: 0; font-size: 13px;"><b>משוואה 1:</b> מהירות כפונקציה של זמן</p>
+            <p style="margin: 4px 0 0; font-size: 12px; color: var(--muted);">משתמשים כשיודעים זמן ורוצים למצוא מהירות סופית</p>
+          </div>
+          <div class="callout" style="text-align: center;">
+            <div class="formula" style="font-size: 18px; margin-bottom: 8px;">x = x₀ + v₀·t + ½a·t²</div>
+            <p style="margin: 0; font-size: 13px;"><b>משוואה 2:</b> מיקום כפונקציה של זמן</p>
+            <p style="margin: 4px 0 0; font-size: 12px; color: var(--muted);">משתמשים כשיודעים זמן ורוצים למצוא מיקום/העתק</p>
+          </div>
+          <div class="callout" style="text-align: center;">
+            <div class="formula" style="font-size: 18px; margin-bottom: 8px;">v² = v₀² + 2a·Δx</div>
+            <p style="margin: 0; font-size: 13px;"><b>משוואה 3:</b> ללא זמן!</p>
+            <p style="margin: 4px 0 0; font-size: 12px; color: var(--muted);">משתמשים כש<b>לא נתון זמן</b> — מקשרת מהירות להעתק</p>
+          </div>
+          <div class="callout" style="text-align: center;">
+            <div class="formula" style="font-size: 18px; margin-bottom: 8px;">Δx = ½(v + v₀)·t</div>
+            <p style="margin: 0; font-size: 13px;"><b>משוואה 4:</b> ממוצע מהירויות</p>
+            <p style="margin: 4px 0 0; font-size: 12px; color: var(--muted);">שימושית כשיודעים שתי מהירויות וזמן</p>
+          </div>
+        </div>
+
+        <div class="callout warn" style="margin-top: 14px;">
+          <b>איך לא ליפול?</b> בחר ציר, קבע סימנים, ואל תחליף באמצע. תמיד כתוב יחידות.
+          <p style="margin: 8px 0 0; font-size: 13px;"><b>טיפ לבחירת משוואה:</b> תסתכל מה <u>נתון</u> ומה <u>רוצים למצוא</u>. בחר את המשוואה שמכילה את כל הנתונים והנעלם — ואין בה משתנים שאתה לא יודע.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>4) מחשבון תרגול: תנועה שוות תאוצה</h3>
+        <p class="muted small">הכנס נתונים ותקבל תוצאה + בדיקת יחידות. (זה לא "מחליף חשיבה" — זה כלי לתרגול ובקרה.)</p>
+
+        <div class="grid2">
+          <div class="callout">
+            <b>תרחיש:</b> גוף מתחיל במהירות <span class="ltr">v₀</span>, עם תאוצה קבועה <span class="ltr">a</span>, במשך זמן <span class="ltr">t</span>. מצא <span class="ltr">v</span> ואת ההעתק <span class="ltr">Δx</span>.
+            <div class="note">אם אין לך ערך — השאר ריק.</div>
+          </div>
+          <div class="callout">
+            <div class="row">
+              <div class="field"><label><span class="ltr">v₀ (m/s)</span></label><input type="number" id="v0" placeholder="למשל 2"></div>
+              <div class="field"><label><span class="ltr">a (m/s²)</span></label><input type="number" id="a" placeholder="למשל 1.5"></div>
+              <div class="field"><label><span class="ltr">t (s)</span></label><input type="number" id="t" placeholder="למשל 4"></div>
+            </div>
+            <div class="row" style="margin-top:10px">
+              <button class="btn primary" onclick="kinCalc()">חשב</button>
+              <button class="btn" onclick="clearKin()">נקה</button>
+            </div>
+            <div class="result" id="kinOut">הכנס ערכים ולחץ "חשב".</div>
+          </div>
+        </div>
+
+        <details style="margin-top:12px">
+          <summary>מה המחשבון עושה בדיוק?</summary>
+          <p>מחשב <span class="ltr">v = v₀ + a·t</span> ואת <span class="ltr">Δx = v₀·t + 0.5·a·t²</span> (בהנחה <span class="ltr">x₀=0</span>, כלומר "העתק").</p>
+        </details>
+      </div>
+
+      <div class="card">
+        <h3>5) תרגילים מדורגים (כולל תשובות)</h3>
+
+        <div class="q">
+          <div class="qtitle">
+            <strong>תרגיל 1 (בסיס)</strong>
+            <span class="badge">תאוצה קבועה</span>
+          </div>
+          <p>מכונית מתחילה ממנוחה ומאיצה בתאוצה קבועה <span class="ltr">2 m/s²</span> במשך 5 שניות.</p>
+          <ol class="list">
+            <li>מה המהירות בסוף?</li>
+            <li>מה ההעתק בזמן הזה?</li>
+          </ol>
+          <details>
+            <summary>תשובה + פתרון</summary>
+            <p><b>1)</b> <span class="ltr">v = v₀ + a·t = 0 + 2·5 = <b>10 m/s</b></span></p>
+            <p><b>2)</b> <span class="ltr">Δx = v₀·t + 0.5·a·t² = 0 + 0.5·2·25 = <b>25 m</b></span></p>
+          </details>
+        </div>
+
+        <div class="q">
+          <div class="qtitle">
+            <strong>תרגיל 2 (ביניים)</strong>
+            <span class="badge">בלימה</span>
+          </div>
+          <p>אופנוע נוסע במהירות <span class="ltr">18 m/s</span> ומתחיל לבלום בתאוצה קבועה <span class="ltr">−3 m/s²</span> עד עצירה.</p>
+          <ol class="list">
+            <li>כמה זמן לוקח לעצור?</li>
+            <li>מה מרחק הבלימה?</li>
+          </ol>
+          <details>
+            <summary>תשובה + פתרון</summary>
+            <p><b>1)</b> <span class="ltr">0 = 18 + (−3)·t ⇒ t = <b>6 s</b></span></p>
+            <p><b>2)</b> נשתמש: <span class="ltr">v² = v₀² + 2aΔx</span>. <span class="ltr">0 = 18² + 2(−3)Δx ⇒ Δx = 324/6 = <b>54 m</b></span></p>
+            <p class="muted small">בדיקת היגיון: מרחק בלימה עשרות מטרים נשמע סביר.</p>
+          </details>
+        </div>
+
+        <div class="q">
+          <div class="qtitle">
+            <strong>תרגיל 3 (בגרות-סטייל: גרפים)</strong>
+            <span class="badge"><span class="ltr">v(t)</span></span>
+          </div>
+          <p>תנועת גוף מתוארת כך: מ־<span class="ltr">t=0</span> עד <span class="ltr">t=4 s</span> הוא נע במהירות קבועה <span class="ltr">2 m/s</span>. מ־<span class="ltr">t=4</span> עד <span class="ltr">t=8 s</span> המהירות עולה בקו ישר עד <span class="ltr">6 m/s</span>.</p>
+          <ol class="list">
+            <li>מה ההעתק הכולל ב־8 שניות?</li>
+            <li>מה התאוצה בין 4 ל־8 שניות?</li>
+          </ol>
+          <details>
+            <summary>תשובה + פתרון</summary>
+            <p><b>1)</b> העתק = שטח מתחת <span class="ltr">v(t)</span>.</p>
+            <ul class="list">
+              <li>0–4: מלבן <span class="ltr">2·4 = 8 m</span></li>
+              <li>4–8: טרפז: <span class="ltr">((2+6)/2)·4 = 16 m</span></li>
+            </ul>
+            <p>סה״כ: <b>24 m</b></p>
+            <p><b>2)</b> <span class="ltr">a = Δv/Δt = (6−2)/4 = <b>1 m/s²</b></span></p>
+          </details>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>קישורי וידאו/סימולציות מומלצים</h3>
+        <ul class="list">
+          <li><a href="https://phet.colorado.edu/en/simulations/category/physics/motion" target="_blank" rel="noopener">PhET: Motion (בחר סימולציה שמתאימה)</a></li>
+          <li><a href="https://www.youtube.com/results?search_query=kinematics+velocity+acceleration+graphs" target="_blank" rel="noopener">YouTube: גרפים <span class="ltr">v(t) a(t)</span> (חיפוש)</a></li>
+        </ul>
+        <div class="callout good">
+          <b>יעד לפני מעבר ליחידה 2:</b> אתה יודע לפתור תרגילי תאוצה קבועה + להבין שטח ושיפוע בגרפים.
+        </div>
+      </div>
+    `
+  },
+
+  {
+    id: "u2",
+    title: "יחידה 2 — תנועה בשני ממדים (קליעים) + התחלה של חוקי ניוטון",
+    subtitle: "פירוק לצירים, זריקה אופקית, זריקה בזווית, והבנת הכוח היחיד (כבידה) בלי פאניקה.",
+    est: "90–150 דק׳",
+    html: `
+      <div class="card">
+        <div class="pill">🧠 מה הרעיון הגדול כאן?</div>
+        <p>בקליעים יש "קסם" פשוט: מפרקים לצירים <span class="ltr">x</span> ו-<span class="ltr">y</span>. בכל ציר פותרים כמו יחידה 1, ואז מחברים את הסיפור.</p>
+
+        <div class="callout" style="margin: 12px 0;">
+          <b>מה זה "פירוק לצירים"?</b>
+          <p style="margin: 8px 0; font-size: 14px;">דמיינו שאתם זורקים כדור באלכסון. הכדור נע גם ימינה וגם למעלה בו-זמנית. הטריק הגדול בפיזיקה הוא <b>לפצל</b> את התנועה הזו לשתי תנועות נפרדות: אחת אופקית (ימינה/שמאלה) ואחת אנכית (למעלה/למטה). זה כמו לשאול בנפרד "כמה התקדם הכדור ימינה?" ו"כמה גבוה עלה?". היופי הוא שהתנועות האלה <b>לא משפיעות אחת על השנייה</b> — אפשר לפתור כל אחת בנפרד!</p>
+        </div>
+
+        <div class="callout good">
+          <b>עיקרון:</b> בתנועה בליסטית אידיאלית (ללא התנגדות אוויר) הכוח היחיד הוא <b>משקל</b> כלפי מטה ⇒
+          <ul class="list">
+            <li>בציר <span class="ltr">x</span>: <span class="ltr">a<sub>x</sub> = 0</span> ⇒ <span class="ltr">v<sub>x</sub></span> קבוע</li>
+            <li>בציר <span class="ltr">y</span>: <span class="ltr">a<sub>y</sub> = −g</span> ⇒ תנועה שוות תאוצה</li>
+          </ul>
+          <p style="margin: 8px 0 0; font-size: 14px;">למה? כי כוח המשיכה פועל רק <b>למטה</b>. הוא לא דוחף ימינה או שמאלה, ולכן בכיוון האופקי אין כוח ⇒ אין תאוצה ⇒ המהירות האופקית נשארת קבועה לכל אורך המעוף!</p>
+        </div>
+        <p class="muted small">בבגרות לרוב משתמשים ב־<span class="ltr">g = 10 m/s²</span> (אלא אם כתוב אחרת).</p>
+      </div>
+
+      <div class="card">
+        <h3>1) זריקה אופקית (מהשולחן)</h3>
+        <p style="margin: 8px 0 12px; font-size: 14px;">זו המקרה הפשוט ביותר: גוף נזרק <b>ישר קדימה</b> (לא למעלה, לא למטה). דמיינו כדור שמתגלגל מקצה שולחן — ברגע שהוא עוזב את השולחן, הוא ממשיך קדימה (כי אין מה יעצור אותו אופקית) ובמקביל מתחיל ליפול (בגלל כוח המשיכה). הכדור עושה "קשת" באוויר, לא קו ישר למטה.</p>
+        <div class="grid2">
+          <div class="callout">
+            <b>מה נשמר?</b> <span class="ltr">v<sub>x</sub></span> קבוע.
+            <p style="margin: 8px 0; font-size: 14px;">המהירות האופקית נשארת בדיוק כמו שהייתה ברגע העזיבה. אם הכדור יצא מהשולחן ב-5 מ/ש, הוא ימשיך ב-5 מ/ש אופקית עד שיפגע בקרקע.</p>
+            <div class="formula">x = v₀ₓ · t</div>
+            <div class="note">כי <span class="ltr">a<sub>x</sub>=0</span></div>
+          </div>
+          <div class="callout">
+            <b>מה משתנה?</b> בציר <span class="ltr">y</span> יש נפילה חופשית.
+            <p style="margin: 8px 0; font-size: 14px;">בכיוון האנכי, הגוף פשוט נופל כמו אבן — מתחיל מאפס מהירות אנכית ומאיץ כלפי מטה בגלל כוח המשיכה.</p>
+            <div class="formula">y = y₀ + v₀ᵧ·t + 0.5·(−g)·t²</div>
+            <div class="note">בזריקה אופקית: <span class="ltr">v₀ᵧ = 0</span></div>
+          </div>
+        </div>
+
+        <div class="q" data-quiz="u2q1">
+          <div class="qtitle">
+            <strong>שאלה קלאסית: מי יפגע ראשון?</strong>
+            <span class="badge">רב-ברירה</span>
+          </div>
+          <p>כדור א׳ נורה אופקית מהשולחן. כדור ב׳ משתחרר באותו רגע מנקודת השולחן ונופל ישר מטה. (אותו גובה, ללא אוויר.)</p>
+          <div class="mc">
+            <label class="opt"><input type="radio" name="u2q1" value="A"><span>A) הכדור הנורה יפגע קודם</span></label>
+            <label class="opt"><input type="radio" name="u2q1" value="B"><span>B) הכדור הנופל יפגע קודם</span></label>
+            <label class="opt"><input type="radio" name="u2q1" value="C"><span>C) יפגעו יחד</span></label>
+            <label class="opt"><input type="radio" name="u2q1" value="D"><span>D) אי אפשר לדעת</span></label>
+          </div>
+          <div class="row" style="margin-top:10px">
+            <button class="btn" onclick="checkMC('u2q1','C')">בדיקה</button>
+            <span class="small muted" id="u2q1_msg"></span>
+          </div>
+          <details style="margin-top:10px">
+            <summary>הסבר מלא</summary>
+            <p>בציר <span class="ltr">y</span> לשני הכדורים תנאי התחלה זהים: <span class="ltr">v₀ᵧ=0</span> וגובה זהה. לכן זמן הנפילה זהה — הם פוגעים יחד. התנועה האופקית לא "משפיעה" על הנפילה האנכית (במודל ללא אוויר).</p>
+          </details>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>2) זריקה בזווית</h3>
+        <p style="margin: 8px 0 12px; font-size: 14px;">זה המקרה הכללי יותר: גוף נזרק <b>באלכסון</b> — גם קדימה וגם למעלה. דמיינו כדור שנזרק בזווית 45 מעלות: הוא יעלה, יגיע לנקודה הכי גבוהה (שיא), ואז ירד בחזרה. כדי לפתור, אנחנו "מפרקים" את המהירות ההתחלתית לשני חלקים נפרדים — כמה ממנה הולך ימינה וכמה הולך למעלה.</p>
+        <p class="muted">כאן פשוט מפרקים מהירות התחלתית לרכיבים:</p>
+        <div class="formula">
+v₀ₓ = v₀ · cos(θ)
+v₀ᵧ = v₀ · sin(θ)
+        </div>
+        <p style="margin: 8px 0; font-size: 14px;"><b>איך לזכור?</b> חשבו על משולש ישר-זווית: המהירות הכוללת היא היתר, והרכיבים הם הניצבים. קוסינוס נותן את הרכיב הקרוב לזווית (האופקי), וסינוס נותן את הרכיב שמול הזווית (האנכי).</p>
+
+        <div class="callout">
+          <b>כללים שימושיים:</b>
+          <ul class="list">
+            <li><b>זמן למעלה עד שיא:</b> <span class="ltr">v<sub>y</sub>=0</span> ⇒ <span class="ltr">t<sub>up</sub> = v₀ᵧ / g</span> — בשיא, הגוף "נעצר" לרגע בכיוון האנכי לפני שמתחיל לרדת.</li>
+            <li><b>אם נוחתים באותו גובה:</b> זמן מעוף ≈ <span class="ltr">2·t<sub>up</sub></span> — הירידה לוקחת בדיוק כמו העלייה (סימטריה!).</li>
+            <li><b>טווח:</b> <span class="ltr">R = v₀ₓ · T</span> — המרחק האופקי הכולל.</li>
+          </ul>
+        </div>
+
+        <div class="q">
+          <div class="qtitle">
+            <strong>תרגיל 1 (בסיס)</strong>
+            <span class="badge">זריקה אופקית</span>
+          </div>
+          <p>כדור נורה אופקית במהירות <span class="ltr">8 m/s</span> משולחן בגובה <span class="ltr">5 m</span>. נניח <span class="ltr">g = 10 m/s²</span>.</p>
+          <ol class="list">
+            <li>מה זמן הנפילה?</li>
+            <li>מה המרחק האופקי עד הפגיעה?</li>
+          </ol>
+          <details>
+            <summary>תשובה + פתרון</summary>
+            <p><b>1)</b> בציר <span class="ltr">y</span>: <span class="ltr">Δy = 5 = 0.5·g·t² ⇒ 5 = 5·t² ⇒ t = <b>1 s</b></span></p>
+            <p><b>2)</b> בציר <span class="ltr">x</span>: <span class="ltr">x = v₀ₓ·t = 8·1 = <b>8 m</b></span></p>
+          </details>
+        </div>
+
+        <div class="q">
+          <div class="qtitle">
+            <strong>תרגיל 2 (ביניים)</strong>
+            <span class="badge">זריקה בזווית</span>
+          </div>
+          <p>כדור נזרק במהירות <span class="ltr">20 m/s</span> בזווית <span class="ltr">30°</span> מעל האופק. נניח <span class="ltr">g = 10 m/s²</span>. הכדור נוחת באותו גובה.</p>
+          <ol class="list">
+            <li>מה זמן המעוף?</li>
+            <li>מה הטווח?</li>
+          </ol>
+          <details>
+            <summary>תשובה + פתרון</summary>
+            <p><span class="ltr">v₀ᵧ = 20·sin30° = 20·0.5 = <b>10 m/s</b></span></p>
+            <p><span class="ltr">t<sub>up</sub> = v₀ᵧ/g = 10/10 = 1 s</span> ⇒ זמן מעוף <span class="ltr">T = 2 s</span>.</p>
+            <p><span class="ltr">v₀ₓ = 20·cos30° ≈ 20·0.866 ≈ <b>17.32 m/s</b></span></p>
+            <p>טווח <span class="ltr">R = v₀ₓ·T ≈ 17.32·2 ≈ <b>34.6 m</b></span></p>
+          </details>
+        </div>
+
+        <div class="callout warn">
+          <b>מוקש בגרות:</b> אם נקודת הנחיתה <u>לא</u> באותו גובה — אי אפשר להשתמש ישר ב־<span class="ltr">T=2·v₀ᵧ/g</span> בלי לבדוק.
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>3) סימולטור קטן: מסלול קליע (אינטראקטיבי)</h3>
+        <p class="muted small">בחר <span class="ltr">v₀</span>, זווית, וגובה התחלה. המודל אידיאלי (ללא התנגדות אוויר). אפשר להשתמש כדי "להרגיש" איך הפרמטרים משפיעים.</p>
+
+        <div class="grid2">
+          <div class="callout">
+            <div class="row">
+              <div class="field"><label>מהירות התחלתית <span class="ltr">v₀ (m/s)</span></label><input type="number" id="p_v0" value="20"></div>
+              <div class="field"><label>זווית <span class="ltr">θ</span> (מעלות)</label><input type="number" id="p_th" value="35"></div>
+            </div>
+            <div class="row" style="margin-top:10px">
+              <div class="field"><label>גובה התחלה <span class="ltr">y₀ (m)</span></label><input type="number" id="p_y0" value="0"></div>
+              <div class="field"><label><span class="ltr">g (m/s²)</span></label>
+                <select id="p_g">
+                  <option value="10" selected>10 (בגרות לרוב)</option>
+                  <option value="9.8">9.8</option>
+                </select>
+              </div>
+            </div>
+            <div class="row" style="margin-top:10px">
+              <button class="btn primary" onclick="drawProjectile()">שרטט מסלול</button>
+              <button class="btn" onclick="resetProjectile()">איפוס</button>
+            </div>
+            <div class="result" id="p_out">לחץ "שרטט מסלול".</div>
+            <div class="note">טיפ: נסה לשנות רק משתנה אחד בכל פעם.</div>
+          </div>
+
+          <div>
+            <canvas id="traj"></canvas>
+            <div class="note">המסלול מצויר בקנה מידה אוטומטי כדי להתאים למסך.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>4) התחלה של חוקי ניוטון — רק מה שצריך לקליעים</h3>
+        <p>כדי להבין למה <span class="ltr">a<sub>y</sub> = −g</span> ו-<span class="ltr">a<sub>x</sub> = 0</span>, מספיק רעיון אחד:</p>
+        <div class="callout">
+          <b>ניוטון 2:</b> סכום הכוחות = <span class="ltr">m·a</span>.
+          <div class="formula">ΣF = m·a</div>
+          <p style="margin: 10px 0; font-size: 14px;">זהו אחד החוקים הכי חשובים בפיזיקה! הוא אומר דבר פשוט: כדי שגוף יאיץ (ישנה את מהירותו), חייב לפעול עליו <b>כוח</b>. וככל שהכוח חזק יותר — התאוצה גדולה יותר. וככל שהגוף כבד יותר — קשה יותר להאיץ אותו (צריך יותר כוח לאותה תאוצה).</p>
+          <p style="margin: 8px 0; font-size: 14px;"><b>בקליע:</b> הכוח היחיד שפועל הוא המשקל <span class="ltr">mg</span> — והוא פועל רק <b>למטה</b>. לכן יש תאוצה רק בכיוון האנכי (למטה), ובכיוון האופקי אין כוח ⇒ אין תאוצה ⇒ המהירות האופקית נשמרת!</p>
+        </div>
+
+        <div class="q" data-quiz="u2q_newton">
+          <div class="qtitle">
+            <strong>בדיקת הבנה</strong>
+            <span class="badge">רב-ברירה</span>
+          </div>
+          <p>למה בזריקה אידיאלית המהירות האופקית נשארת קבועה?</p>
+          <div class="mc">
+            <label class="opt"><input type="radio" name="u2q_newton" value="A"><span>A) כי הכבידה מושכת רק ימינה</span></label>
+            <label class="opt"><input type="radio" name="u2q_newton" value="B"><span>B) כי אין כוח בציר <span class="ltr">x</span> ⇒ <span class="ltr">ΣF<sub>x</sub>=0</span> ⇒ <span class="ltr">a<sub>x</sub>=0</span></span></label>
+            <label class="opt"><input type="radio" name="u2q_newton" value="C"><span>C) כי <span class="ltr">v₀ₓ</span> תמיד שווה 0</span></label>
+            <label class="opt"><input type="radio" name="u2q_newton" value="D"><span>D) כי הזמן עוצר בציר <span class="ltr">x</span></span></label>
+          </div>
+          <div class="row" style="margin-top:10px">
+            <button class="btn" onclick="checkMC('u2q_newton','B')">בדיקה</button>
+            <span class="small muted" id="u2q_newton_msg"></span>
+          </div>
+          <details style="margin-top:10px">
+            <summary>הסבר מלא</summary>
+            <p>אם אין כוחות אופקיים (מזניחים אוויר), אז <span class="ltr">ΣF<sub>x</sub>=0</span> ⇒ <span class="ltr">a<sub>x</sub>=0</span> ⇒ <span class="ltr">v<sub>x</sub></span> קבועה.</p>
+          </details>
+        </div>
+
+        <div class="callout good">
+          <b>יעד לפני מעבר לחוקי ניוטון המלאים:</b> אתה יודע לפתור זריקה אופקית + בזווית, ומבין "פירוק לצירים".
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>קישורים מומלצים (חיפוש/סימולציות)</h3>
+        <ul class="list">
+          <li><a href="https://phet.colorado.edu/en/simulations/category/physics/motion" target="_blank" rel="noopener">PhET: Projectile Motion (אם מופיע אצלך בקטגוריית Motion)</a></li>
+          <li><a href="https://www.youtube.com/results?search_query=projectile+motion+horizontal+launch+explained" target="_blank" rel="noopener">YouTube: Projectile Motion (חיפוש)</a></li>
+        </ul>
+      </div>
+    `
+  }
+];
+
+// ============================
+// Progress storage
+// ============================
+const STORE_KEY = "mech_course_progress_v1";
+
+function loadProgress() {
+  try {
+    return JSON.parse(localStorage.getItem(STORE_KEY)) || { done: {}, current: "u0" };
+  } catch(e) {
+    return { done: {}, current: "u0" };
+  }
+}
+
+function saveProgress(p) {
+  localStorage.setItem(STORE_KEY, JSON.stringify(p));
+}
+
+let progress = loadProgress();
+let currentIndex = Math.max(0, LESSONS.findIndex(x => x.id === progress.current));
+if (currentIndex === -1) currentIndex = 0;
+
+// ============================
+// Rendering
+// ============================
+const navList = document.getElementById("navList");
+const content = document.getElementById("content");
+const pageTitle = document.getElementById("pageTitle");
+const pageSubtitle = document.getElementById("pageSubtitle");
+const progressFill = document.getElementById("progressFill");
+const progressText = document.getElementById("progressText");
+const markDoneBtn = document.getElementById("markDoneBtn");
+
+function renderNav() {
+  navList.innerHTML = "";
+  LESSONS.forEach((l, idx) => {
+    const li = document.createElement("li");
+    const btn = document.createElement("button");
+    btn.className = "navLink" + (idx === currentIndex ? " active" : "");
+    btn.onclick = () => goTo(idx);
+
+    const left = document.createElement("div");
+    left.style.display = "flex";
+    left.style.gap = "10px";
+    left.style.alignItems = "center";
+
+    const chk = document.createElement("div");
+    chk.className = "check" + (progress.done[l.id] ? " done" : "");
+    chk.textContent = progress.done[l.id] ? "✓" : "";
+    left.appendChild(chk);
+
+    var title = document.createElement("div");
+    title.innerHTML = '<div style="font-size:13px">' + l.title + '</div><div class="small muted">' + l.est + '</div>';
+    left.appendChild(title);
+
+    const badge = document.createElement("span");
+    badge.className = "badge";
+    badge.textContent = "יחידה";
+
+    btn.appendChild(left);
+    btn.appendChild(badge);
+    li.appendChild(btn);
+    navList.appendChild(li);
+  });
+}
+
+function renderLesson() {
+  const l = LESSONS[currentIndex];
+  pageTitle.textContent = l.title;
+  pageSubtitle.textContent = l.subtitle;
+
+  content.innerHTML = l.html;
+
+  // Restore active nav highlight
+  [...document.querySelectorAll(".navLink")].forEach((b, i) => {
+    if (i === currentIndex) b.classList.add("active");
+    else b.classList.remove("active");
+  });
+
+  // Update buttons
+  document.getElementById("prevBtn").disabled = (currentIndex === 0);
+  document.getElementById("nextBtn").disabled = (currentIndex === LESSONS.length - 1);
+
+  // Store current
+  progress.current = l.id;
+  saveProgress(progress);
+
+  // Recompute progress bar
+  updateProgressUI();
+
+  // Initialize interactive graphs if present
+  initGraphs();
+}
+
+function updateProgressUI() {
+  var total = LESSONS.length;
+  var doneCount = LESSONS.reduce(function(acc, l) { return acc + (progress.done[l.id] ? 1 : 0); }, 0);
+  var pct = Math.round((doneCount / total) * 100);
+  progressFill.style.width = pct + "%";
+  progressText.textContent = "התקדמות: " + pct + "%";
+
+  // Update "done" button text
+  var cur = LESSONS[currentIndex];
+  markDoneBtn.textContent = progress.done[cur.id] ? "היחידה מסומנת כהושלמה ✅" : "סמן יחידה כהושלמה ✅";
+
+  // Update nav checkmarks
+  Array.from(document.querySelectorAll(".navList .check")).forEach(function(el, idx) {
+    var id = LESSONS[idx].id;
+    if (progress.done[id]) {
+      el.classList.add("done");
+      el.textContent = "✓";
+    } else {
+      el.classList.remove("done");
+      el.textContent = "";
+    }
+  });
+}
+
+function goTo(idx) {
+  currentIndex = idx;
+  renderNav();
+  renderLesson();
+}
+
+// ============================
+// Interactive Graph Visualization
+// ============================
+function showGraphType(type) {
+  // Update button states
+  document.querySelectorAll('[id^="btn-"]').forEach(function(btn) {
+    btn.classList.remove('primary');
+  });
+  document.getElementById('btn-' + type).classList.add('primary');
+
+  // Graph elements
+  var lineXt = document.getElementById('line-xt');
+  var lineVt = document.getElementById('line-vt');
+  var lineAt = document.getElementById('line-at');
+  var areaVt = document.getElementById('area-vt');
+  var areaAt = document.getElementById('area-at');
+  var valueAt = document.getElementById('value-at');
+  var areaLabelVt = document.getElementById('area-label-vt');
+  var explanationText = document.getElementById('explanation-text');
+  var explanationBox = document.getElementById('graph-explanation');
+
+  // Reset area-at to rect
+  if (areaAt) {
+    areaAt.setAttribute('x', '30');
+    areaAt.setAttribute('width', '140');
+  }
+
+  if (type === 'constant') {
+    // x(t): straight line with constant slope
+    lineXt.setAttribute('d', 'M 30 100 L 170 40');
+    // v(t): horizontal line (constant velocity)
+    lineVt.setAttribute('d', 'M 30 60 L 170 60');
+    areaVt.setAttribute('d', 'M 30 120 L 30 60 L 170 60 L 170 120 Z');
+    areaLabelVt.textContent = 'שטח = Δx';
+    // a(t): zero line
+    lineAt.setAttribute('d', 'M 30 75 L 170 75');
+    areaAt.setAttribute('y', '75');
+    areaAt.setAttribute('height', '0');
+    valueAt.textContent = 'a = 0';
+    valueAt.setAttribute('y', '68');
+    // Explanation
+    explanationBox.querySelector('b').textContent = '🔍 מהירות קבועה:';
+    explanationText.innerHTML = '• המיקום <span class="ltr">x(t)</span> עולה בקו ישר — שיפוע קבוע = מהירות קבועה<br>' +
+      '• המהירות <span class="ltr">v(t)</span> קו אופקי — המהירות לא משתנה<br>' +
+      '• התאוצה <span class="ltr">a(t)</span> = 0 — אין שינוי במהירות<br>' +
+      '<b style="color: var(--good)">📌 השטח הירוק = ההעתק הכולל</b>';
+  }
+  else if (type === 'accelerate') {
+    // x(t): parabola curving up (accelerating)
+    lineXt.setAttribute('d', 'M 30 110 Q 80 105 110 80 T 170 30');
+    // v(t): line going up (increasing velocity)
+    lineVt.setAttribute('d', 'M 30 100 L 170 40');
+    areaVt.setAttribute('d', 'M 30 120 L 30 100 L 170 40 L 170 120 Z');
+    areaLabelVt.textContent = 'שטח = Δx';
+    // a(t): positive constant
+    lineAt.setAttribute('d', 'M 30 50 L 170 50');
+    areaAt.setAttribute('y', '50');
+    areaAt.setAttribute('height', '25');
+    valueAt.textContent = 'a > 0';
+    valueAt.setAttribute('y', '43');
+    // Explanation
+    explanationBox.querySelector('b').textContent = '🔍 תאוצה חיובית (האצה):';
+    explanationText.innerHTML = '• המיקום <span class="ltr">x(t)</span> עולה בעקומה (פרבולה) — המהירות גדלה<br>' +
+      '• המהירות <span class="ltr">v(t)</span> עולה בקו ישר — התאוצה קבועה וחיובית<br>' +
+      '• התאוצה <span class="ltr">a(t)</span> קבועה וחיובית (מעל ציר 0)<br>' +
+      '<b style="color: var(--accent2)">📌 שטח סגול = שינוי במהירות (Δv)</b>';
+  }
+  else if (type === 'decelerate') {
+    // x(t): parabola curving down (decelerating)
+    lineXt.setAttribute('d', 'M 30 110 Q 100 40 170 35');
+    // v(t): line going down (decreasing velocity)
+    lineVt.setAttribute('d', 'M 30 40 L 170 100');
+    areaVt.setAttribute('d', 'M 30 120 L 30 40 L 170 100 L 170 120 Z');
+    areaLabelVt.textContent = 'שטח = Δx';
+    // a(t): negative constant
+    lineAt.setAttribute('d', 'M 30 100 L 170 100');
+    areaAt.setAttribute('y', '75');
+    areaAt.setAttribute('height', '25');
+    valueAt.textContent = 'a < 0';
+    valueAt.setAttribute('y', '115');
+    // Explanation
+    explanationBox.querySelector('b').textContent = '🔍 תאוצה שלילית (בלימה):';
+    explanationText.innerHTML = '• המיקום <span class="ltr">x(t)</span> עולה בעקומה שמתמתנת — המהירות קטנה<br>' +
+      '• המהירות <span class="ltr">v(t)</span> יורדת בקו ישר — התאוצה קבועה ושלילית<br>' +
+      '• התאוצה <span class="ltr">a(t)</span> קבועה ושלילית (מתחת לציר 0)<br>' +
+      '<b style="color: var(--bad)">⚠️ תאוצה שלילית ≠ "האטה" תמיד! תלוי בכיוון התנועה</b>';
+  }
+}
+
+// Initialize graphs on page load (will be called after lesson renders)
+function initGraphs() {
+  if (document.getElementById('graph-xt')) {
+    showGraphType('constant');
+  }
+}
+
+// ============================
+// Quiz helpers
+// ============================
+function checkMC(name, correct) {
+  var selector = 'input[name="' + name + '"]';
+  var radios = document.querySelectorAll(selector);
+  var msg = document.getElementById(name + "_msg");
+  var chosen = null;
+  radios.forEach(function(r) { if (r.checked) chosen = r.value; });
+
+  // Clear styling
+  document.querySelectorAll(selector).forEach(function(r) {
+    r.closest(".opt").classList.remove("correct", "wrong");
+  });
+
+  if (!chosen) {
+    msg.textContent = "בחר תשובה ואז בדוק 🙂";
+    msg.style.color = "var(--warn)";
+    return;
+  }
+
+  // Mark selected
+  var selectedSelector = 'input[name="' + name + '"][value="' + chosen + '"]';
+  var correctSelector = 'input[name="' + name + '"][value="' + correct + '"]';
+  var selected = document.querySelector(selectedSelector).closest(".opt");
+  var correctOpt = document.querySelector(correctSelector).closest(".opt");
+
+  if (chosen === correct) {
+    selected.classList.add("correct");
+    msg.textContent = "נכון! ✅";
+    msg.style.color = "var(--good)";
+  } else {
+    selected.classList.add("wrong");
+    correctOpt.classList.add("correct");
+    msg.textContent = "לא בדיוק. סמן את ההסבר למטה ואז נסה שוב ✅";
+    msg.style.color = "var(--bad)";
+  }
+}
+
+function checkNumeric(inputId, correctValue, msgId) {
+  var inp = document.getElementById(inputId);
+  var msg = document.getElementById(msgId);
+  var v = Number(inp.value);
+  if (!inp.value) {
+    msg.textContent = "הכנס מספר ואז בדוק 🙂";
+    msg.style.color = "var(--warn)";
+    return;
+  }
+  // Tolerance
+  var tol = 1e-6;
+  if (Math.abs(v - correctValue) < tol) {
+    msg.textContent = "נכון! ✅ (" + correctValue + ")";
+    msg.style.color = "var(--good)";
+  } else {
+    msg.textContent = "עוד לא. רמז: בדוק יחידות/נוסחה. (התשובה כאן: " + correctValue + ")";
+    msg.style.color = "var(--bad)";
+  }
+}
+
+// ============================
+// Kinematics calculator
+// ============================
+function kinCalc() {
+  const v0 = parseFloat(document.getElementById("v0").value);
+  const a = parseFloat(document.getElementById("a").value);
+  const t = parseFloat(document.getElementById("t").value);
+  const out = document.getElementById("kinOut");
+
+  if ([v0, a, t].some(x => Number.isNaN(x))) {
+    out.textContent = "צריך להכניס v₀, a, t כדי לחשב (בשלושתם).";
+    out.style.color = "var(--warn)";
+    return;
+  }
+  var v = v0 + a * t;
+  var dx = v0 * t + 0.5 * a * t * t;
+
+  out.style.color = "var(--muted)";
+  out.innerHTML = '<b>תוצאות:</b><br>' +
+    '<span class="ltr">v = v₀ + a·t = ' + v0 + ' + ' + a + '·' + t + ' = <b>' + round2(v) + ' m/s</b></span><br>' +
+    '<span class="ltr">Δx = v₀·t + 0.5·a·t² = ' + v0 + '·' + t + ' + 0.5·' + a + '·' + t + '² = <b>' + round2(dx) + ' m</b></span><br>' +
+    '<span class="small muted">בדיקה: <span class="ltr">v</span> ביחידות <span class="ltr">m/s</span>, <span class="ltr">Δx</span> ביחידות <span class="ltr">m</span>.</span>';
+}
+
+function clearKin() {
+  ["v0", "a", "t"].forEach(function(id) { document.getElementById(id).value = ""; });
+  document.getElementById("kinOut").textContent = "הכנס ערכים ולחץ \"חשב\".";
+  document.getElementById("kinOut").style.color = "var(--muted)";
+}
+
+function round2(x) {
+  return Math.round(x * 100) / 100;
+}
+
+// ============================
+// Projectile simulator
+// ============================
+function drawProjectile() {
+  const v0 = parseFloat(document.getElementById("p_v0").value);
+  const th = parseFloat(document.getElementById("p_th").value);
+  const y0 = parseFloat(document.getElementById("p_y0").value);
+  const g = parseFloat(document.getElementById("p_g").value);
+
+  const out = document.getElementById("p_out");
+  const canvas = document.getElementById("traj");
+  const ctx = canvas.getContext("2d");
+
+  if ([v0, th, y0, g].some(x => Number.isNaN(x))) {
+    out.textContent = "יש ערך חסר. מלא את כל השדות.";
+    out.style.color = "var(--warn)";
+    return;
+  }
+  if (v0 <= 0 || g <= 0) {
+    out.textContent = "וודא ש-v₀>0 וש-g>0.";
+    out.style.color = "var(--warn)";
+    return;
+  }
+
+  // Canvas sizing for crisp rendering
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = Math.floor(rect.width * devicePixelRatio);
+  canvas.height = Math.floor(rect.height * devicePixelRatio);
+  ctx.scale(devicePixelRatio, devicePixelRatio);
+
+  const rad = th * Math.PI / 180;
+  const v0x = v0 * Math.cos(rad);
+  const v0y = v0 * Math.sin(rad);
+
+  // Find flight time: y(t) = y0 + v0y·t - 0.5·g·t² = 0
+  // Solve: -0.5·g·t² + v0y·t + y0 = 0
+  const A = -0.5 * g, B = v0y, C = y0;
+  const disc = B * B - 4 * A * C;
+  if (disc < 0) {
+    out.textContent = "לא מתקבל זמן פגיעה (דיסקרימיננטה שלילית). בדוק נתונים.";
+    out.style.color = "var(--bad)";
+    return;
+  }
+  const t1 = (-B + Math.sqrt(disc)) / (2 * A);
+  const t2 = (-B - Math.sqrt(disc)) / (2 * A);
+  const T = Math.max(t1, t2); // positive root
+
+  const R = v0x * T;
+  const tUp = v0y / g;
+  const yMax = y0 + v0y * tUp - 0.5 * g * tUp * tUp;
+
+  // Generate points
+  const N = 200;
+  const pts = [];
+  for (let i = 0; i <= N; i++) {
+    const t = (T * i) / N;
+    const x = v0x * t;
+    const y = y0 + v0y * t - 0.5 * g * t * t;
+    pts.push({ x, y });
+  }
+
+  // Determine scaling
+  const maxX = Math.max(...pts.map(p => p.x), 1);
+  const maxY = Math.max(...pts.map(p => p.y), 1);
+  const pad = 22;
+  const w = rect.width, h = rect.height;
+
+  const sx = (w - 2 * pad) / maxX;
+  const sy = (h - 2 * pad) / (maxY + 0.001);
+  const s = Math.min(sx, sy);
+
+  // Clear
+  ctx.clearRect(0, 0, w, h);
+
+  // Axes
+  ctx.lineWidth = 1;
+  ctx.strokeStyle = "rgba(255,255,255,.18)";
+  ctx.beginPath();
+  // x-axis
+  ctx.moveTo(pad, h - pad);
+  ctx.lineTo(w - pad, h - pad);
+  // y-axis
+  ctx.moveTo(pad, h - pad);
+  ctx.lineTo(pad, pad);
+  ctx.stroke();
+
+  // Plot
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = "rgba(125,211,252,.9)";
+  ctx.beginPath();
+  pts.forEach((p, i) => {
+    const X = pad + p.x * s;
+    const Y = (h - pad) - p.y * s;
+    if (i === 0) ctx.moveTo(X, Y);
+    else ctx.lineTo(X, Y);
+  });
+  ctx.stroke();
+
+  // Mark start & end
+  const start = pts[0];
+  const end = pts[pts.length - 1];
+  drawDot(ctx, pad + start.x * s, (h - pad) - start.y * s, "rgba(52,211,153,.95)");
+  drawDot(ctx, pad + end.x * s, (h - pad) - end.y * s, "rgba(251,191,36,.95)");
+
+  out.style.color = "var(--muted)";
+  out.innerHTML = '<b>תוצאות משוערות:</b><br>' +
+    '<span class="ltr">v₀ₓ = ' + round2(v0x) + ' m/s</span>, <span class="ltr">v₀ᵧ = ' + round2(v0y) + ' m/s</span><br>' +
+    'זמן מעוף <span class="ltr">T ≈ <b>' + round2(T) + ' s</b></span><br>' +
+    'טווח <span class="ltr">R ≈ <b>' + round2(R) + ' m</b></span><br>' +
+    'גובה מקסימלי <span class="ltr">y<sub>max</sub> ≈ <b>' + round2(yMax) + ' m</b></span><br>' +
+    '<span class="small muted">נקודה ירוקה = התחלה, נקודה צהובה = פגיעה בקרקע.</span>';
+}
+
+function drawDot(ctx, x, y, color) {
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.arc(x, y, 5, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function resetProjectile() {
+  document.getElementById("p_v0").value = 20;
+  document.getElementById("p_th").value = 35;
+  document.getElementById("p_y0").value = 0;
+  document.getElementById("p_g").value = 10;
+  document.getElementById("p_out").textContent = "לחץ \"שרטט מסלול\".";
+  const canvas = document.getElementById("traj");
+  const ctx = canvas.getContext("2d");
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = Math.floor(rect.width * devicePixelRatio);
+  canvas.height = Math.floor(rect.height * devicePixelRatio);
+  ctx.scale(devicePixelRatio, devicePixelRatio);
+  ctx.clearRect(0, 0, rect.width, rect.height);
+}
+
+// ============================
+// Navigation buttons
+// ============================
+document.getElementById("prevBtn").onclick = () => {
+  if (currentIndex > 0) goTo(currentIndex - 1);
+};
+
+document.getElementById("nextBtn").onclick = () => {
+  if (currentIndex < LESSONS.length - 1) goTo(currentIndex + 1);
+};
+
+document.getElementById("markDoneBtn").onclick = () => {
+  const id = LESSONS[currentIndex].id;
+  progress.done[id] = true;
+  saveProgress(progress);
+  updateProgressUI();
+};
+
+document.getElementById("resetBtn").onclick = () => {
+  if (confirm("לאפס התקדמות? זה ימחק סימוני 'הושלם'.")) {
+    progress = { done: {}, current: "u0" };
+    saveProgress(progress);
+    currentIndex = 0;
+    renderNav();
+    renderLesson();
+  }
+};
+
+// Initial render
+renderNav();
+renderLesson();
+updateProgressUI();
+</script>
+
+</body>
+</html>

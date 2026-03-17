@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מינדסטורמס: Line Follower</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #e0e0e0;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.8;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 40px;
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            color: #ff6b35;
+            font-size: 2.2em;
+            text-align: center;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(255, 107, 53, 0.3);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .intro-box {
+            background: linear-gradient(135deg, #ff6b3520, #ff6b3510);
+            border: 2px solid #ff6b35;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .intro-box h3 {
+            color: #ff6b35;
+            margin-top: 0;
+        }
+
+        .env-box {
+            background: rgba(100, 149, 237, 0.15);
+            border: 2px solid #6495ed;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .env-box::before {
+            content: "🔧 סביבת עבודה:";
+            display: block;
+            color: #6495ed;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .mission-header {
+            background: linear-gradient(90deg, #ff6b35, #004e89);
+            color: white;
+            padding: 20px 25px;
+            border-radius: 15px;
+            margin: 40px 0 20px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .mission-header h2 {
+            margin: 0;
+            font-size: 1.5em;
+        }
+
+        .time-estimate {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+
+        .exercise {
+            background: rgba(255, 107, 53, 0.1);
+            border: 2px solid #ff6b35;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .exercise h3 {
+            color: #ff6b35;
+            margin-top: 0;
+            font-size: 1.3em;
+        }
+
+        .steps {
+            counter-reset: step-counter;
+            list-style: none;
+            padding: 0;
+        }
+
+        .steps li {
+            counter-increment: step-counter;
+            margin: 15px 0;
+            padding-right: 45px;
+            position: relative;
+        }
+
+        .steps li::before {
+            content: counter(step-counter);
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 30px;
+            height: 30px;
+            background: #ff6b35;
+            color: #1a1a1a;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .prompt-box {
+            background: #1a1a1a;
+            border: 2px solid #6495ed;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            direction: rtl;
+            text-align: right;
+        }
+
+        .prompt-box::before {
+            content: "💬 פרומפט ל-Claude:";
+            display: block;
+            color: #6495ed;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .prompt-box pre {
+            background: #0f0f0f;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 0;
+            white-space: pre-wrap;
+            direction: rtl;
+            text-align: right;
+            color: #fff;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .what-you-see {
+            background: #000;
+            border: 2px solid #ff6b35;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .what-you-see::before {
+            content: "👀 מה צריך לראות:";
+            display: block;
+            color: #ff6b35;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .what-you-see pre {
+            margin: 0;
+            color: #00ff00;
+            direction: ltr;
+            text-align: left;
+        }
+
+        .checkpoint {
+            background: linear-gradient(135deg, #ff6b3520, #ff6b3510);
+            border-right: 5px solid #ff6b35;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 0 15px 15px 0;
+        }
+
+        .checkpoint strong {
+            color: #ff6b35;
+        }
+
+        .answer-box {
+            background: rgba(100, 149, 237, 0.1);
+            border: 2px dashed #6495ed;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .answer-box label {
+            display: block;
+            color: #6495ed;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .answer-box input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #444;
+            border-radius: 8px;
+            background: #1a1a1a;
+            color: #fff;
+            font-size: 1em;
+            margin-bottom: 10px;
+        }
+
+        .answer-box input[type="text"]:focus {
+            border-color: #6495ed;
+            outline: none;
+        }
+
+        .check-btn {
+            background: linear-gradient(135deg, #ff6b35, #004e89);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .check-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(255, 107, 53, 0.4);
+        }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .feedback.correct {
+            background: rgba(255, 107, 53, 0.2);
+            border: 2px solid #ff6b35;
+            color: #ff6b35;
+            display: block;
+        }
+
+        .feedback.incorrect {
+            background: rgba(255, 107, 107, 0.2);
+            border: 2px solid #ff6b6b;
+            color: #ff6b6b;
+            display: block;
+        }
+
+        .mission-complete {
+            background: linear-gradient(135deg, #9b59b620, #9b59b610);
+            border: 2px solid #9b59b6;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .mission-complete h3 {
+            color: #9b59b6;
+            margin-top: 0;
+        }
+
+        .diagram-box {
+            background: #0f0f0f;
+            border: 2px solid #ff6b35;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .diagram-box pre {
+            color: #ff6b35;
+            font-family: monospace;
+            direction: ltr;
+            text-align: center;
+            margin: 0;
+        }
+
+        .tip-box {
+            background: rgba(255, 193, 7, 0.1);
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .tip-box::before {
+            content: "💡 טיפ:";
+            display: block;
+            color: #ffc107;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .formula-box {
+            background: #0f0f0f;
+            border: 2px solid #6495ed;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .formula-box::before {
+            content: "📐 נוסחה:";
+            display: block;
+            color: #6495ed;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .formula-box code {
+            font-size: 1.3em;
+            color: #6495ed;
+        }
+
+        .final-section {
+            background: linear-gradient(135deg, #ff6b3520, #6495ed20);
+            border: 2px solid #ff6b35;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        .final-section h2 {
+            color: #ff6b35;
+            margin-top: 0;
+        }
+
+        /* Popup Styles */
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popup {
+            background: #1a1a1a;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            max-width: 400px;
+            animation: popIn 0.3s ease-out;
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0.5); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .popup.correct {
+            border: 3px solid #ff6b35;
+            box-shadow: 0 0 30px rgba(255, 107, 53, 0.5);
+        }
+
+        .popup.incorrect {
+            border: 3px solid #ff6b6b;
+            box-shadow: 0 0 30px rgba(255, 107, 107, 0.5);
+        }
+
+        .popup .emoji {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        .popup h3 {
+            margin: 0 0 15px 0;
+        }
+
+        .popup.correct h3 {
+            color: #ff6b35;
+        }
+
+        .popup.incorrect h3 {
+            color: #ff6b6b;
+        }
+
+        .popup button {
+            background: linear-gradient(135deg, #ff6b35, #004e89);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        ul {
+            padding-right: 20px;
+        }
+
+        li {
+            margin: 8px 0;
+        }
+
+        code {
+            background: #0f0f0f;
+            padding: 2px 8px;
+            border-radius: 4px;
+            color: #ff6b35;
+            font-family: Consolas, monospace;
+        }
+
+        .robot-icon {
+            font-size: 3em;
+            display: block;
+            text-align: center;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 מינדסטורמס: Line Follower</h1>
+        <p class="subtitle">בונים רובוט עוקב קו עם Claude!</p>
+
+        <div class="intro-box">
+            <h3>🎯 מה נלמד היום?</h3>
+            <p>במדריך הזה תבנו רובוט שעוקב אחרי קו שחור על רקע לבן:</p>
+            <ul>
+                <li><strong>כיול</strong> - ללמד את הרובוט להבדיל בין לבן לשחור</li>
+                <li><strong>בקר סף</strong> - לעקוב בצורה בסיסית (ימינה/שמאלה)</li>
+                <li><strong>בקר פרופורציונלי</strong> - לעקוב בצורה חלקה!</li>
+            </ul>
+        </div>
+
+        <div class="env-box">
+            <p><strong>SPIKE Prime</strong> או <strong>Robot Inventor</strong> עם Python</p>
+            <p>ניתן להתאים גם ל-EV3 MicroPython עם שינויים קטנים</p>
+        </div>
+
+        <!-- משימה 1 -->
+        <div class="mission-header">
+            <h2>משימה 1: כיול החיישן</h2>
+            <span class="time-estimate">⏱️ 10 דקות</span>
+        </div>
+
+        <div class="exercise">
+            <h3>תרגיל 1.1: הבנת רפלקטנס</h3>
+            <p>חיישן הצבע מודד כמה אור חוזר מהמשטח:</p>
+
+            <div class="diagram-box">
+                <pre>
+    לבן = הרבה אור חוזר (ערך גבוה ~80-100)
+         💡 → ⬜ → 💡
+
+    שחור = מעט אור חוזר (ערך נמוך ~5-20)
+         💡 → ⬛ →
+                </pre>
+            </div>
+
+            <p><strong>איזה צבע יחזיר ערך רפלקטנס גבוה יותר?</strong></p>
+            <div class="answer-box">
+                <label>התשובה שלך:</label>
+                <input type="text" id="answer-1-1" placeholder="לבן או שחור?">
+                <button class="check-btn" onclick="checkAnswer('answer-1-1', ['לבן', 'white'], '💡 נכון! לבן מחזיר יותר אור', '❌ רמז: איזה צבע מחזיר יותר אור?')">בדוק תשובה</button>
+                <div class="feedback" id="feedback-1-1"></div>
+            </div>
+        </div>
+
+        <div class="exercise">
+            <h3>תרגיל 1.2: יצירת קוד כיול</h3>
+            <ol class="steps">
+                <li>פתחו את Claude ויצרו תיקייה בשם <code>line_follower</code></li>
+                <li>העתיקו את הפרומפט הזה:</li>
+            </ol>
+
+            <div class="prompt-box">
+                <pre>צר/י קובץ line_follower/calibrate.py שקורא רפלקטנס מעל לבן ואז מעל שחור,
+מדפיס ערכים, ומחשב T=(white+black)/2. הוסף/י הנחיות תצוגה קצרות בקונסול.</pre>
+            </div>
+
+            <ol class="steps" start="3">
+                <li>הניחו את החיישן מעל משטח לבן</li>
+                <li>הריצו את הקוד וקבלו ערך לבן</li>
+                <li>הניחו מעל משטח שחור וקבלו ערך שחור</li>
+            </ol>
+
+            <div class="what-you-see">
+                <pre>
+Place sensor on WHITE and press button...
+White value: 85
+Place sensor on BLACK and press button...
+Black value: 12
+Threshold T = 48
+                </pre>
+            </div>
+
+            <div class="formula-box">
+                <code>T = (white + black) / 2</code>
+                <p style="margin: 10px 0 0 0; color: #888;">הסף הוא הממוצע בין שני הערכים</p>
+            </div>
+
+            <p><strong>אם לבן=80 ושחור=20, מה יהיה הסף T?</strong></p>
+            <div class="answer-box">
+                <label>התשובה שלך:</label>
+                <input type="text" id="answer-1-2" placeholder="מספר...">
+                <button class="check-btn" onclick="checkAnswer('answer-1-2', ['50', 'חמישים'], '🧮 נכון! (80+20)/2 = 50', '❌ רמז: חשבו (80+20)/2')">בדוק תשובה</button>
+                <div class="feedback" id="feedback-1-2"></div>
+            </div>
+        </div>
+
+        <div class="tip-box">
+            אם הערכים של לבן ושחור קרובים מדי - הנמיכו את החיישן או בדקו את התאורה!
+        </div>
+
+        <div class="checkpoint">
+            ✅ <strong>עצור!</strong> וודאו שלבן > שחור ושיש הפרש משמעותי (לפחות 30)
+        </div>
+
+        <div class="mission-complete">
+            <h3>🎉 משימה 1 הושלמה!</h3>
+            <p>למדת: איך לכייל חיישן צבע ולחשב סף</p>
+        </div>
+
+        <!-- משימה 2 -->
+        <div class="mission-header">
+            <h2>משימה 2: בקר סף (Bang-Bang)</h2>
+            <span class="time-estimate">⏱️ 12 דקות</span>
+        </div>
+
+        <div class="exercise">
+            <h3>תרגיל 2.1: הבנת הלוגיקה</h3>
+            <p>בקר Bang-Bang הוא הכי פשוט - שני מצבים בלבד:</p>
+
+            <div class="diagram-box">
+                <pre>
+    אם r < T (רואים שחור):
+        ↱ פנה ימינה
+
+    אם r >= T (רואים לבן):
+        ↰ פנה שמאלה
+
+          ⬛⬛⬛⬛⬛⬛⬛
+    🤖 → עוקב על קצה הקו
+          ⬜⬜⬜⬜⬜⬜⬜
+                </pre>
+            </div>
+
+            <p><strong>אם הרובוט רואה שחור (r קטן מ-T), לאיזה כיוון הוא צריך לפנות?</strong></p>
+            <div class="answer-box">
+                <label>התשובה שלך:</label>
+                <input type="text" id="answer-2-1" placeholder="ימינה או שמאלה?">
+                <button class="check-btn" onclick="checkAnswer('answer-2-1', ['ימינה', 'ימין', 'right'], '👉 נכון! פונה ימינה כדי לחזור לקצה הקו', '❌ רמז: הרובוט צריך לחזור לעבר הלבן...')">בדוק תשובה</button>
+                <div class="feedback" id="feedback-2-1"></div>
+            </div>
+        </div>
+
+        <div class="exercise">
+            <h3>תרגיל 2.2: יצירת קוד Bang-Bang</h3>
+            <ol class="steps">
+                <li>העתיקו את הפרומפט הזה ל-Claude:</li>
+            </ol>
+
+            <div class="prompt-box">
+                <pre>צר/י line_follower/bang_bang.py עם base_speed, קריאת חיישן, ואם r<T - פנייה ימינה אחרת שמאלה.
+פרמטרים נוחים לכיוון בראש הקובץ.</pre>
+            </div>
+
+            <ol class="steps" start="2">
+                <li>הניחו את הרובוט על קצה הקו</li>
+                <li>הריצו והתבוננו</li>
+            </ol>
+
+            <div class="what-you-see">
+                <pre>
+הרובוט עוקב אחרי הקו!
+התנועה "רועדת" - מתנדנד מצד לצד
+זה נורמלי לבקר bang-bang
+                </pre>
+            </div>
+        </div>
+
+        <div class="exercise">
+            <h3>תרגיל 2.3: התאמת פרמטרים</h3>
+            <ol class="steps">
+                <li>נסו לשנות את <code>base_speed</code></li>
+                <li>מהיר מדי? הורידו את המהירות</li>
+                <li>איטי מדי? העלו את המהירות</li>
+            </ol>
+
+            <p><strong>למה הרובוט "רועד" כשהוא עוקב?</strong></p>
+            <div class="answer-box">
+                <label>התשובה שלך:</label>
+                <input type="text" id="answer-2-3" placeholder="כי...">
+                <button class="check-btn" onclick="checkAnswer('answer-2-3', ['שני', 'מצבים', 'ימין', 'שמאל', 'מחליף', 'קופץ'], '🔄 נכון! יש רק 2 מצבים - קופץ ביניהם כל הזמן', '❌ רמז: כמה מצבים יש לבקר?', true)">בדוק תשובה</button>
+                <div class="feedback" id="feedback-2-3"></div>
+            </div>
+        </div>
+
+        <div class="checkpoint">
+            ✅ <strong>עצור!</strong> הרובוט צריך לעקוב אחרי הקו, גם אם בצורה רועדת
+        </div>
+
+        <div class="mission-complete">
+            <h3>🎉 משימה 2 הושלמה!</h3>
+            <p>למדת: בקר סף פשוט - ימינה או שמאלה</p>
+        </div>
+
+        <!-- משימה 3 -->
+        <div class="mission-header">
+            <h2>משימה 3: בקר פרופורציונלי (Kp)</h2>
+            <span class="time-estimate">⏱️ 15 דקות</span>
+        </div>
+
+        <div class="exercise">
+            <h3>תרגיל 3.1: הבנת הרעיון</h3>
+            <p>במקום רק ימין/שמאל, נפנה <strong>בהתאם לכמה רחוק מהקו</strong>:</p>
+
+            <div class="diagram-box">
+                <pre>
+    קרוב לקו → פנייה קטנה
+    רחוק מהקו → פנייה גדולה
+
+    error = r - T
+    turn = Kp * error
+                </pre>
+            </div>
+
+            <div class="formula-box">
+                <code>turn = Kp × error</code>
+                <p style="margin: 10px 0 0 0; color: #888;">Kp הוא "כפתור הרגישות"</p>
+            </div>
+
+            <p><strong>אם error גדול (רחוק מהקו), האם turn יהיה גדול או קטן?</strong></p>
+            <div class="answer-box">
+                <label>התשובה שלך:</label>
+                <input type="text" id="answer-3-1" placeholder="גדול או קטן?">
+                <button class="check-btn" onclick="checkAnswer('answer-3-1', ['גדול', 'big', 'large'], '📈 נכון! error גדול = turn גדול = פנייה חזקה', '❌ רמז: מספר גדול כפול Kp = ?')">בדוק תשובה</button>
+                <div class="feedback" id="feedback-3-1"></div>
+            </div>
+        </div>
+
+        <div class="exercise">
+            <h3>תרגיל 3.2: יצירת קוד פרופורציונלי</h3>
+            <ol class="steps">
+                <li>העתיקו את הפרומפט הזה ל-Claude:</li>
+            </ol>
+
+            <div class="prompt-box">
+                <pre>צר/י line_follower/proportional.py שמחשב e=r-T ו-turn=Kp*e, כולל clamp ל-±100.
+הוסף/י הערות טיוב.</pre>
+            </div>
+
+            <ol class="steps" start="2">
+                <li>הניחו את הרובוט על קצה הקו</li>
+                <li>הריצו וצפו בהבדל!</li>
+            </ol>
+
+            <div class="what-you-see">
+                <pre>
+הרובוט עוקב בצורה חלקה יותר!
+פחות "רעידות" - תנועה זורמת
+                </pre>
+            </div>
+        </div>
+
+        <div class="exercise">
+            <h3>תרגיל 3.3: כיוון Kp</h3>
+            <ol class="steps">
+                <li>התחילו עם Kp נמוך (למשל 0.5)</li>
+                <li>הריצו וצפו</li>
+                <li>העלו בהדרגה (1.0, 1.5, 2.0...)</li>
+                <li>מצאו את הערך האופטימלי</li>
+            </ol>
+
+            <div class="tip-box">
+                <strong>Kp נמוך מדי:</strong> הרובוט מגיב לאט, יוצא מהקו<br>
+                <strong>Kp גבוה מדי:</strong> הרובוט רועד, לא יציב<br>
+                <strong>Kp מושלם:</strong> עקיבה חלקה ויציבה!
+            </div>
+
+            <p><strong>מה עושה הפקודה clamp ל-±100?</strong></p>
+            <div class="answer-box">
+                <label>התשובה שלך:</label>
+                <input type="text" id="answer-3-3" placeholder="...">
+                <button class="check-btn" onclick="checkAnswer('answer-3-3', ['מגבילה', 'גבול', 'לא יעבור', '100', 'מקסימום', 'limit'], '🔒 נכון! מגבילה את הערך ל-100 מקסימום', '❌ רמז: clamp = להגביל לטווח...', true)">בדוק תשובה</button>
+                <div class="feedback" id="feedback-3-3"></div>
+            </div>
+        </div>
+
+        <div class="checkpoint">
+            ✅ <strong>עצור!</strong> הרובוט צריך לעקוב חלק יותר מ-bang-bang. כיילו את Kp!
+        </div>
+
+        <div class="mission-complete">
+            <h3>🎉 משימה 3 הושלמה!</h3>
+            <p>למדת: בקר פרופורציונלי - פנייה יחסית למרחק מהקו</p>
+        </div>
+
+        <!-- משימה 4 (אופציונלי) -->
+        <div class="mission-header">
+            <h2>משימה 4: התאוששות מאיבוד קו (בונוס)</h2>
+            <span class="time-estimate">⏱️ 10 דקות</span>
+        </div>
+
+        <div class="exercise">
+            <h3>תרגיל 4.1: מה קורה כשמאבדים את הקו?</h3>
+            <p>לפעמים הרובוט יוצא מהקו לגמרי. נוסיף התאוששות!</p>
+
+            <ol class="steps">
+                <li>העתיקו את הפרומפט הזה ל-Claude:</li>
+            </ol>
+
+            <div class="prompt-box">
+                <pre>הוסף/י זיהוי יציאה מהקו ל->300ms, עצירה וסריקה איטית להשבה לקו.</pre>
+            </div>
+
+            <ol class="steps" start="2">
+                <li>הרחיקו את הרובוט מהקו</li>
+                <li>צפו איך הוא מוצא את הדרך חזרה!</li>
+            </ol>
+
+            <div class="what-you-see">
+                <pre>
+הרובוט מזהה שאיבד את הקו
+עוצר
+מסתובב לאט עד שמוצא את הקו
+ממשיך לעקוב!
+                </pre>
+            </div>
+        </div>
+
+        <div class="checkpoint">
+            ✅ <strong>עצור!</strong> הרובוט צריך להתאושש כשמאבד את הקו
+        </div>
+
+        <div class="mission-complete">
+            <h3>🎉 משימה 4 הושלמה!</h3>
+            <p>למדת: איך להוסיף התאוששות אוטומטית לרובוט</p>
+        </div>
+
+        <!-- סיכום -->
+        <div class="final-section">
+            <h2>🏆 כל הכבוד! סיימת את המדריך!</h2>
+            <div class="robot-icon">🤖</div>
+            <p>בנית רובוט עוקב קו שלם בעזרת Claude!</p>
+            <h3>מה למדת:</h3>
+            <ul style="text-align: right; display: inline-block;">
+                <li>כיול חיישן וחישוב סף</li>
+                <li>בקר סף (bang-bang)</li>
+                <li>בקר פרופורציונלי עם Kp</li>
+                <li>התאוששות מאיבוד קו</li>
+            </ul>
+            <h3 style="margin-top: 20px;">טיפים לזכור:</h3>
+            <ul style="text-align: right; display: inline-block;">
+                <li>ציינו קבצים ושמות פורטים (A/B מנועים, F חיישן)</li>
+                <li>דווחו תוצאות מדויקות ובקשו שינוי ממוקד</li>
+                <li>איטרציות קצרות; commit כשעובד!</li>
+            </ul>
+            <h3 style="margin-top: 20px;">אתגר הבא:</h3>
+            <p>נסו להוסיף בקר PID מלא (עם Ki ו-Kd)!</p>
+        </div>
+    </div>
+
+    <!-- Popup Modal -->
+    <div class="popup-overlay" id="popup-overlay" onclick="closePopup()">
+        <div class="popup" id="popup" onclick="event.stopPropagation()">
+            <div class="emoji" id="popup-emoji"></div>
+            <h3 id="popup-title"></h3>
+            <p id="popup-message"></p>
+            <button onclick="closePopup()">סגור</button>
+        </div>
+    </div>
+
+    <script>
+        function showPopup(isCorrect, title, message) {
+            const overlay = document.getElementById('popup-overlay');
+            const popup = document.getElementById('popup');
+            const emoji = document.getElementById('popup-emoji');
+            const titleEl = document.getElementById('popup-title');
+            const messageEl = document.getElementById('popup-message');
+
+            popup.className = 'popup ' + (isCorrect ? 'correct' : 'incorrect');
+            emoji.textContent = isCorrect ? '🎉' : '🤔';
+            titleEl.textContent = isCorrect ? 'מעולה!' : 'נסה שוב';
+            messageEl.textContent = message;
+
+            overlay.style.display = 'flex';
+        }
+
+        function closePopup() {
+            document.getElementById('popup-overlay').style.display = 'none';
+        }
+
+        function checkAnswer(inputId, correctAnswers, successMsg, failMsg, partialMatch = false) {
+            const input = document.getElementById(inputId);
+            const feedback = document.getElementById('feedback-' + inputId.split('-').slice(1).join('-'));
+            const userAnswer = input.value.trim().toLowerCase();
+
+            let isCorrect;
+            if (partialMatch) {
+                isCorrect = correctAnswers.some(answer =>
+                    userAnswer.includes(answer.toLowerCase())
+                );
+            } else {
+                isCorrect = correctAnswers.some(answer =>
+                    userAnswer === answer.toLowerCase()
+                );
+            }
+
+            if (isCorrect) {
+                feedback.className = 'feedback correct';
+                feedback.textContent = successMsg;
+                showPopup(true, 'מעולה!', successMsg);
+            } else {
+                feedback.className = 'feedback incorrect';
+                feedback.textContent = failMsg;
+                showPopup(false, 'נסה שוב', failMsg);
+            }
+        }
+
+        // Close popup with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closePopup();
+            }
+        });
+
+        // Submit on Enter
+        document.querySelectorAll('.answer-box input').forEach(input => {
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const btn = this.parentElement.querySelector('.check-btn');
+                    if (btn) btn.click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

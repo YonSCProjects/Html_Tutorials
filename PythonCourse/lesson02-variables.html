@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>שיעור 2: משתנים וסוגי נתונים</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.8;
+            background: #f5f7fa;
+            color: #1a1a2e;
+            direction: rtl;
+            text-align: right;
+        }
+        .navbar {
+            background: #1a1a2e;
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        .navbar a {
+            color: #58a6ff;
+            text-decoration: none;
+            font-size: 0.95em;
+            padding: 6px 14px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+        .navbar a:hover { background: rgba(88,166,255,0.15); }
+        .navbar .nav-links { display: flex; gap: 8px; }
+        .navbar .nav-title { color: #c9d1d9; font-weight: bold; }
+        .container {
+            max-width: 820px;
+            margin: 0 auto;
+            padding: 30px 20px 60px;
+        }
+        h1 {
+            font-size: 2.2em;
+            color: #1a1a2e;
+            margin-bottom: 8px;
+            direction: rtl;
+            text-align: right;
+        }
+        h1 .emoji { font-size: 1.1em; }
+        .subtitle {
+            color: #555;
+            font-size: 1.1em;
+            margin-bottom: 30px;
+            direction: rtl;
+            text-align: right;
+        }
+        h2, h3, h4, h5, h6, p, li, td, th, div, label {
+            direction: rtl;
+            text-align: right;
+        }
+        .mission-header {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: white;
+            padding: 20px 28px;
+            border-radius: 12px;
+            margin: 35px 0 20px;
+        }
+        .mission-header h2 {
+            color: white;
+            font-size: 1.5em;
+            margin-bottom: 4px;
+            text-align: right;
+        }
+        .time-estimate {
+            display: inline-block;
+            background: rgba(255,255,255,0.15);
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            color: #a8dadc;
+        }
+        .exercise {
+            background: white;
+            border: 2px solid #2ea043;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 18px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .exercise h3 {
+            color: #238636;
+            font-size: 1.2em;
+            margin-bottom: 12px;
+        }
+        .steps {
+            list-style: none;
+            counter-reset: step-counter;
+            padding: 0;
+            margin: 12px 0;
+        }
+        .steps li {
+            counter-increment: step-counter;
+            padding: 8px 0 8px 0;
+            padding-right: 40px;
+            position: relative;
+            border-bottom: 1px solid #eee;
+        }
+        .steps li:last-child { border-bottom: none; }
+        .steps li::before {
+            content: counter(step-counter);
+            position: absolute;
+            right: 0;
+            top: 8px;
+            background: #58a6ff;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+        .what-you-see {
+            background: #1a1a2e;
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin: 14px 0;
+            overflow-x: auto;
+        }
+        .what-you-see::before {
+            content: "מה אתה אמור לראות:";
+            display: block;
+            color: #8b949e;
+            font-size: 0.85em;
+            margin-bottom: 8px;
+            direction: rtl;
+            text-align: right;
+        }
+        .what-you-see pre {
+            color: #3fb950;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.95em;
+            direction: ltr;
+            text-align: left;
+            margin: 0;
+            white-space: pre-wrap;
+        }
+        pre, code {
+            font-family: 'Consolas', 'Courier New', monospace;
+            direction: ltr;
+            text-align: left;
+        }
+        .code-block {
+            background: #1a1a2e;
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin: 12px 0;
+            overflow-x: auto;
+        }
+        .code-block::before {
+            content: "קוד:";
+            display: block;
+            color: #8b949e;
+            font-size: 0.85em;
+            margin-bottom: 8px;
+            direction: rtl;
+            text-align: right;
+        }
+        .code-block pre {
+            color: #e6edf3;
+            font-size: 0.95em;
+            margin: 0;
+            white-space: pre-wrap;
+        }
+        .answer-box {
+            border: 2px dashed #58a6ff;
+            border-radius: 10px;
+            padding: 18px;
+            margin: 14px 0;
+            background: #f0f7ff;
+        }
+        .answer-box label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #1a1a2e;
+        }
+        .answer-box input[type="text"] {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            font-size: 1em;
+            margin-bottom: 10px;
+            direction: ltr;
+            text-align: left;
+            font-family: 'Consolas', 'Courier New', monospace;
+        }
+        .answer-box input[type="text"]:focus {
+            outline: none;
+            border-color: #58a6ff;
+            box-shadow: 0 0 0 3px rgba(88,166,255,0.2);
+        }
+        .check-btn {
+            background: linear-gradient(135deg, #238636, #2ea043);
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.1s;
+        }
+        .check-btn:hover { transform: scale(1.03); }
+        .check-btn:active { transform: scale(0.97); }
+        .feedback { display: none; }
+        .checkpoint {
+            background: #f0fff4;
+            border-right: 5px solid #2ea043;
+            padding: 18px 24px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-size: 1.05em;
+        }
+        .mission-complete {
+            border: 2px solid #8957e5;
+            background: #f8f0ff;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .mission-complete h3 { color: #8957e5; text-align: center; }
+        .mission-complete p { text-align: center; }
+        .tip {
+            background: #fff8e1;
+            border-right: 5px solid #f0883e;
+            padding: 14px 20px;
+            border-radius: 8px;
+            margin: 14px 0;
+        }
+        .tip::before {
+            content: "💡 טיפ: ";
+            font-weight: bold;
+            color: #f0883e;
+        }
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .popup {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: popIn 0.3s ease;
+        }
+        @keyframes popIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .popup .emoji { font-size: 3em; margin-bottom: 10px; }
+        .popup h3 { margin-bottom: 8px; direction: rtl; }
+        .popup p { color: #555; margin-bottom: 20px; direction: rtl; }
+        .popup button {
+            background: #58a6ff;
+            color: white;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+        }
+        .popup.correct { border-top: 5px solid #2ea043; }
+        .popup.incorrect { border-top: 5px solid #e74c3c; }
+        .lesson-end {
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 30px;
+        }
+        .lesson-end a {
+            display: inline-block;
+            background: linear-gradient(135deg, #238636, #2ea043);
+            color: white;
+            text-decoration: none;
+            padding: 14px 32px;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: transform 0.2s;
+            margin: 5px;
+        }
+        .lesson-end a:hover { transform: scale(1.05); }
+        .lesson-end a.secondary {
+            background: linear-gradient(135deg, #484f58, #6e7681);
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <span class="nav-title">🐍 קורס Python - שיעור 2</span>
+    <div class="nav-links">
+        <a href="lesson01-hello-python.html">→ שיעור 1</a>
+        <a href="index.html">🏠 ראשי</a>
+        <a href="lesson03-conditions.html">שיעור 3 ←</a>
+    </div>
+</nav>
+
+<div class="container">
+    <h1><span class="emoji">📦</span> משתנים וסוגי נתונים</h1>
+    <p class="subtitle">בשיעור הזה נלמד איך לשמור מידע במשתנים, נכיר את סוגי הנתונים השונים, ונבנה מחשבון גיל!</p>
+
+    <!-- =================== משימה 1 =================== -->
+    <div class="mission-header">
+        <h2>משימה 1: מה זה משתנים?</h2>
+        <span class="time-estimate">⏱️ 12 דקות</span>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 1.1: יצירת משתנים</h3>
+        <p>משתנה הוא כמו קופסה עם שם — אתה שם בתוכה ערך ואחר כך יכול להשתמש בו.</p>
+        <ol class="steps">
+            <li>צרו קובץ חדש בשם <code>variables.py</code></li>
+            <li>כתבו את הקוד הבא:</li>
+        </ol>
+        <div class="code-block">
+            <pre>name = "יוסי"
+age = 14
+height = 1.68
+
+print("שם:", name)
+print("גיל:", age)
+print("גובה:", height)</pre>
+        </div>
+        <div class="what-you-see">
+            <pre>שם: יוסי
+גיל: 14
+גובה: 1.68</pre>
+        </div>
+        <div class="tip">שימו לב: ב-Python אין צורך להצהיר על סוג המשתנה. Python מבין לבד!</div>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 1.2: חוקי שמות משתנים</h3>
+        <p>לא כל שם מתאים למשתנה. הנה הכללים:</p>
+        <div class="code-block">
+            <pre># שמות חוקיים ✅
+my_name = "דנה"
+age2 = 15
+_secret = "סודי"
+firstName = "משה"
+
+# שמות לא חוקיים ❌
+# 2age = 15       # לא מתחיל במספר!
+# my-name = "דנה" # לא מכיל מקף!
+# class = "A"     # מילה שמורה של Python!</pre>
+        </div>
+
+        <p><strong>האם השם <code>my_age</code> הוא שם חוקי למשתנה? (כן/לא)</strong></p>
+        <div class="answer-box">
+            <label>התשובה שלך:</label>
+            <input type="text" id="answer-1-2" placeholder="כן או לא">
+            <button class="check-btn" onclick="checkAnswer('answer-1-2', ['כן', 'yes'], 'נכון! שימוש בקו תחתון _ בין מילים הוא הדרך המומלצת ב-Python.', 'לא נכון... my_age הוא שם חוקי לגמרי! הוא מתחיל באות ומשתמש בקו תחתון.')">בדוק תשובה</button>
+            <div class="feedback" id="feedback-1-2"></div>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 1.3: שינוי ערכי משתנים</h3>
+        <div class="code-block">
+            <pre>score = 0
+print("ניקוד התחלתי:", score)
+
+score = score + 10
+print("אחרי בונוס:", score)
+
+score = score + 5
+print("אחרי עוד נקודות:", score)
+
+# דרך קצרה לעדכון
+score += 20
+print("ניקוד סופי:", score)</pre>
+        </div>
+        <div class="what-you-see">
+            <pre>ניקוד התחלתי: 0
+אחרי בונוס: 10
+אחרי עוד נקודות: 15
+ניקוד סופי: 35</pre>
+        </div>
+    </div>
+
+    <div class="checkpoint">
+        ✅ <strong>עצור!</strong> ודא שאתה יודע: איך יוצרים משתנה, מהם הכללים לשמות, ואיך מעדכנים ערך.
+    </div>
+
+    <div class="mission-complete">
+        <h3>🎉 משימה 1 הושלמה!</h3>
+        <p>למדת: יצירת משתנים, כללי שמות, ועדכון ערכים.</p>
+    </div>
+
+    <!-- =================== משימה 2 =================== -->
+    <div class="mission-header">
+        <h2>משימה 2: סוגי נתונים</h2>
+        <span class="time-estimate">⏱️ 13 דקות</span>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 2.1: הכרת הסוגים</h3>
+        <p>ב-Python יש 4 סוגי נתונים בסיסיים:</p>
+        <div class="code-block">
+            <pre># str - מחרוזת (טקסט)
+name = "Python"
+
+# int - מספר שלם
+year = 2026
+
+# float - מספר עשרוני
+pi = 3.14159
+
+# bool - ערך אמת/שקר
+is_fun = True
+
+print(type(name))     # &lt;class 'str'&gt;
+print(type(year))     # &lt;class 'int'&gt;
+print(type(pi))       # &lt;class 'float'&gt;
+print(type(is_fun))   # &lt;class 'bool'&gt;</pre>
+        </div>
+        <div class="what-you-see">
+            <pre>&lt;class 'str'&gt;
+&lt;class 'int'&gt;
+&lt;class 'float'&gt;
+&lt;class 'bool'&gt;</pre>
+        </div>
+
+        <p><strong>מה הפקודה שבודקת את סוג המשתנה?</strong></p>
+        <div class="answer-box">
+            <label>התשובה שלך:</label>
+            <input type="text" id="answer-2-1" placeholder="שם הפקודה...">
+            <button class="check-btn" onclick="checkAnswer('answer-2-1', ['type', 'type()'], 'מעולה! type() מחזירה את סוג הנתון.', 'לא... חפשו את הפקודה שמופיעה בתוך print בדוגמה למעלה.')">בדוק תשובה</button>
+            <div class="feedback" id="feedback-2-1"></div>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 2.2: בניית משפטים מפרטים אישיים</h3>
+        <p>בואו נשלב משתנים לתוך משפטים באמצעות f-string:</p>
+        <div class="code-block">
+            <pre>name = "דני"
+age = 13
+city = "תל אביב"
+hobby = "תכנות"
+
+# f-string - הדרך הקלה לשלב משתנים בטקסט
+print(f"שלום! שמי {name}")
+print(f"אני בן {age} מ{city}")
+print(f"התחביב שלי הוא {hobby}")
+print(f"בעוד 10 שנים אהיה בן {age + 10}")</pre>
+        </div>
+        <div class="what-you-see">
+            <pre>שלום! שמי דני
+אני בן 13 מתל אביב
+התחביב שלי הוא תכנות
+בעוד 10 שנים אהיה בן 23</pre>
+        </div>
+        <div class="tip">f-string מתחיל באות <code>f</code> לפני הגרשיים, ומשתנים נכנסים בתוך סוגריים מסולסלים <code>{}</code></div>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 2.3: החלפת משתנים</h3>
+        <p>אתגר קלאסי: איך מחליפים ערכים בין שני משתנים?</p>
+        <div class="code-block">
+            <pre>a = "שוקולד"
+b = "וניל"
+print(f"לפני: a={a}, b={b}")
+
+# ב-Python זה קל מאוד!
+a, b = b, a
+print(f"אחרי: a={a}, b={b}")</pre>
+        </div>
+        <div class="what-you-see">
+            <pre>לפני: a=שוקולד, b=וניל
+אחרי: a=וניל, b=שוקולד</pre>
+        </div>
+    </div>
+
+    <div class="mission-complete">
+        <h3>🎉 משימה 2 הושלמה!</h3>
+        <p>למדת: str, int, float, bool, הפקודה type(), ו-f-string!</p>
+    </div>
+
+    <!-- =================== משימה 3 =================== -->
+    <div class="mission-header">
+        <h2>משימה 3: המרת סוגים</h2>
+        <span class="time-estimate">⏱️ 12 דקות</span>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 3.1: המרות בסיסיות</h3>
+        <p>לפעמים צריך להמיר ערך מסוג אחד לאחר:</p>
+        <div class="code-block">
+            <pre># מחרוזת למספר
+age_text = "14"
+age_number = int(age_text)
+print(age_number + 1)  # 15 - עכשיו אפשר לחשב!
+
+# מספר למחרוזת
+score = 100
+score_text = str(score)
+print("הניקוד שלך: " + score_text)
+
+# מספר שלם לעשרוני
+x = float(7)
+print(x)  # 7.0
+
+# עשרוני לשלם (חותך את הנקודה!)
+y = int(3.99)
+print(y)  # 3 (לא 4!)</pre>
+        </div>
+        <div class="what-you-see">
+            <pre>15
+הניקוד שלך: 100
+7.0
+3</pre>
+        </div>
+
+        <p><strong>מה התוצאה של <code>int(9.7)</code>?</strong></p>
+        <div class="answer-box">
+            <label>התשובה שלך:</label>
+            <input type="text" id="answer-3-1" placeholder="הקלידו מספר...">
+            <button class="check-btn" onclick="checkAnswer('answer-3-1', ['9'], 'נכון! int() חותך את החלק העשרוני, לא מעגל.', 'לא... int() חותך את הנקודה העשרונית. 9.7 הופך ל...?')">בדוק תשובה</button>
+            <div class="feedback" id="feedback-3-1"></div>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 3.2: שנות כלב</h3>
+        <p>אומרים ששנה אנושית שווה 7 שנות כלב. בואו נבנה מחשבון!</p>
+        <div class="code-block">
+            <pre>human_age = 14
+dog_years = human_age * 7
+
+print(f"אם אתה בן {human_age}")
+print(f"בשנות כלב אתה בן {dog_years}! 🐕")</pre>
+        </div>
+        <div class="what-you-see">
+            <pre>אם אתה בן 14
+בשנות כלב אתה בן 98! 🐕</pre>
+        </div>
+
+        <p><strong>כמה שנות כלב יש למי שבן 10? (חשבו: 10 * 7)</strong></p>
+        <div class="answer-box">
+            <label>התשובה שלך:</label>
+            <input type="text" id="answer-3-2" placeholder="הקלידו מספר...">
+            <button class="check-btn" onclick="checkAnswer('answer-3-2', ['70'], 'מעולה! 10 כפול 7 = 70 שנות כלב.', 'לא... 10 שנים כפול 7 = ?')">בדוק תשובה</button>
+            <div class="feedback" id="feedback-3-2"></div>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 3.3: הבעיה הנפוצה — חיבור מחרוזות ומספרים</h3>
+        <div class="code-block">
+            <pre># זה יגרום לשגיאה! ❌
+# print("הגיל שלי: " + 14)
+
+# הפתרון: המרה למחרוזת ✅
+print("הגיל שלי: " + str(14))
+
+# או: שימוש ב-f-string (עדיף!) ✅
+print(f"הגיל שלי: {14}")
+
+# או: שימוש בפסיק ב-print ✅
+print("הגיל שלי:", 14)</pre>
+        </div>
+    </div>
+
+    <div class="checkpoint">
+        ✅ <strong>עצור!</strong> ודא שאתה מכיר: int(), float(), str() — ויודע מתי להשתמש בכל אחת.
+    </div>
+
+    <div class="mission-complete">
+        <h3>🎉 משימה 3 הושלמה!</h3>
+        <p>למדת: המרת סוגים עם int(), float(), str(), ואיך להתמודד עם שגיאות סוג.</p>
+    </div>
+
+    <!-- =================== משימה 4 =================== -->
+    <div class="mission-header">
+        <h2>משימה 4: מיני-פרויקט — מחשבון גיל</h2>
+        <span class="time-estimate">⏱️ 13 דקות</span>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 4.1: כרטיס מידע אישי</h3>
+        <p>בואו נבנה תוכנית שמציגה כרטיס מידע אישי מפורט:</p>
+        <div class="code-block">
+            <pre># פרטים אישיים
+name = "שירה"
+birth_year = 2012
+current_year = 2026
+city = "ירושלים"
+hobby = "רובוטיקה"
+favorite_food = "פיצה"
+
+# חישובים
+age = current_year - birth_year
+age_in_months = age * 12
+age_in_days = age * 365
+age_in_hours = age_in_days * 24
+age_in_seconds = age_in_hours * 60 * 60
+
+# הדפסת הכרטיס
+print("=" * 35)
+print("   כרטיס מידע אישי")
+print("=" * 35)
+print(f"  שם: {name}")
+print(f"  עיר: {city}")
+print(f"  גיל: {age}")
+print(f"  תחביב: {hobby}")
+print(f"  אוכל אהוב: {favorite_food}")
+print("-" * 35)
+print(f"  הגיל שלך בחודשים: {age_in_months}")
+print(f"  הגיל שלך בימים: {age_in_days}")
+print(f"  הגיל שלך בשעות: {age_in_hours:,}")
+print(f"  הגיל שלך בשניות: {age_in_seconds:,}")
+print("=" * 35)</pre>
+        </div>
+        <div class="what-you-see">
+            <pre>===================================
+   כרטיס מידע אישי
+===================================
+  שם: שירה
+  עיר: ירושלים
+  גיל: 14
+  תחביב: רובוטיקה
+  אוכל אהוב: פיצה
+-----------------------------------
+  הגיל שלך בחודשים: 168
+  הגיל שלך בימים: 5110
+  הגיל שלך בשעות: 122,640
+  הגיל שלך בשניות: 441,504,000
+===================================</pre>
+        </div>
+        <div class="tip">הסימן <code>:,</code> בתוך f-string מוסיף פסיקים למספרים גדולים. למשל: <code>{1000000:,}</code> ידפיס <code>1,000,000</code></div>
+
+        <p><strong>אם מישהו נולד בשנת 2010, כמה חודשים חי עד 2026? (חשבו: (2026-2010)*12)</strong></p>
+        <div class="answer-box">
+            <label>התשובה שלך:</label>
+            <input type="text" id="answer-4-1" placeholder="הקלידו מספר...">
+            <button class="check-btn" onclick="checkAnswer('answer-4-1', ['192'], 'מדויק! 16 שנים כפול 12 חודשים = 192 חודשים.', 'לא בדיוק... 2026 מינוס 2010 = 16 שנים. 16 כפול 12 = ?')">בדוק תשובה</button>
+            <div class="feedback" id="feedback-4-1"></div>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 4.2: שנה אותו!</h3>
+        <p>עכשיו שנו את הפרטים לפרטים שלכם!</p>
+        <ol class="steps">
+            <li>שנו את <code>name</code> לשם שלכם</li>
+            <li>שנו את <code>birth_year</code> לשנת הלידה שלכם</li>
+            <li>שנו את שאר הפרטים</li>
+            <li>הריצו ובדקו שהחישובים נכונים</li>
+        </ol>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 4.3: אתגר בונוס — עוד חישובים!</h3>
+        <p>הוסיפו את החישובים הבאים לכרטיס:</p>
+        <div class="code-block">
+            <pre># כמה שנים עד גיל 100?
+years_to_100 = 100 - age
+print(f"  שנים עד גיל 100: {years_to_100}")
+
+# באיזו שנה תהיה בן/בת 100?
+year_at_100 = birth_year + 100
+print(f"  תהיה בן/בת 100 בשנת: {year_at_100}")
+
+# כמה פעמים הלב פעם (72 פעימות בדקה)
+heartbeats = age_in_seconds * 72
+print(f"  פעימות לב עד היום: {heartbeats:,}")</pre>
+        </div>
+    </div>
+
+    <div class="checkpoint">
+        ✅ <strong>עצור!</strong> ודא שהכרטיס האישי שלך מציג את כל הנתונים הנכונים עם הפרטים שלך.
+    </div>
+
+    <div class="mission-complete">
+        <h3>🎉 משימה 4 הושלמה!</h3>
+        <p>למדת: לשלב משתנים, חישובים ו-f-string לפרויקט אמיתי!</p>
+    </div>
+
+    <!-- =================== סיום שיעור =================== -->
+    <div class="mission-complete" style="border-color: #f0883e; background: #fff8e1;">
+        <h3>🏆 סיכום שיעור 2</h3>
+        <p>כל הכבוד! הנה מה שלמדת:</p>
+        <ul style="text-align: right; display: inline-block; margin-top: 10px;">
+            <li>יצירת משתנים וכללי שמות</li>
+            <li>סוגי נתונים: str, int, float, bool</li>
+            <li>בדיקת סוג עם <code>type()</code></li>
+            <li>המרות עם <code>int()</code>, <code>float()</code>, <code>str()</code></li>
+            <li>f-string לשילוב משתנים בטקסט</li>
+            <li>בניית מחשבון גיל מלא!</li>
+        </ul>
+    </div>
+
+    <div class="lesson-end">
+        <a href="lesson01-hello-python.html" class="secondary">→ חזרה לשיעור 1</a>
+        <a href="lesson03-conditions.html">המשך לשיעור 3: קלט ותנאים ←</a>
+    </div>
+</div>
+
+<!-- Popup Modal -->
+<div class="popup-overlay" id="popup-overlay" onclick="closePopup()">
+    <div class="popup" id="popup" onclick="event.stopPropagation()">
+        <div class="emoji" id="popup-emoji"></div>
+        <h3 id="popup-title"></h3>
+        <p id="popup-message"></p>
+        <button onclick="closePopup()">סגור</button>
+    </div>
+</div>
+
+<script>
+function checkAnswer(inputId, correctAnswers, successMsg, failMsg) {
+    var input = document.getElementById(inputId);
+    var val = input.value.trim();
+    var isCorrect = false;
+    for (var i = 0; i < correctAnswers.length; i++) {
+        if (val === correctAnswers[i] || val.toLowerCase() === correctAnswers[i].toLowerCase()) {
+            isCorrect = true;
+            break;
+        }
+    }
+    var overlay = document.getElementById('popup-overlay');
+    var emoji = document.getElementById('popup-emoji');
+    var title = document.getElementById('popup-title');
+    var message = document.getElementById('popup-message');
+    var popup = document.getElementById('popup');
+    if (isCorrect) {
+        emoji.textContent = '🎉';
+        title.textContent = 'כל הכבוד!';
+        message.textContent = successMsg;
+        popup.className = 'popup correct';
+    } else {
+        emoji.textContent = '🤔';
+        title.textContent = 'נסה שוב';
+        message.textContent = failMsg;
+        popup.className = 'popup incorrect';
+    }
+    overlay.style.display = 'flex';
+}
+function closePopup() {
+    document.getElementById('popup-overlay').style.display = 'none';
+}
+</script>
+
+</body>
+</html>

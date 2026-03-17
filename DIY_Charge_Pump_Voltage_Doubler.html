@@ -1,0 +1,1410 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>בניית מכפיל מתח DIY - Charge Pump ללא סליל</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            line-height: 1.8;
+            padding: 20px;
+            max-width: 920px;
+            margin: 0 auto;
+        }
+
+        h1 { text-align: center; color: #00e5ff; font-size: 2em; margin-bottom: 10px; text-shadow: 0 0 15px rgba(0,229,255,0.3); }
+        h2 { color: #ffab00; margin-top: 30px; margin-bottom: 15px; border-bottom: 2px solid #ffab00; padding-bottom: 8px; }
+        h3 { color: #76ff03; margin-top: 20px; margin-bottom: 10px; }
+
+        .subtitle { text-align: center; color: #90a4ae; font-size: 1.1em; margin-bottom: 30px; }
+
+        .mission-header {
+            background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%);
+            border: 2px solid #42a5f5; border-radius: 12px;
+            padding: 20px; margin: 30px 0 20px 0; text-align: center;
+        }
+        .mission-header h2 { color: #90caf9; border: none; margin: 0; padding: 0; font-size: 1.5em; }
+        .time-estimate { display: inline-block; background: #263238; color: #b0bec5; padding: 4px 12px; border-radius: 20px; font-size: 0.85em; margin-top: 8px; }
+
+        .exercise {
+            background: #1a2a1a; border: 2px solid #4caf50; border-radius: 10px;
+            padding: 20px; margin: 20px 0;
+        }
+        .exercise h3 { color: #81c784; margin-top: 0; }
+
+        .steps { counter-reset: step-counter; list-style: none; padding: 0; margin: 15px 0; }
+        .steps li { counter-increment: step-counter; padding: 8px 0 8px 45px; position: relative; margin-bottom: 5px; }
+        .steps li::before {
+            content: counter(step-counter);
+            position: absolute; right: 0; left: auto; top: 8px;
+            width: 30px; height: 30px; background: #1565c0; color: white;
+            border-radius: 50%; text-align: center; line-height: 30px; font-weight: bold; font-size: 0.9em;
+        }
+
+        .what-you-see {
+            background: #000; border: 1px solid #333; border-radius: 8px;
+            padding: 15px; margin: 15px 0; position: relative;
+        }
+        .what-you-see::before { content: "👁️ מה אתה אמור לראות:"; display: block; color: #ff9800; font-weight: bold; margin-bottom: 10px; }
+        .what-you-see pre { color: #00e676; font-family: 'Courier New', monospace; font-size: 0.9em; white-space: pre; overflow-x: auto; direction: ltr; text-align: left; }
+
+        .answer-box {
+            border: 2px dashed #546e7a; border-radius: 8px;
+            padding: 15px; margin: 15px 0; background: #1a1a2e;
+        }
+        .answer-box label { color: #80cbc4; font-weight: bold; display: block; margin-bottom: 8px; }
+        .answer-box input[type="text"] {
+            width: 100%; padding: 10px; border: 2px solid #37474f; border-radius: 6px;
+            background: #0d1117; color: #e0e0e0; font-size: 1em; margin-bottom: 10px; direction: rtl;
+        }
+        .answer-box input.ltr-input { direction: ltr; text-align: left; }
+
+        .check-btn {
+            background: linear-gradient(135deg, #2e7d32, #43a047); color: white;
+            border: none; padding: 10px 25px; border-radius: 6px;
+            cursor: pointer; font-size: 1em; font-weight: bold; transition: all 0.3s;
+        }
+        .check-btn:hover { background: linear-gradient(135deg, #388e3c, #4caf50); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(76,175,80,0.3); }
+
+        .feedback { display: none; margin-top: 10px; padding: 10px; border-radius: 6px; font-weight: bold; }
+        .feedback.correct { display: block; background: #1b5e20; color: #a5d6a7; border: 1px solid #4caf50; }
+        .feedback.incorrect { display: block; background: #b71c1c; color: #ef9a9a; border: 1px solid #f44336; }
+
+        .checkpoint {
+            background: #1a2a1a; border-right: 5px solid #4caf50;
+            padding: 15px 20px; margin: 20px 0; border-radius: 0 8px 8px 0;
+        }
+
+        .mission-complete {
+            background: #1a1a2e; border: 2px solid #7c4dff; border-radius: 12px;
+            padding: 20px; margin: 25px 0; text-align: center;
+        }
+        .mission-complete h3 { color: #b388ff; }
+
+        .warning {
+            background: #2a1a0a; border: 2px solid #ff6f00; border-radius: 10px;
+            padding: 15px 20px; margin: 15px 0;
+        }
+        .warning::before { content: "⚠️ אזהרת בטיחות"; display: block; color: #ffab00; font-weight: bold; font-size: 1.1em; margin-bottom: 8px; }
+
+        .info-box {
+            background: #0d1b2a; border: 2px solid #0288d1; border-radius: 10px;
+            padding: 15px 20px; margin: 15px 0;
+        }
+        .info-box::before { content: "💡 מידע חשוב"; display: block; color: #4fc3f7; font-weight: bold; margin-bottom: 8px; }
+
+        .diagram {
+            background: #000; border: 1px solid #333; border-radius: 8px;
+            padding: 15px; margin: 15px 0; overflow-x: auto;
+        }
+        .diagram pre {
+            color: #00e5ff; font-family: 'Courier New', monospace;
+            font-size: 0.82em; line-height: 1.4; white-space: pre; direction: ltr; text-align: left;
+        }
+        .diagram.green pre { color: #76ff03; }
+        .diagram.orange pre { color: #ffab00; }
+        .diagram.pink pre { color: #f48fb1; }
+
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; direction: rtl; }
+        th { background: #1a237e; color: #90caf9; padding: 12px; text-align: right; border: 1px solid #37474f; }
+        td { padding: 10px 12px; border: 1px solid #37474f; background: #121212; }
+        tr:hover td { background: #1a1a2e; }
+
+        .formula {
+            background: #1a1a2e; border: 1px solid #7c4dff; border-radius: 8px;
+            padding: 15px; margin: 15px 0; text-align: center; font-size: 1.15em; direction: ltr;
+        }
+        .formula .label { color: #b388ff; font-size: 0.8em; display: block; margin-bottom: 5px; direction: rtl; }
+
+        code { background: #1a1a1a; color: #80cbc4; padding: 2px 6px; border-radius: 4px; font-family: 'Courier New', monospace; direction: ltr; display: inline-block; }
+
+        .component-card {
+            display: inline-block; background: #121218; border: 1px solid #37474f;
+            border-radius: 10px; padding: 12px 16px; margin: 5px; text-align: center; min-width: 110px;
+        }
+        .component-card .icon { font-size: 1.6em; display: block; margin-bottom: 4px; }
+        .component-card .name { color: #80cbc4; font-size: 0.85em; }
+        .component-card .val { color: #ffab00; font-weight: bold; font-size: 0.95em; }
+
+        .stage-badge {
+            display: inline-block; background: #e65100; color: white;
+            padding: 3px 14px; border-radius: 20px; font-weight: bold; font-size: 0.85em; margin-bottom: 8px;
+        }
+
+        .comparison-box {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 15px 0;
+        }
+        .comparison-box > div {
+            border-radius: 10px; padding: 15px;
+        }
+        .comparison-box .good { background: #1a2a1a; border: 2px solid #4caf50; }
+        .comparison-box .bad { background: #2a1a1a; border: 2px solid #f44336; }
+
+        .popup-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center;
+        }
+        .popup-overlay.show { display: flex; }
+        .popup {
+            background: #1a1a2e; border-radius: 15px; padding: 30px;
+            max-width: 400px; text-align: center; animation: popIn 0.3s ease-out;
+        }
+        .popup.correct { border: 3px solid #4caf50; box-shadow: 0 0 30px rgba(76,175,80,0.3); }
+        .popup.incorrect { border: 3px solid #f44336; box-shadow: 0 0 30px rgba(244,67,54,0.3); }
+        .popup .emoji { font-size: 3em; margin-bottom: 10px; }
+        .popup h3 { margin-bottom: 10px; }
+        .popup p { color: #b0bec5; margin-bottom: 20px; }
+        .popup button { background: #1565c0; color: white; border: none; padding: 10px 30px; border-radius: 8px; cursor: pointer; font-size: 1em; }
+        .popup button:hover { background: #1976d2; }
+        @keyframes popIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        @media (max-width: 600px) {
+            body { padding: 10px; font-size: 0.95em; }
+            h1 { font-size: 1.5em; }
+            .diagram pre { font-size: 0.65em; }
+            .comparison-box { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<h1>בניית מכפיל מתח בעצמך - Charge Pump</h1>
+<p class="subtitle">הגבר מתח בלי סליל! רק טרנזיסטורים, קבלים, דיודות ונגדים</p>
+
+<div class="info-box">
+    <p><strong>מה נבנה?</strong> מעגל שלוקח 3.7V מסוללה ומכפיל אותו ל-~6V. בלי שום סליל (inductor) ובלי מודולים מוכנים - רק רכיבים בסיסיים שיש לך!</p>
+    <p style="margin-top: 8px;">המעגל בנוי משני חלקים:</p>
+    <ol>
+        <li><strong>אוסצילטור</strong> (מחולל תנודות) - שני טרנזיסטורים שמייצרים אות מרובע</li>
+        <li><strong>משאבת מטען (Charge Pump)</strong> - קבלים ודיודות שמכפילים את המתח</li>
+    </ol>
+</div>
+
+<!-- ==================== MISSION 1 ==================== -->
+<div class="mission-header">
+    <h2>משימה 1: העיקרון - איך מכפילים מתח בלי סליל?</h2>
+    <p class="time-estimate">⏱️ 10 דקות</p>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 1.1: הרעיון של משאבת מטען (Charge Pump)</h3>
+
+    <p>תחשוב על דלי מים:</p>
+    <ol>
+        <li>מלא דלי מים מהברז (גובה 1 מטר)</li>
+        <li>תעלה את הדלי המלא למדף (גובה 2 מטר)</li>
+        <li>שפוך את המים - עכשיו הם בגובה 2 מטר!</li>
+    </ol>
+    <p>זה בדיוק מה ש-Charge Pump עושה, אבל עם מתח חשמלי:</p>
+
+    <div class="diagram">
+        <pre>
+  שלב 1: "מילוי הדלי"              שלב 2: "הרמה ושפיכה"
+  ═══════════════════               ═══════════════════════
+
+  Vcc (3.7V)                        Vcc (3.7V)
+   │                                 │
+   │    D1                           │
+   ├───►|────┐                       ├───►|────┐
+   │         │                       │         │
+   │     ────┴────                   │     ────┴────
+   │     ║  C3   ║ ← קבל נטען      │     ║  C3   ║ ← קבל טעון
+   │     ║ 3.0V  ║    ל-3V          │     ║ 3.0V  ║
+   │     ────┬────                   │     ────┬────
+   │         │                       │         │
+   │         ▼                       │         ▼
+   │     GND (0V)                    │     Vcc (3.7V) ← דוחפים למעלה!
+   │                                 │         │
+   │                                 │   3.0V + 3.7V = 6.7V!
+   │                                 │         │
+   │                                 │     D2  ▼
+   │                                 │    ►|────── Vout ≈ 6.0V!
+   │                                 │              │
+   │                                 │          ════╧════
+   │                                 │          ║  C4   ║
+   │                                 │          ╚═══════╝
+   │                                 │              │
+  GND                               GND           GND
+
+  המתג סגור = קבל נטען             המתג פתוח = קבל מורם
+  מ-Vcc דרך דיודה D1               צד התחתון קופץ ל-Vcc
+                                    צד העליון = Vcc + 3V = 6.7V!
+                                    דרך D2 ליציאה → ~6.0V
+        </pre>
+    </div>
+
+    <p><strong>מה התפקיד של הקבל C3 במעגל?</strong></p>
+    <div class="answer-box">
+        <label>התשובה שלך:</label>
+        <input type="text" id="answer-1-1" placeholder="מה הקבל עושה?">
+        <button class="check-btn" onclick="checkAnswer('answer-1-1', ['אוגר', 'מאגר', 'שומר', 'טוען', 'נטען', 'מאחסן', 'אנרגיה', 'מטען', 'דלי', 'store', 'charge'], 'מעולה! הקבל C3 הוא ה&quot;דלי&quot; - הוא נטען למתח ואז מורם למעלה כדי להוסיף מתח!', 'רמז: תחשוב על הקבל כמו דלי שמתמלא ואז מורם למעלה...')">בדוק תשובה</button>
+        <div class="feedback" id="feedback-1-1"></div>
+    </div>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 1.2: למה צריך אוסצילטור?</h3>
+
+    <p>כדי ש-Charge Pump יעבוד, צריך <strong>מתג</strong> שנפתח ונסגר מהר מאוד - אלפי פעמים בשנייה!</p>
+
+    <ul style="margin: 10px 0;">
+        <li><strong>מתג סגור:</strong> C3 נטען מ-Vcc (מילוי הדלי)</li>
+        <li><strong>מתג פתוח:</strong> C3 מורם ומוסיף מתח (הרמת הדלי)</li>
+        <li><strong>ככל שזה קורה יותר מהר</strong> → יותר זרם זמין ביציאה</li>
+    </ul>
+
+    <p>האוסצילטור שלנו ישתמש בשני טרנזיסטורים שמדליקים ומכבים אחד את השני - נקרא <strong>Astable Multivibrator</strong> (מולטיוויברטור א-יציב).</p>
+
+    <div class="diagram green">
+        <pre>
+  אוסצילטור = מתג שנדלק ונכבה אוטומטית
+
+  מצב 1:                            מצב 2:
+  Q1 = ON, Q2 = OFF                 Q1 = OFF, Q2 = ON
+
+    Vcc          Vcc                  Vcc          Vcc
+     │            │                    │            │
+     R1           R2                   R1           R2
+     │            │                    │            │
+     ├── LOW      ├── HIGH             ├── HIGH     ├── LOW
+     │            │                    │            │
+    Q1(ON)       Q2(OFF)              Q1(OFF)      Q2(ON)
+     │            │                    │            │
+    GND          GND                  GND          GND
+
+           ← מתחלפים אוטומטית! →
+
+  יציאה מ-Q2 collector:
+  ┌─────┐     ┌─────┐     ┌─────┐
+  │HIGH │     │HIGH │     │HIGH │
+  │     │     │     │     │     │
+  ┘     └─────┘     └─────┘     └───  ← גל מרובע!
+        </pre>
+    </div>
+
+    <p><strong>כמה מצבים יש לאוסצילטור Astable Multivibrator?</strong></p>
+    <div class="answer-box">
+        <label>התשובה שלך:</label>
+        <input type="text" id="answer-1-2" placeholder="מספר">
+        <button class="check-btn" onclick="checkAnswer('answer-1-2', ['2', 'שני', 'שניים', 'two'], 'נכון! שני מצבים - Q1 דולק/Q2 כבוי, ואז Q1 כבוי/Q2 דולק. הם מתחלפים כל הזמן!', 'רמז: כמה טרנזיסטורים מתחלפים ביניהם?')">בדוק תשובה</button>
+        <div class="feedback" id="feedback-1-2"></div>
+    </div>
+</div>
+
+<div class="checkpoint">
+    ✅ <strong>עצור!</strong> וודא שאתה מבין:
+    <ul>
+        <li>Charge Pump = קבל שנטען ואז "מורם" כדי להכפיל מתח</li>
+        <li>צריך מתג מהיר (אוסצילטור) שעובד אלפי פעמים בשנייה</li>
+        <li>Astable Multivibrator = שני טרנזיסטורים שמחליפים ביניהם</li>
+    </ul>
+</div>
+
+<div class="mission-complete">
+    <h3>🎉 משימה 1 הושלמה!</h3>
+    <p>למדת: העיקרון של Charge Pump ולמה צריך אוסצילטור</p>
+</div>
+
+<!-- ==================== MISSION 2 ==================== -->
+<div class="mission-header">
+    <h2>משימה 2: רשימת רכיבים ותכנון</h2>
+    <p class="time-estimate">⏱️ 10 דקות</p>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 2.1: רשימת כל הרכיבים</h3>
+
+    <p>אלה הרכיבים שצריך. סמן V ליד כל אחד שיש לך:</p>
+
+    <table>
+        <tr>
+            <th>#</th>
+            <th>רכיב</th>
+            <th>סימון</th>
+            <th>כמות</th>
+            <th>תפקיד</th>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>טרנזיסטור NPN</td>
+            <td><code>BC547</code> / <code>2N2222</code> / <code>2N3904</code></td>
+            <td>3</td>
+            <td>Q1, Q2 = אוסצילטור, Q3 = באפר</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>נגד 1kΩ</td>
+            <td>חום-שחור-אדום-זהב</td>
+            <td>2</td>
+            <td>R1, R2 = עומס collector</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>נגד 10kΩ</td>
+            <td>חום-שחור-כתום-זהב</td>
+            <td>3</td>
+            <td>R3, R4 = תזמון, R5 = באפר</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>נגד 100Ω</td>
+            <td>חום-שחור-חום-זהב</td>
+            <td>1</td>
+            <td>R6 = pull-up לבאפר</td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>נגד 1kΩ (נוסף)</td>
+            <td>חום-שחור-אדום-זהב</td>
+            <td>1</td>
+            <td>R7 = הגנת LED לבדיקה</td>
+        </tr>
+        <tr>
+            <td>6</td>
+            <td>קבל 10µF אלקטרוליטי</td>
+            <td>16V מינימום</td>
+            <td>2</td>
+            <td>C1, C2 = תזמון איטי (בדיקה)</td>
+        </tr>
+        <tr>
+            <td>7</td>
+            <td>קבל 10nF קרמי</td>
+            <td><code>103</code> על הקבל</td>
+            <td>2</td>
+            <td>C1', C2' = תזמון מהיר (עבודה)</td>
+        </tr>
+        <tr>
+            <td>8</td>
+            <td>קבל 1µF</td>
+            <td>קרמי או אלקטרוליטי</td>
+            <td>1</td>
+            <td>C3 = קבל משאבה (pump)</td>
+        </tr>
+        <tr>
+            <td>9</td>
+            <td>קבל 47µF אלקטרוליטי</td>
+            <td>16V מינימום</td>
+            <td>1</td>
+            <td>C4 = סינון יציאה</td>
+        </tr>
+        <tr>
+            <td>10</td>
+            <td>דיודה 1N4148</td>
+            <td>או 1N4001</td>
+            <td>2</td>
+            <td>D1, D2 = כיוון זרם</td>
+        </tr>
+        <tr>
+            <td>11</td>
+            <td>LED אדום 5mm</td>
+            <td>לבדיקה</td>
+            <td>1</td>
+            <td>אינדיקציה ובדיקה</td>
+        </tr>
+        <tr>
+            <td>12</td>
+            <td>ברדבורד + חוטי חיבור</td>
+            <td></td>
+            <td>1</td>
+            <td>בסיס הבנייה</td>
+        </tr>
+        <tr>
+            <td>13</td>
+            <td>סוללה 3.7V + מחזיק</td>
+            <td>18650 / LiPo</td>
+            <td>1</td>
+            <td>מקור המתח</td>
+        </tr>
+        <tr>
+            <td>14</td>
+            <td>מולטימטר</td>
+            <td></td>
+            <td>1</td>
+            <td>מדידות</td>
+        </tr>
+    </table>
+
+    <div class="info-box">
+        <p><strong>תחליפי טרנזיסטורים:</strong> כל טרנזיסטור NPN קטן יעבוד - BC547, BC548, 2N2222, 2N3904, S8050. העיקר שזה NPN!</p>
+        <p style="margin-top: 5px;"><strong>תחליפי דיודות:</strong> 1N4148 (הכי טוב - מהירה), 1N4001-1N4007 (יעבוד אבל פחות יעיל), או דיודת שוטקי 1N5817 (הכי טוב מכולם!)</p>
+    </div>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 2.2: הכר את הטרנזיסטור שלך</h3>
+
+    <p>הטרנזיסטור NPN הוא הרכיב הכי חשוב. צריך לדעת איזה פין זה מה!</p>
+
+    <div class="diagram">
+        <pre>
+  פינים של טרנזיסטור NPN (מבט מלפנים - הצד השטוח אליך):
+
+  BC547 / BC548:                 2N2222 (TO-92):
+  ┌─────────────┐                ┌─────────────┐
+  │  ┌───────┐  │                │  ┌───────┐  │
+  │  │       │  │                │  │       │  │
+  │  │ שטוח  │  │                │  │ שטוח  │  │
+  │  └───────┘  │                │  └───────┘  │
+  │   │  │  │   │                │   │  │  │   │
+  └───┼──┼──┼───┘                └───┼──┼──┼───┘
+      │  │  │                        │  │  │
+      C  B  E                        E  B  C
+      │  │  │                        │  │  │
+  Collector                      Emitter
+      Base                          Base
+         Emitter                       Collector
+
+  C = Collector (אוסף) - מתחבר לנגד ול-Vcc
+  B = Base (בסיס) - "שער" - שולט על הטרנזיסטור
+  E = Emitter (פולט) - מתחבר ל-GND
+        </pre>
+    </div>
+
+    <div class="warning">
+        <p><strong>חשוב מאוד!</strong> סדר הפינים משתנה בין דגמים שונים! בדוק את ה-Datasheet של הטרנזיסטור הספציפי שלך. אם תחליף בין C ל-E, המעגל לא יעבוד!</p>
+    </div>
+
+    <p><strong>מה שם הפין שמחובר ל-GND בטרנזיסטור NPN?</strong></p>
+    <div class="answer-box">
+        <label>התשובה שלך:</label>
+        <input type="text" id="answer-2-2" class="ltr-input" placeholder="שם הפין באנגלית">
+        <button class="check-btn" onclick="checkAnswer('answer-2-2', ['emitter', 'e', 'פולט'], 'נכון! ה-Emitter (פולט) מתחבר ל-GND בחיבור Common Emitter.', 'רמז: הפין שהשם שלו מתחיל ב-E...')">בדוק תשובה</button>
+        <div class="feedback" id="feedback-2-2"></div>
+    </div>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 2.3: הכר את הדיודה</h3>
+
+    <p>דיודה מעבירה זרם <strong>בכיוון אחד בלבד</strong> - מ-Anode ל-Cathode:</p>
+
+    <div class="diagram">
+        <pre>
+  דיודה - כיוון הזרם:
+
+    Anode (+)           Cathode (-)
+      │                     │
+      ├──────►|─────────────┤
+      │    ▲                │
+      │    │                │
+      │  פס/טבעת           │
+      │  מסמן              │
+      │  Cathode!          │
+
+  1N4148:
+  ┌──────────────────────────────┐
+  │  ●━━━━━━━━━━━━━━━━━━━━[█]━●  │
+  │  Anode              Cathode  │
+  │  (+)            פס שחור (-)  │
+  └──────────────────────────────┘
+
+  זרם עובר רק בכיוון: Anode → Cathode  (כמו חץ)
+  אם מחברים הפוך - לא עובר זרם!
+
+  מתח נפילה (Vf):
+  • 1N4148:  ~0.7V
+  • 1N4001:  ~0.7V
+  • 1N5817 (שוטקי): ~0.3V  ← הכי טוב!
+        </pre>
+    </div>
+
+    <p><strong>מהו מתח הנפילה (Vf) של דיודה 1N4148?</strong></p>
+    <div class="answer-box">
+        <label>התשובה שלך:</label>
+        <input type="text" id="answer-2-3" class="ltr-input" placeholder="X.XV">
+        <button class="check-btn" onclick="checkAnswer('answer-2-3', ['0.7', '0.7v', '0.65', '0.6', '0.7V'], 'נכון! ~0.7V נפילה בכל דיודה. בגלל זה מפסידים 0.7V על כל דיודה במעגל.', 'רמז: זה ערך סטנדרטי לדיודה סיליקון, בין 0.6 ל-0.7...')">בדוק תשובה</button>
+        <div class="feedback" id="feedback-2-3"></div>
+    </div>
+</div>
+
+<div class="mission-complete">
+    <h3>🎉 משימה 2 הושלמה!</h3>
+    <p>למדת: רשימת רכיבים, זיהוי פיני טרנזיסטור, וכיוון דיודה</p>
+</div>
+
+<!-- ==================== MISSION 3 ==================== -->
+<div class="mission-header">
+    <h2>משימה 3: בניית האוסצילטור - שלב 1</h2>
+    <p class="time-estimate">⏱️ 25 דקות</p>
+</div>
+
+<div class="warning">
+    <ul>
+        <li>אל תחבר סוללה עד שסיימת את כל החיבורים!</li>
+        <li>בדוק שאין קצר בין חוט אדום לשחור</li>
+        <li>שים לב לכיוון הפינים של הטרנזיסטורים</li>
+    </ul>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 3.1: סכמה מלאה של האוסצילטור</h3>
+
+    <p>זו הסכמה של Astable Multivibrator - מעגל שמייצר גל מרובע:</p>
+
+    <div class="diagram">
+        <pre>
+                        Vcc (3.7V)
+                           │
+              ┌────────────┼────────────┐
+              │            │            │
+             R1           │           R2
+            1kΩ           │          1kΩ
+              │            │            │
+              ├──── A      │      B ────┤
+              │            │            │
+              │      ┌─────┘─────┐      │
+              │      │           │      │
+              │     R3          R4      │
+              │    10kΩ        10kΩ     │
+              │      │           │      │
+     C2       │      │           │      │       C1
+  ┌──┤├───────┼──────┘     ┌─────┘      ├───┤├──┐
+  │           │            │            │        │
+  │           │            │            │        │
+  │        ┌──┴──┐      ┌──┴──┐         │        │
+  │        │ Q1  │      │ Q2  │         │        │
+  │     ┌──┤ NPN │   ┌──┤ NPN │         │        │
+  │     │  └──┬──┘   │  └──┬──┘         │        │
+  └─────┘     │      └─────┘     ┌──────┘        │
+     ▲        │         ▲        │               │
+     │        │         │        │               │
+  מ-B של Q2   │     מ-B של Q1    │               │
+  ל-collector │     ל-collector  │               │
+     של Q1    │        של Q2     │               │
+              │                  │               │
+              └──────────────────┴───────────────┘
+                               │
+                              GND
+
+   חיבורים צולבים:
+   ● C1: מ-collector Q2 (נקודה B) → ל-base Q1
+   ● C2: מ-collector Q1 (נקודה A) → ל-base Q2
+   ● R3: מ-Vcc → ל-base Q1
+   ● R4: מ-Vcc → ל-base Q2
+        </pre>
+    </div>
+
+    <div class="info-box">
+        <p><strong>איך זה עובד?</strong></p>
+        <ol>
+            <li>נניח ש-Q1 דולק (ON) ו-Q2 כבוי (OFF)</li>
+            <li>Collector Q1 = LOW → דרך C2 מוריד את base Q2 → Q2 נשאר OFF</li>
+            <li>C2 נטען דרך R4 → בסוף base Q2 עולה → Q2 נדלק!</li>
+            <li>Q2 ON → Collector Q2 = LOW → דרך C1 מוריד את base Q1 → Q1 נכבה!</li>
+            <li>חוזר לשלב 1 אבל הפוך!</li>
+        </ol>
+    </div>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 3.2: בנייה על ברדבורד - תזמון איטי (LED מהבהב)</h3>
+
+    <p><span class="stage-badge">שלב A: תדר נמוך לבדיקה</span></p>
+    <p>קודם נבנה עם <strong>קבלים גדולים (10µF)</strong> כדי שנוכל <strong>לראות את ההבהוב</strong> בעין:</p>
+
+    <ol class="steps">
+        <li><strong>הנח Q1 ו-Q2</strong> על הברדבורד, עם רווח של 5 שורות ביניהם. ודא שה-Emitter של כל אחד בשורה נפרדת</li>
+        <li><strong>חבר Emitter של Q1 ו-Q2 ל-GND</strong> (פס כחול/שחור)</li>
+        <li><strong>חבר R1 (1kΩ):</strong> מ-Vcc (פס אדום) → לשורה של Collector Q1 (נקודה A)</li>
+        <li><strong>חבר R2 (1kΩ):</strong> מ-Vcc (פס אדום) → לשורה של Collector Q2 (נקודה B)</li>
+        <li><strong>חבר R3 (10kΩ):</strong> מ-Vcc → לשורה של Base Q1</li>
+        <li><strong>חבר R4 (10kΩ):</strong> מ-Vcc → לשורה של Base Q2</li>
+        <li><strong>חבר C1 (10µF):</strong> מ-Collector Q2 (נקודה B) → ל-Base Q1. <span style="color:#f44336;">שים לב לקוטביות! (+) לצד Q2 collector</span></li>
+        <li><strong>חבר C2 (10µF):</strong> מ-Collector Q1 (נקודה A) → ל-Base Q2. <span style="color:#f44336;">(+) לצד Q1 collector</span></li>
+        <li><strong>LED + נגד 1kΩ:</strong> חבר LED מ-Collector Q2 (נקודה B) דרך נגד 1kΩ ל-GND. (רגל ארוכה/+ לצד collector)</li>
+    </ol>
+
+    <div class="diagram orange">
+        <pre>
+  סידור על הברדבורד:
+
+   Vcc (+) ═══════════════════════════════════════ (+)
+   GND (-) ═══════════════════════════════════════ (-)
+
+         a   b   c   d   e       f   g   h   i   j
+    3    ●   ●   ●   ●   ●       ●   ●   ●   ●   ●
+    4   [R3 10k from Vcc]        [R4 10k from Vcc]
+    5   [to base Q1]             [to base Q2]
+    6    ●  [C]  ●   ●   ●       ●   ●  [C]  ●   ●
+    7    ●  [B] Q1   ●   ●       ●   ●  [B] Q2   ●
+    8    ●  [E]  ●   ●   ●       ●   ●  [E]  ●   ●
+    9    ●   │   ●   ●   ●       ●   ●   │   ●   ●
+   10    ●  GND  ●   ●   ●       ●   ●  GND  ●   ●
+
+    R1: Vcc → row 6 col b (Q1 collector)
+    R2: Vcc → row 6 col h (Q2 collector)
+    C2: row 6 col c (Q1 coll) → row 7 col g (Q2 base)
+    C1: row 6 col g (Q2 coll) → row 7 col c (Q1 base)
+
+    LED: row 6 col i (Q2 coll) → R7(1kΩ) → GND
+
+    (הערה: מספרי השורות לדוגמה בלבד - התאם למיקום שלך)
+        </pre>
+    </div>
+
+    <div class="what-you-see">
+        <pre>
+  אחרי חיבור סוללה:
+
+  LED מהבהב! (נדלק ונכבה לחילופין)
+
+  ✅ עם C1=C2=10µF ו-R3=R4=10kΩ:
+     תדר ≈ 1/(0.693 × 2 × 10kΩ × 10µF) ≈ 7.2 Hz
+     LED מהבהב ~7 פעמים בשנייה (מהיר אבל נראה!)
+
+  ✅ אם הוא מהבהב - האוסצילטור עובד!
+  ❌ אם לא מהבהב - בדוק חיבורי C/B/E של הטרנזיסטורים
+        </pre>
+    </div>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 3.3: חישוב תדר</h3>
+
+    <p>הנוסחה לתדר של Astable Multivibrator:</p>
+
+    <div class="formula">
+        <span class="label">נוסחת תדר (מחזור סימטרי, R3=R4=R, C1=C2=C):</span>
+        f = 1 / (2 × 0.693 × R × C) = 1 / (1.386 × R × C)
+    </div>
+
+    <table>
+        <tr>
+            <th>R3=R4</th>
+            <th>C1=C2</th>
+            <th>תדר</th>
+            <th>שימוש</th>
+        </tr>
+        <tr>
+            <td>10kΩ</td>
+            <td>10µF</td>
+            <td>~7 Hz</td>
+            <td>בדיקה - רואים הבהוב</td>
+        </tr>
+        <tr>
+            <td>10kΩ</td>
+            <td>100nF</td>
+            <td>~720 Hz</td>
+            <td>Charge Pump - בינוני</td>
+        </tr>
+        <tr>
+            <td>10kΩ</td>
+            <td>10nF</td>
+            <td>~7,200 Hz</td>
+            <td>Charge Pump - טוב!</td>
+        </tr>
+        <tr>
+            <td>10kΩ</td>
+            <td>1nF</td>
+            <td>~72,000 Hz</td>
+            <td>Charge Pump - מצוין!</td>
+        </tr>
+    </table>
+
+    <p><strong>מה יהיה התדר עם R=10kΩ ו-C=10nF?</strong></p>
+    <div class="answer-box">
+        <label>התשובה שלך:</label>
+        <input type="text" id="answer-3-3" class="ltr-input" placeholder="הכנס מספר ב-Hz">
+        <button class="check-btn" onclick="checkNumberRange('answer-3-3', 6500, 8000, 'מצוין! ~7,200Hz. תדר גבוה מספיק ל-Charge Pump!', 'רמז: השתמש בנוסחה f = 1/(1.386 × 10000 × 0.00000001)')">בדוק תשובה</button>
+        <div class="feedback" id="feedback-3-3"></div>
+    </div>
+</div>
+
+<div class="checkpoint">
+    ✅ <strong>עצור!</strong> לפני שממשיכים:
+    <ul>
+        <li>ה-LED מהבהב? אם כן - האוסצילטור עובד מושלם!</li>
+        <li>אם לא מהבהב: בדוק C/B/E של הטרנזיסטורים, כיוון הקבלים, וחיבורים צולבים</li>
+    </ul>
+</div>
+
+<div class="mission-complete">
+    <h3>🎉 משימה 3 הושלמה!</h3>
+    <p>למדת: לבנות אוסצילטור Astable Multivibrator ולראות אותו עובד!</p>
+</div>
+
+<!-- ==================== MISSION 4 ==================== -->
+<div class="mission-header">
+    <h2>משימה 4: הוספת Charge Pump - הכפלת המתח!</h2>
+    <p class="time-estimate">⏱️ 25 דקות</p>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 4.1: העלאת התדר</h3>
+
+    <p><span class="stage-badge">שלב B: עוברים לתדר גבוה</span></p>
+    <p>כדי שה-Charge Pump יעבוד טוב, צריך תדר גבוה. נחליף את קבלי התזמון:</p>
+
+    <ol class="steps">
+        <li><strong>נתק את הסוללה!</strong></li>
+        <li><strong>הוצא את C1 ו-C2</strong> (הקבלים 10µF)</li>
+        <li><strong>הכנס C1' ו-C2' = 10nF</strong> (קרמיים, כתוב עליהם <code>103</code>) באותם מקומות</li>
+        <li>הוצא את ה-LED (לא צריך עכשיו)</li>
+    </ol>
+
+    <div class="info-box">
+        <p><strong>למה 10nF?</strong> עם 10nF האוסצילטור עובד ב-~7,200Hz. בתדר הזה ה-Charge Pump מעביר מטען 7,200 פעם בשנייה - הרבה יותר יעיל!</p>
+        <p style="margin-top: 5px;"><strong>קבל קרמי = אין כיוון!</strong> בניגוד לאלקטרוליטי, לקבל קרמי אין + ו- . אפשר להכניס בכל כיוון.</p>
+    </div>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 4.2: הוספת טרנזיסטור באפר (Q3)</h3>
+
+    <p>Collector של Q2 לא מספיק חזק כדי להזרים מספיק זרם ל-Charge Pump. נוסיף טרנזיסטור שלישי כ-<strong>"מגבר כוח"</strong>:</p>
+
+    <div class="diagram">
+        <pre>
+  למה באפר?
+
+  בלי באפר:                      עם באפר:
+  ┌──────────────────┐           ┌──────────────────────────┐
+  │ Q2 collector     │           │ Q2 collector             │
+  │     │            │           │     │                    │
+  │     R2 (1kΩ)     │           │     R5 (10kΩ)           │
+  │     │            │           │     │                    │
+  │  מוגבל ל-3.7mA  │           │     ▼ Q3 base            │
+  │  לא מספיק!      │           │  ┌──┴──┐                 │
+  │     │            │           │  │ Q3  │← יכול להעביר   │
+  │     ▼            │           │  │ NPN │   עד 100mA!    │
+  │  Charge Pump     │           │  └──┬──┘                 │
+  │  (לא עובד טוב)  │           │     │ collector          │
+  │                  │           │     ▼                    │
+  └──────────────────┘           │  Charge Pump             │
+                                 │  (עובד מצוין!)           │
+                                 └──────────────────────────┘
+        </pre>
+    </div>
+
+    <ol class="steps">
+        <li><strong>הנח Q3</strong> (NPN) על הברדבורד, ליד Q2</li>
+        <li><strong>חבר Emitter Q3 → GND</strong></li>
+        <li><strong>חבר R5 (10kΩ):</strong> מ-Collector Q2 (נקודה B) → ל-Base Q3</li>
+        <li><strong>חבר R6 (100Ω):</strong> מ-Vcc → ל-Collector Q3 (נקודה C)</li>
+    </ol>
+
+    <div class="diagram green">
+        <pre>
+  Q3 - מגבר באפר:
+
+              Vcc
+               │
+              R6 (100Ω)    ← pull-up: מושך collector למעלה כש-Q3 OFF
+               │
+  Q2 coll ── R5(10k) ──► base Q3
+                           │
+                        ┌──┴──┐
+                        │ Q3  │
+                        │ NPN │
+                        └──┬──┘
+                           │ collector = נקודה C (יציאה!)
+                           │
+                           │ emitter
+                           │
+                          GND
+
+  כש-Q2 coll = HIGH → Q3 base = HIGH → Q3 ON → נקודה C = LOW (~0V)
+  כש-Q2 coll = LOW  → Q3 base = LOW  → Q3 OFF → נקודה C = HIGH (~Vcc)
+
+  (Q3 הופך את האות, וגם מגביר את הכוח!)
+        </pre>
+    </div>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 4.3: חיבור ה-Charge Pump!</h3>
+
+    <p>עכשיו מגיע החלק המרגש - נוסיף את הקבל והדיודות שמכפילים את המתח:</p>
+
+    <ol class="steps">
+        <li><strong>חבר D1 (1N4148):</strong> Anode ל-Vcc, Cathode לשורה חדשה (נקודה X)</li>
+        <li><strong>חבר C3 (1µF):</strong> צד אחד לנקודה X, צד שני ל-Collector Q3 (נקודה C)</li>
+        <li><strong>חבר D2 (1N4148):</strong> Anode לנקודה X, Cathode לשורה חדשה (נקודה Y = Vout)</li>
+        <li><strong>חבר C4 (47µF):</strong> (+) לנקודה Y (Vout), (-) ל-GND. <span style="color:#f44336;">שים לב לקוטביות!</span></li>
+    </ol>
+
+    <div class="diagram pink">
+        <pre>
+  Charge Pump - סכמה:
+
+     Vcc (3.7V)
+      │
+      │    D1 (1N4148)
+      ├────►|────────── node X ────────►|──────── node Y (Vout!)
+      │                    │        D2 (1N4148)       │
+      │                    │                          │
+      │                ════╤════                  ════╤════
+      │                ║  C3   ║                  ║  C4   ║
+      │                ║  1µF  ║                  ║ 47µF  ║
+      │                ════╤════                  ════╤════
+      │                    │                          │
+      │                    │                         GND
+      │              Collector Q3
+      │              (נקודה C)
+      │                    │
+      │                    │
+      │              ┌─────┘
+      │              │
+     GND        (swing 0V ↔ Vcc)
+        </pre>
+    </div>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 4.4: הסכמה המלאה!</h3>
+
+    <p>ככה נראה המעגל השלם:</p>
+
+    <div class="diagram">
+        <pre>
+  ╔═══════════════════════════════════════════════════════════════════════╗
+  ║              מעגל מכפיל מתח DIY - סכמה מלאה                         ║
+  ╚═══════════════════════════════════════════════════════════════════════╝
+
+                              Vcc (3.7V from battery)
+                                 │
+         ┌──────────┬────────────┼──────────────┬──────────────┐
+         │          │            │              │              │
+        R1         R3           R4            R2             R6
+       1kΩ        10kΩ         10kΩ          1kΩ           100Ω
+         │          │            │              │              │
+    ┌────┤     ┌────┤            ├────┐         ├────┐         │
+    │    A     │    │            │    │         B    │         C
+    │    │     │    │            │    │         │    │         │
+    │ ┌──┴──┐  │    │            │  ┌─┴───┐    │  ┌─┴───┐     │
+    │ │     │  │    │            │  │     │    │  │     │     │
+    │ │ Q1  │  │    │            │  │ Q2  │    │  │ Q3  │     │
+    │ │ NPN │  │    │            │  │ NPN │    │  │ NPN │     │
+    │ └──┬──┘  │    │            │  └──┬──┘    │  └──┬──┘     │
+    │    │E    │    │            │     │E      │     │E       │
+    │    │     │    │            │     │       │     │        │
+    │   GND   │    │            │    GND      │    GND       │
+    │          │    │            │             │              │
+    │          └────┼────C2──────┘             │              │
+    │               │   10nF                   │              │
+    │               └────C1──────┘             │              │
+    │                    10nF    │              │              │
+    │                           │      R5(10kΩ)│              │
+    │                           └──────────────┘              │
+    │                                                         │
+    │                                                         │
+    │         Vcc                                             │
+    │          │       D1                D2                    │
+    │          ├───────►|──── X ─────────►|──── Y ═══ Vout    │
+    │          │              │                     │         │
+    │          │           ═══╤═══               ═══╤═══      │
+    │          │           ║ C3  ║               ║ C4  ║      │
+    │          │           ║ 1µF ║               ║47µF ║      │
+    │          │           ═══╤═══               ═══╤═══      │
+    │          │              │                     │         │
+    │          │              └─────────────────────┘         │
+    │          │                        │           │         │
+    └──────────┘                       GND         GND        │
+                                                              │
+               ┌──────────────────────────────────────────────┘
+               │
+           Collector Q3
+           (נקודה C)
+
+  ╔═══════════════════════════════════════════════════════════════╗
+  ║  כניסה: 3.7V (סוללה)    →    יציאה: ~6.0V (Vout)           ║
+  ║                                                              ║
+  ║  Vout = 2 × Vcc − 2 × Vf(diode)                            ║
+  ║  Vout = 2 × 3.7 − 2 × 0.7 = 6.0V  (ללא עומס)             ║
+  ╚═══════════════════════════════════════════════════════════════╝
+        </pre>
+    </div>
+
+    <p><strong>מה המתח התיאורטי ביציאה אם Vcc=3.7V ו-Vf=0.7V?</strong></p>
+    <div class="answer-box">
+        <label>התשובה שלך:</label>
+        <input type="text" id="answer-4-4" class="ltr-input" placeholder="X.XV">
+        <button class="check-btn" onclick="checkAnswer('answer-4-4', ['6', '6.0', '6v', '6.0v', '6.0V', '6V'], 'מושלם! 2×3.7 − 2×0.7 = 7.4−1.4 = 6.0V. בפועל יהיה קצת פחות בגלל עומס.', 'רמז: Vout = 2 × 3.7 − 2 × 0.7 = ?')">בדוק תשובה</button>
+        <div class="feedback" id="feedback-4-4"></div>
+    </div>
+</div>
+
+<div class="checkpoint">
+    ✅ <strong>עצור!</strong> לפני הפעלה, בדוק:
+    <ul>
+        <li>C1, C2 הוחלפו ל-10nF (103)</li>
+        <li>Q3 מחובר נכון (E→GND, B←R5←Q2 coll, C→R6→Vcc)</li>
+        <li>D1: Anode ב-Vcc, Cathode בנקודה X</li>
+        <li>D2: Anode בנקודה X, Cathode בנקודה Y</li>
+        <li>C3: בין X ל-C (collector Q3)</li>
+        <li>C4: (+) בנקודה Y, (-) ב-GND</li>
+        <li>אין חוטים חשופים שנוגעים זה בזה!</li>
+    </ul>
+</div>
+
+<div class="mission-complete">
+    <h3>🎉 משימה 4 הושלמה!</h3>
+    <p>למדת: לחבר Charge Pump מלא עם באפר Q3 ודיודות!</p>
+</div>
+
+<!-- ==================== MISSION 5 ==================== -->
+<div class="mission-header">
+    <h2>משימה 5: הפעלה, מדידות ובדיקות!</h2>
+    <p class="time-estimate">⏱️ 20 דקות</p>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 5.1: הפעלה ראשונה!</h3>
+
+    <ol class="steps">
+        <li><strong>הכן מולטימטר:</strong> מצב DCV, טווח 20V, פרוב אדום ב-VΩ, שחור ב-COM</li>
+        <li><strong>חבר פרובים:</strong> אדום לנקודה Y (Vout), שחור ל-GND</li>
+        <li><strong>חבר את הסוללה</strong></li>
+        <li><strong>קרא את המתח!</strong></li>
+    </ol>
+
+    <div class="what-you-see">
+        <pre>
+  מולטימטר קורא:
+
+  ╔═══════════════════════╗
+  ║                       ║
+  ║       5.4 - 6.2 V    ║   ← מצוין! המתח הוכפל!
+  ║                       ║
+  ╚═══════════════════════╝
+
+  ✅ 5.0V - 6.5V  = מעגל עובד מושלם!
+  ⚠️ 4.0V - 5.0V  = עובד חלקית (בדוק דיודות וקבלים)
+  ⚠️ 3.7V         = Charge Pump לא עובד (רק מתח סוללה)
+  ❌ 0V            = יש קצר או חיבור חסר
+        </pre>
+    </div>
+
+    <div class="info-box">
+        <p><strong>למה לא בדיוק 6.0V?</strong> התוצאה בפועל תלויה ב:</p>
+        <ul>
+            <li>מתח הסוללה בפועל (3.5V-4.2V)</li>
+            <li>סוג הדיודות (שוטקי = יותר, סיליקון = פחות)</li>
+            <li>מהירות התדר (יותר מהיר = יותר יעיל)</li>
+            <li>זרם שנמשך (יותר עומס = פחות מתח)</li>
+        </ul>
+    </div>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 5.2: טבלת מדידות</h3>
+
+    <p>מלא את טבלת המדידות:</p>
+
+    <table>
+        <tr>
+            <th>מדידה</th>
+            <th>איפה למדוד</th>
+            <th>ערך צפוי</th>
+            <th>הערך שלך</th>
+        </tr>
+        <tr>
+            <td>מתח סוללה</td>
+            <td>פס (+) לפס (-)</td>
+            <td>3.2V - 4.2V</td>
+            <td><input type="text" style="width:80px; background:#0d1117; color:#e0e0e0; border:1px solid #37474f; padding:4px; direction:ltr;" placeholder="___V"></td>
+        </tr>
+        <tr>
+            <td>מתח יציאה (Vout)</td>
+            <td>נקודה Y ל-GND</td>
+            <td>5.0V - 6.5V</td>
+            <td><input type="text" style="width:80px; background:#0d1117; color:#e0e0e0; border:1px solid #37474f; padding:4px; direction:ltr;" placeholder="___V"></td>
+        </tr>
+        <tr>
+            <td>יחס הכפלה</td>
+            <td>Vout ÷ Vbat</td>
+            <td>1.4 - 1.8</td>
+            <td><input type="text" style="width:80px; background:#0d1117; color:#e0e0e0; border:1px solid #37474f; padding:4px; direction:ltr;" placeholder="___"></td>
+        </tr>
+    </table>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 5.3: בדיקה עם LED</h3>
+
+    <p>נחבר LED כדי לראות ש-Charge Pump באמת יכול לספק זרם:</p>
+
+    <ol class="steps">
+        <li><strong>חבר:</strong> R7 (1kΩ) מ-Vout (נקודה Y) → LED (+, רגל ארוכה) → LED (-) → GND</li>
+        <li>ה-LED צריך לדלוק!</li>
+        <li><strong>מדוד מתח Vout עם LED מחובר</strong> - המתח ירד קצת (זה נורמלי)</li>
+    </ol>
+
+    <div class="what-you-see">
+        <pre>
+  ╔═══════════════════════════════════════════╗
+  ║                                           ║
+  ║  LED דולק!                                ║
+  ║                                           ║
+  ║  Vout ללא LED:   5.8V                    ║
+  ║  Vout עם LED:    5.0V - 5.5V             ║
+  ║  הפרש:           ~0.5V (נורמלי)          ║
+  ║                                           ║
+  ║  זרם ב-LED ≈ (Vout − 2V) / 1kΩ          ║
+  ║            ≈ (5.5 − 2) / 1000            ║
+  ║            ≈ 3.5mA (LED דולק!)           ║
+  ║                                           ║
+  ╚═══════════════════════════════════════════╝
+        </pre>
+    </div>
+
+    <p><strong>אם Vout=5.5V ומתח LED=2V ונגד=1kΩ, מה הזרם דרך ה-LED? (ב-mA)</strong></p>
+    <div class="answer-box">
+        <label>התשובה שלך:</label>
+        <input type="text" id="answer-5-3" class="ltr-input" placeholder="X.X mA">
+        <button class="check-btn" onclick="checkAnswer('answer-5-3', ['3.5', '3.5ma', '3,5', '3.5 ma', '3.5mA'], 'מעולה! I = (5.5−2)/1000 = 3.5/1000 = 3.5mA. מספיק כדי שה-LED יאיר!', 'רמז: I = (Vout − Vled) / R = (5.5 − 2.0) / 1000 = ?')">בדוק תשובה</button>
+        <div class="feedback" id="feedback-5-3"></div>
+    </div>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 5.4: אבחון תקלות</h3>
+
+    <table>
+        <tr>
+            <th>תקלה</th>
+            <th>סיבות אפשריות</th>
+            <th>פתרון</th>
+        </tr>
+        <tr>
+            <td>Vout = 0V</td>
+            <td>סוללה מנותקת / קצר ביציאה</td>
+            <td>בדוק סוללה, חפש קצרים</td>
+        </tr>
+        <tr>
+            <td>Vout = Vbat (לא הוכפל)</td>
+            <td>אוסצילטור לא עובד / D1, D2 הפוכות</td>
+            <td>בדוק הבהוב בתדר נמוך, כיוון דיודות</td>
+        </tr>
+        <tr>
+            <td>Vout נמוך (4V-4.5V)</td>
+            <td>תדר נמוך / C3 קטן / דיודות איטיות</td>
+            <td>הקטן C1/C2, הגדל C3, נסה דיודות שוטקי</td>
+        </tr>
+        <tr>
+            <td>Vout גבוה מדי (>7V)</td>
+            <td>סוללה מלאה מאוד (4.2V)</td>
+            <td>נורמלי! 2×4.2−1.4=7.0V</td>
+        </tr>
+        <tr>
+            <td>Vout יורד מהר עם עומס</td>
+            <td>R6 גדול מדי / C3 קטן / תדר נמוך</td>
+            <td>הקטן R6, הגדל C3, העלה תדר</td>
+        </tr>
+        <tr>
+            <td>רכיב מתחמם</td>
+            <td>קצר / טרנזיסטור הפוך</td>
+            <td>נתק מיד! בדוק C/B/E</td>
+        </tr>
+    </table>
+</div>
+
+<div class="checkpoint">
+    ✅ <strong>עצור!</strong> תוצאות שצריך לקבל:
+    <ul>
+        <li>Vout > 5.0V ללא עומס</li>
+        <li>LED דולק כשמחובר עם 1kΩ</li>
+        <li>שום רכיב לא מתחמם</li>
+    </ul>
+</div>
+
+<div class="mission-complete">
+    <h3>🎉 משימה 5 הושלמה!</h3>
+    <p>למדת: להפעיל את המעגל, למדוד מתח מוכפל, ולאבחן תקלות!</p>
+</div>
+
+<!-- ==================== MISSION 6 ==================== -->
+<div class="mission-header">
+    <h2>משימה 6: שיפורים ושילוב בפרויקט</h2>
+    <p class="time-estimate">⏱️ 15 דקות</p>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 6.1: שיפור 1 - דיודות שוטקי</h3>
+
+    <p>אם יש לך דיודות <strong>שוטקי</strong> (1N5817/1N5819), החלף את D1 ו-D2:</p>
+
+    <div class="comparison-box">
+        <div class="bad">
+            <h4 style="color: #ef9a9a;">1N4148 (סיליקון רגיל)</h4>
+            <ul>
+                <li>Vf = 0.7V × 2 = <strong>1.4V הפסד</strong></li>
+                <li>Vout = 2×3.7 − 1.4 = <strong>6.0V</strong></li>
+            </ul>
+        </div>
+        <div class="good">
+            <h4 style="color: #a5d6a7;">1N5817 (שוטקי)</h4>
+            <ul>
+                <li>Vf = 0.3V × 2 = <strong>0.6V הפסד</strong></li>
+                <li>Vout = 2×3.7 − 0.6 = <strong>6.8V</strong></li>
+            </ul>
+        </div>
+    </div>
+
+    <p>דיודות שוטקי גם <strong>מהירות יותר</strong>, מה שמשפר את היעילות בתדרים גבוהים!</p>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 6.2: שיפור 2 - מכפיל כפול (Voltage Tripler)</h3>
+
+    <p>רוצה עוד יותר מתח? הוסף עוד שלב של C+D!</p>
+
+    <div class="diagram">
+        <pre>
+  Voltage Doubler (מה שבנינו):
+  3.7V → [C3 + D1 + D2 + C4] → ~6.0V
+
+  Voltage Tripler (שלב נוסף):
+  3.7V → [C3 + D1 + D2] → [C5 + D3 + D4 + C6] → ~9.0V!
+
+  סכמה:
+
+  Vcc──D1──X──D2──Y──D3──Z──D4──W (Vout)
+           │       │       │       │
+          C3      C5      (אופציונלי)
+           │       │
+          Q3     Q3 coll
+         coll   (אותה נקודה!)
+
+  כל שלב מוסיף עוד ~Vcc − Vf ≈ 3.0V
+        </pre>
+    </div>
+
+    <div class="warning">
+        <p>מתח גבוה מ-6V יכול להזיק לרכיבים רגישים! אל תחבר מתח גבוה ישירות ל-ESP32.</p>
+    </div>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 6.3: מגבלות Charge Pump לעומת Boost Converter</h3>
+
+    <p>חשוב להבין את ההבדלים:</p>
+
+    <table>
+        <tr>
+            <th>פרמטר</th>
+            <th>Charge Pump (מה שבנינו)</th>
+            <th>Boost Converter (עם סליל)</th>
+        </tr>
+        <tr>
+            <td>זרם יציאה מקסימלי</td>
+            <td><strong>5-20mA</strong> (מוגבל)</td>
+            <td><strong>500mA-2A</strong></td>
+        </tr>
+        <tr>
+            <td>יעילות</td>
+            <td>60-80%</td>
+            <td>85-95%</td>
+        </tr>
+        <tr>
+            <td>מורכבות</td>
+            <td>פשוט - אין סליל!</td>
+            <td>צריך סליל ייעודי</td>
+        </tr>
+        <tr>
+            <td>רעש חשמלי</td>
+            <td>נמוך</td>
+            <td>בינוני-גבוה</td>
+        </tr>
+        <tr>
+            <td>מתאים ל...</td>
+            <td>עומסים קלים: LED, חיישנים, מעגלי לוגיקה</td>
+            <td>עומסים כבדים: מנועים, ESP32, מסכים</td>
+        </tr>
+    </table>
+
+    <div class="info-box">
+        <p><strong>לפרויקט העכבר:</strong> ה-ESP32-S3 צריך 120-210mA. ה-Charge Pump שבנינו מספק 5-20mA, אז הוא <strong>לא מספיק חזק</strong> בשביל ה-ESP32 בעצמו. אבל הוא מצוין ללימוד העיקרון! לשימוש אמיתי בעכבר, מומלץ מודול MT3608 (ראה מדריך נפרד).</p>
+        <p style="margin-top:8px;"><strong>מה הוא כן יכול להפעיל?</strong> LEDs, חיישנים קטנים, מעגלי לוגיקה שצורכים עד ~15mA.</p>
+    </div>
+
+    <p><strong>מה הזרם המקסימלי שה-Charge Pump שלנו יכול לספק?</strong></p>
+    <div class="answer-box">
+        <label>התשובה שלך:</label>
+        <input type="text" id="answer-6-3" class="ltr-input" placeholder="X-XXmA">
+        <button class="check-btn" onclick="checkAnswer('answer-6-3', ['5-20', '5-20ma', '10', '15', '20', '5', '10ma', '15ma', '20ma', '5ma'], 'נכון! כ-5 עד 20mA, תלוי ברכיבים ובתדר. מספיק ל-LED וחיישנים קטנים!', 'רמז: חפש בטבלה למעלה בשורה של &quot;זרם יציאה מקסימלי&quot;')">בדוק תשובה</button>
+        <div class="feedback" id="feedback-6-3"></div>
+    </div>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 6.4: סיכום שרשרת הרכיבים</h3>
+
+    <div class="diagram">
+        <pre>
+  ╔═════════════════════════════════════════════════════════════════════╗
+  ║                    מה בנינו - סיכום                                ║
+  ╠═════════════════════════════════════════════════════════════════════╣
+  ║                                                                    ║
+  ║  ┌──────────────┐    ┌──────────────┐    ┌──────────────────────┐ ║
+  ║  │  אוסצילטור   │    │    באפר      │    │    Charge Pump       │ ║
+  ║  │              │    │              │    │                      │ ║
+  ║  │  Q1 + Q2     │───►│     Q3       │───►│  D1 + C3 + D2 + C4  │ ║
+  ║  │  R1-R4       │    │   R5, R6     │    │                      │ ║
+  ║  │  C1, C2      │    │              │    │                      │ ║
+  ║  │              │    │              │    │                      │ ║
+  ║  │ מייצר גל     │    │ מגביר כוח    │    │ מכפיל מתח            │ ║
+  ║  │ מרובע 7kHz   │    │ האות         │    │ 3.7V → ~6V          │ ║
+  ║  └──────────────┘    └──────────────┘    └──────────────────────┘ ║
+  ║                                                                    ║
+  ║  רכיבים: 3 טרנזיסטורים + 2 דיודות + 4 קבלים + 6 נגדים           ║
+  ║  = 15 רכיבים בסה"כ!                                               ║
+  ║                                                                    ║
+  ║  ╔═══════════════════════════════════════════╗                     ║
+  ║  ║  כניסה: 3.7V  →  יציאה: ~6.0V           ║                     ║
+  ║  ║  ללא סליל! ללא IC! רק רכיבים בסיסיים!   ║                     ║
+  ║  ╚═══════════════════════════════════════════╝                     ║
+  ║                                                                    ║
+  ╚═════════════════════════════════════════════════════════════════════╝
+        </pre>
+    </div>
+</div>
+
+<div class="mission-complete">
+    <h3>🎉 משימה 6 הושלמה!</h3>
+    <p>למדת: שיפורים אפשריים, המגבלות של Charge Pump, וההשוואה ל-Boost Converter אמיתי</p>
+</div>
+
+<!-- ==================== FINAL SUMMARY ==================== -->
+<div style="background: linear-gradient(135deg, #1a237e 0%, #4a148c 100%); border-radius: 15px; padding: 25px; margin-top: 40px; text-align: center;">
+    <h2 style="color: #e1bee7; border: none; margin: 0 0 15px 0;">סיכום הפרויקט</h2>
+
+    <table style="text-align: right;">
+        <tr>
+            <th>משימה</th>
+            <th>נושא</th>
+            <th>מה למדנו</th>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>תיאוריה</td>
+            <td>עיקרון ה-Charge Pump: קבל שנטען ו"מורם"</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>רכיבים</td>
+            <td>טרנזיסטורים NPN, דיודות, קבלים - זיהוי ותכונות</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>אוסצילטור</td>
+            <td>בניית Astable Multivibrator ובדיקה עם LED</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>Charge Pump</td>
+            <td>באפר Q3, דיודות D1+D2, קבלי משאבה C3+C4</td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>מדידות</td>
+            <td>מדידת מתח מוכפל, בדיקה עם LED, אבחון תקלות</td>
+        </tr>
+        <tr>
+            <td>6</td>
+            <td>שיפורים</td>
+            <td>דיודות שוטקי, מכפיל כפול, מגבלות והשוואה</td>
+        </tr>
+    </table>
+
+    <div style="margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 10px;">
+        <h3 style="color: #76ff03;">הנוסחה:</h3>
+        <p style="font-size: 1.3em; direction: ltr; color: #fff;">
+            V<sub>out</sub> = 2 &times; V<sub>cc</sub> &minus; 2 &times; V<sub>f</sub>
+        </p>
+        <p style="font-size: 1.1em; direction: ltr; color: #b0bec5; margin-top: 5px;">
+            = 2 &times; 3.7V &minus; 2 &times; 0.7V = <span style="color: #76ff03; font-weight: bold;">6.0V</span>
+        </p>
+    </div>
+
+    <div style="margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 10px; text-align: right;">
+        <h3 style="color: #ffab00;">מה הלאה?</h3>
+        <ul style="list-style: none; padding: 0;">
+            <li>🔧 נסה לשנות ערכי C1/C2 ולראות איך זה משפיע על המתח</li>
+            <li>🔧 נסה להוסיף שלב שלישי למכפיל כפול (Tripler)</li>
+            <li>🔧 נסה דיודות שוטקי ותראה את ההבדל</li>
+            <li>🔧 חבר את היציאה ל-AMS1117 כדי לקבל 3.3V יציב</li>
+        </ul>
+    </div>
+</div>
+
+<!-- Popup Modal -->
+<div class="popup-overlay" id="popup-overlay" onclick="closePopup()">
+    <div class="popup" id="popup" onclick="event.stopPropagation()">
+        <div class="emoji" id="popup-emoji"></div>
+        <h3 id="popup-title"></h3>
+        <p id="popup-message"></p>
+        <button onclick="closePopup()">סגור</button>
+    </div>
+</div>
+
+<script>
+function checkAnswer(inputId, correctAnswers, successMsg, failMsg, partialMatch) {
+    if (partialMatch === undefined) partialMatch = true;
+    var input = document.getElementById(inputId);
+    var feedbackId = 'feedback-' + inputId.replace('answer-', '');
+    var feedback = document.getElementById(feedbackId);
+    var userAnswer = input.value.trim().toLowerCase();
+
+    if (!userAnswer) { showPopup(false, 'אופס!', 'הכנס תשובה לפני הבדיקה'); return; }
+
+    var isCorrect = false;
+    for (var i = 0; i < correctAnswers.length; i++) {
+        var ans = correctAnswers[i].toLowerCase();
+        if (partialMatch) {
+            if (userAnswer.indexOf(ans) !== -1 || ans.indexOf(userAnswer) !== -1) { isCorrect = true; break; }
+        } else {
+            if (userAnswer === ans) { isCorrect = true; break; }
+        }
+    }
+
+    if (isCorrect) {
+        if (feedback) { feedback.className = 'feedback correct'; feedback.textContent = successMsg; }
+        showPopup(true, 'כל הכבוד!', successMsg);
+    } else {
+        if (feedback) { feedback.className = 'feedback incorrect'; feedback.textContent = failMsg; }
+        showPopup(false, 'נסה שוב!', failMsg);
+    }
+}
+
+function checkNumberRange(inputId, min, max, successMsg, failMsg) {
+    var input = document.getElementById(inputId);
+    var feedbackId = 'feedback-' + inputId.replace('answer-', '');
+    var feedback = document.getElementById(feedbackId);
+    var val = parseFloat(input.value.trim().replace(/[^0-9.\-]/g, ''));
+
+    if (isNaN(val)) { showPopup(false, 'אופס!', 'הכנס מספר'); return; }
+
+    if (val >= min && val <= max) {
+        if (feedback) { feedback.className = 'feedback correct'; feedback.textContent = successMsg; }
+        showPopup(true, 'כל הכבוד!', successMsg);
+    } else {
+        if (feedback) { feedback.className = 'feedback incorrect'; feedback.textContent = failMsg; }
+        showPopup(false, 'נסה שוב!', failMsg);
+    }
+}
+
+function showPopup(isCorrect, title, message) {
+    var overlay = document.getElementById('popup-overlay');
+    var popup = document.getElementById('popup');
+    document.getElementById('popup-emoji').textContent = isCorrect ? '🎉' : '🤔';
+    var t = document.getElementById('popup-title');
+    t.textContent = title;
+    t.style.color = isCorrect ? '#4caf50' : '#f44336';
+    document.getElementById('popup-message').textContent = message;
+    popup.className = 'popup ' + (isCorrect ? 'correct' : 'incorrect');
+    overlay.classList.add('show');
+}
+
+function closePopup() { document.getElementById('popup-overlay').classList.remove('show'); }
+
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closePopup(); });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>שיעור 11: APIs ו-Web — קורס Python</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.8;
+            background: #0d1117;
+            color: #c9d1d9;
+            direction: rtl;
+            text-align: right;
+        }
+        h1, h2, h3, h4, h5, h6, p, li, td, th, div, label {
+            direction: rtl;
+            text-align: right;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: #161b22;
+            border-bottom: 1px solid #30363d;
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .navbar a {
+            color: #58a6ff;
+            text-decoration: none;
+            font-size: 0.95em;
+            transition: color 0.2s;
+        }
+        .navbar a:hover { color: #79c0ff; }
+        .nav-center { font-weight: bold; color: #f0f6fc; }
+
+        /* Header */
+        .lesson-hero {
+            background: linear-gradient(180deg, rgba(240,136,62,0.2) 0%, transparent 100%);
+            padding: 50px 20px 30px;
+            text-align: center;
+        }
+        .lesson-hero .icon { font-size: 3.5em; margin-bottom: 10px; }
+        .lesson-hero h1 { color: #f0883e; font-size: 2.4em; margin-bottom: 8px; }
+        .lesson-hero p { color: #8b949e; font-size: 1.15em; max-width: 650px; margin: 0 auto; }
+
+        /* Container */
+        .container { max-width: 850px; margin: 0 auto; padding: 30px 20px; }
+
+        /* Mission Header */
+        .mission-header {
+            background: linear-gradient(135deg, #21262d, #161b22);
+            border: 1px solid #30363d;
+            border-right: 5px solid #f0883e;
+            border-radius: 10px;
+            padding: 20px 25px;
+            margin: 40px 0 20px;
+        }
+        .mission-header h2 { color: #f0883e; font-size: 1.5em; margin-bottom: 4px; }
+        .time-estimate {
+            display: inline-block;
+            background: rgba(139,148,158,0.15);
+            color: #8b949e;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            margin-top: 5px;
+        }
+
+        /* Exercise Box */
+        .exercise {
+            background: #161b22;
+            border: 2px solid #238636;
+            border-radius: 10px;
+            padding: 22px;
+            margin: 18px 0;
+        }
+        .exercise h3 { color: #3fb950; font-size: 1.2em; margin-bottom: 12px; }
+
+        /* Steps */
+        .steps { list-style: none; padding: 0; counter-reset: step-counter; }
+        .steps li {
+            padding: 8px 0 8px 0;
+            padding-right: 40px;
+            position: relative;
+            counter-increment: step-counter;
+        }
+        .steps li::before {
+            content: counter(step-counter);
+            position: absolute;
+            right: 0;
+            top: 8px;
+            background: #1f6feb;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+
+        /* Code Blocks */
+        pre, code {
+            direction: ltr;
+            text-align: left;
+            font-family: 'Consolas', 'Courier New', monospace;
+        }
+        pre {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            margin: 12px 0;
+            font-size: 0.92em;
+            line-height: 1.6;
+        }
+        code {
+            background: rgba(110,118,129,0.2);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        pre code { background: none; padding: 0; }
+        .keyword { color: #ff7b72; }
+        .string { color: #a5d6ff; }
+        .comment { color: #8b949e; }
+        .function { color: #d2a8ff; }
+        .number { color: #79c0ff; }
+
+        /* What You Should See */
+        .what-you-see {
+            background: #000;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 12px 0;
+        }
+        .what-you-see::before {
+            content: "מה שאתה אמור לראות:";
+            display: block;
+            color: #3fb950;
+            font-weight: bold;
+            margin-bottom: 8px;
+            direction: rtl;
+            text-align: right;
+        }
+        .what-you-see pre {
+            background: transparent;
+            border: none;
+            padding: 0;
+            margin: 0;
+            color: #3fb950;
+        }
+
+        /* Answer Box */
+        .answer-box {
+            border: 2px dashed #30363d;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 15px 0;
+            background: #161b22;
+        }
+        .answer-box label { color: #8b949e; font-weight: bold; display: block; margin-bottom: 8px; }
+        .answer-box input[type="text"] {
+            width: 100%;
+            padding: 10px 14px;
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            color: #c9d1d9;
+            font-size: 1em;
+            margin-bottom: 10px;
+            direction: ltr;
+            text-align: left;
+        }
+        .answer-box input:focus { border-color: #58a6ff; outline: none; }
+        .check-btn {
+            background: linear-gradient(135deg, #238636, #2ea043);
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+        .check-btn:hover { transform: scale(1.03); }
+
+        /* Checkpoint */
+        .checkpoint {
+            background: rgba(35,134,54,0.1);
+            border-right: 4px solid #238636;
+            border-radius: 6px;
+            padding: 16px 20px;
+            margin: 20px 0;
+            color: #3fb950;
+        }
+
+        /* Mission Complete */
+        .mission-complete {
+            background: rgba(240,136,62,0.1);
+            border: 2px solid #f0883e;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 25px 0;
+            text-align: center;
+        }
+        .mission-complete h3 { color: #f0883e; margin-bottom: 8px; }
+
+        /* Info Box */
+        .info-box {
+            background: rgba(31,111,235,0.1);
+            border-right: 4px solid #1f6feb;
+            border-radius: 6px;
+            padding: 16px 20px;
+            margin: 15px 0;
+        }
+        .info-box strong { color: #58a6ff; }
+
+        /* Popup */
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+        .popup {
+            background: #21262d;
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            border: 2px solid #30363d;
+        }
+        .popup .emoji { font-size: 3em; margin-bottom: 10px; }
+        .popup h3 { margin-bottom: 8px; color: #f0f6fc; }
+        .popup p { color: #8b949e; margin-bottom: 16px; }
+        .popup button {
+            background: #30363d;
+            color: #f0f6fc;
+            border: none;
+            padding: 8px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        .popup.correct { border-color: #238636; }
+        .popup.correct h3 { color: #3fb950; }
+        .popup.incorrect { border-color: #da3633; }
+        .popup.incorrect h3 { color: #f85149; }
+
+        /* Table of Contents */
+        .toc {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .toc h3 { color: #58a6ff; margin-bottom: 12px; }
+        .toc ul { list-style: none; padding: 0; }
+        .toc li { padding: 6px 0; }
+        .toc a { color: #f0883e; text-decoration: none; }
+        .toc a:hover { text-decoration: underline; }
+
+        /* Warning Box */
+        .warning-box {
+            background: rgba(210,159,34,0.1);
+            border-right: 4px solid #d29922;
+            border-radius: 6px;
+            padding: 16px 20px;
+            margin: 15px 0;
+        }
+        .warning-box strong { color: #d29922; }
+
+        @media (max-width: 600px) {
+            .lesson-hero h1 { font-size: 1.8em; }
+            .container { padding: 15px; }
+            .navbar { flex-direction: column; gap: 8px; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="lesson12-final-projects.html">שיעור 12: פרויקטים מסכמים &larr;</a>
+    <span class="nav-center">שיעור 11 מתוך 12</span>
+    <a href="lesson10-oop.html">&rarr; שיעור 10: תכנות מונחה עצמים</a>
+</nav>
+
+<div class="lesson-hero">
+    <div class="icon">🌐</div>
+    <h1>שיעור 11: APIs ו-Web</h1>
+    <p>למד לדבר עם האינטרנט! requests, JSON, ובניית כלים שמושכים מידע מהרשת</p>
+</div>
+
+<div class="container">
+
+    <div class="toc">
+        <h3>תוכן עניינים</h3>
+        <ul>
+            <li><a href="#mission1">משימה 1: מה זה API?</a></li>
+            <li><a href="#mission2">משימה 2: הקריאה הראשונה שלך ל-API</a></li>
+            <li><a href="#mission3">משימה 3: עבודה עם JSON</a></li>
+            <li><a href="#mission4">משימה 4: Query Parameters ו-Headers</a></li>
+            <li><a href="#mission5">משימה 5: מיני פרויקט — בוט מזג אוויר</a></li>
+            <li><a href="#mission6">משימה 6: בונוס — APIs מהנים</a></li>
+        </ul>
+    </div>
+
+    <!-- ==================== MISSION 1 ==================== -->
+    <div class="mission-header" id="mission1">
+        <h2>משימה 1: מה זה API?</h2>
+        <span class="time-estimate">⏱️ 8 דקות</span>
+    </div>
+
+    <div class="info-box">
+        <strong>אנלוגיה — המלצר במסעדה:</strong><br>
+        אתה (הלקוח) יושב במסעדה. אתה לא הולך ישירות למטבח — אתה מזמין דרך <strong>המלצר</strong>.
+        המלצר לוקח את ההזמנה שלך למטבח (השרת) ומחזיר לך את האוכל (הנתונים).
+        <strong>API = המלצר</strong> — ממשק שמאפשר לתוכנה שלך לדבר עם שרתים אחרים.
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 1.1: HTTP בסיסי</h3>
+        <p>כשאתה גולש באינטרנט, הדפדפן שולח בקשות HTTP. שני הסוגים העיקריים:</p>
+<pre><code><span class="comment"># HTTP Methods - the two main ones:</span>
+<span class="comment">#</span>
+<span class="comment"># GET  = "Give me data"  (read)</span>
+<span class="comment">#   Example: Open a webpage, search Google</span>
+<span class="comment">#</span>
+<span class="comment"># POST = "Here is data"  (write/create)</span>
+<span class="comment">#   Example: Submit a form, upload a photo</span>
+<span class="comment">#</span>
+<span class="comment"># Status Codes:</span>
+<span class="comment">#   200 = OK (success)</span>
+<span class="comment">#   404 = Not Found</span>
+<span class="comment">#   500 = Server Error</span></code></pre>
+
+        <p><strong>מה קוד הסטטוס שאומר "הכל בסדר"?</strong></p>
+        <div class="answer-box">
+            <label>התשובה שלך:</label>
+            <input type="text" id="answer-1-1" placeholder="מספר">
+            <button class="check-btn" onclick="checkAnswer('answer-1-1', ['200'], 'מעולה! 200 = OK, הבקשה הצליחה.', 'רמז: זה מספר עגול בין 100 ל-300...')">בדוק תשובה</button>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 1.2: התקנת requests</h3>
+        <ol class="steps">
+            <li>פתח טרמינל</li>
+            <li>התקן את ספריית requests:</li>
+        </ol>
+<pre><code>pip install requests</code></pre>
+        <div class="what-you-see">
+<pre>Successfully installed requests-2.31.0</pre>
+        </div>
+    </div>
+
+    <div class="checkpoint">
+        ✅ <strong>עצור!</strong> ודא ש-requests מותקנת: <code>python -c "import requests; print('OK')"</code>
+    </div>
+
+    <div class="mission-complete">
+        <h3>🎉 משימה 1 הושלמה!</h3>
+        <p>למדת: מה זה API, HTTP methods, וקודי סטטוס</p>
+    </div>
+
+    <!-- ==================== MISSION 2 ==================== -->
+    <div class="mission-header" id="mission2">
+        <h2>משימה 2: הקריאה הראשונה שלך ל-API</h2>
+        <span class="time-estimate">⏱️ 12 דקות</span>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 2.1: בקשת GET ראשונה</h3>
+        <ol class="steps">
+            <li>צור קובץ <code>first_api.py</code></li>
+            <li>כתוב:</li>
+        </ol>
+<pre><code><span class="keyword">import</span> requests
+
+<span class="comment"># Get a random cat fact!</span>
+response = requests.get(<span class="string">"https://catfact.ninja/fact"</span>)
+
+<span class="keyword">print</span>(<span class="string">"Status Code:"</span>, response.status_code)
+<span class="keyword">print</span>(<span class="string">"Content Type:"</span>, response.headers[<span class="string">'content-type'</span>])
+<span class="keyword">print</span>(<span class="string">"Response:"</span>, response.text)
+<span class="keyword">print</span>()
+
+<span class="comment"># Parse the JSON response</span>
+data = response.json()
+<span class="keyword">print</span>(<span class="string">"Cat Fact:"</span>, data[<span class="string">'fact'</span>])
+<span class="keyword">print</span>(<span class="string">"Fact Length:"</span>, data[<span class="string">'length'</span>])</code></pre>
+
+        <div class="what-you-see">
+<pre>Status Code: 200
+Content Type: application/json
+Response: {"fact":"A cat's brain is...","length":85}
+
+Cat Fact: A cat's brain is biologically more similar to a human brain than it is to a dog's.
+Fact Length: 85</pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 2.2: בדיקת שגיאות</h3>
+        <ol class="steps">
+            <li>צור קובץ <code>error_handling_api.py</code></li>
+            <li>כתוב:</li>
+        </ol>
+<pre><code><span class="keyword">import</span> requests
+
+<span class="keyword">def</span> <span class="function">safe_get</span>(url):
+    <span class="keyword">try</span>:
+        response = requests.get(url, timeout=<span class="number">5</span>)
+        response.raise_for_status()  <span class="comment"># Raise error for 4xx/5xx</span>
+        <span class="keyword">return</span> response
+    <span class="keyword">except</span> requests.exceptions.ConnectionError:
+        <span class="keyword">print</span>(<span class="string">"Connection error! Check your internet."</span>)
+    <span class="keyword">except</span> requests.exceptions.Timeout:
+        <span class="keyword">print</span>(<span class="string">"Request timed out!"</span>)
+    <span class="keyword">except</span> requests.exceptions.HTTPError <span class="keyword">as</span> e:
+        <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"HTTP Error: {e}"</span>)
+    <span class="keyword">return</span> <span class="keyword">None</span>
+
+<span class="comment"># Test with a working URL</span>
+r = safe_get(<span class="string">"https://catfact.ninja/fact"</span>)
+<span class="keyword">if</span> r:
+    <span class="keyword">print</span>(<span class="string">"Success!"</span>, r.json()[<span class="string">'fact'</span>])
+
+<span class="comment"># Test with a broken URL</span>
+r = safe_get(<span class="string">"https://catfact.ninja/nonexistent"</span>)
+<span class="keyword">if not</span> r:
+    <span class="keyword">print</span>(<span class="string">"Request failed, but we handled it!"</span>)</code></pre>
+
+        <p><strong>איזה קוד סטטוס מציין "דף לא נמצא"?</strong></p>
+        <div class="answer-box">
+            <label>התשובה שלך:</label>
+            <input type="text" id="answer-2-2" placeholder="מספר">
+            <button class="check-btn" onclick="checkAnswer('answer-2-2', ['404'], '404 Not Found — הדף שביקשת לא קיים!', 'רמז: זה הקוד הכי מפורסם... ארבע-מאות-ו...')">בדוק תשובה</button>
+        </div>
+    </div>
+
+    <div class="mission-complete">
+        <h3>🎉 משימה 2 הושלמה!</h3>
+        <p>למדת: requests.get, status codes, טיפול בשגיאות</p>
+    </div>
+
+    <!-- ==================== MISSION 3 ==================== -->
+    <div class="mission-header" id="mission3">
+        <h2>משימה 3: עבודה עם JSON</h2>
+        <span class="time-estimate">⏱️ 12 דקות</span>
+    </div>
+
+    <div class="info-box">
+        <strong>JSON</strong> (JavaScript Object Notation) הוא פורמט הנתונים הפופולרי ביותר ב-APIs.
+        הוא נראה בדיוק כמו מילון Python! <code>{"key": "value"}</code>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 3.1: ניווט ב-JSON מקונן</h3>
+        <ol class="steps">
+            <li>צור קובץ <code>json_practice.py</code></li>
+            <li>כתוב:</li>
+        </ol>
+<pre><code><span class="keyword">import</span> requests
+
+<span class="comment"># Get a random number fact</span>
+response = requests.get(<span class="string">"http://numbersapi.com/42/trivia?json"</span>)
+data = response.json()
+
+<span class="keyword">print</span>(<span class="string">"Type of response:"</span>, <span class="keyword">type</span>(data))
+<span class="keyword">print</span>(<span class="string">"Keys:"</span>, <span class="keyword">list</span>(data.keys()))
+<span class="keyword">print</span>(<span class="string">"Fact:"</span>, data[<span class="string">'text'</span>])
+<span class="keyword">print</span>(<span class="string">"Number:"</span>, data[<span class="string">'number'</span>])
+<span class="keyword">print</span>()
+
+<span class="comment"># Multiple cat facts with nested JSON</span>
+response = requests.get(<span class="string">"https://catfact.ninja/facts?limit=3"</span>)
+data = response.json()
+
+<span class="keyword">print</span>(<span class="string">"All keys:"</span>, <span class="keyword">list</span>(data.keys()))
+<span class="keyword">print</span>(<span class="string">"Number of facts:"</span>, <span class="keyword">len</span>(data[<span class="string">'data'</span>]))
+<span class="keyword">print</span>()
+
+<span class="comment"># Loop through the facts</span>
+<span class="keyword">for</span> i, fact <span class="keyword">in</span> <span class="keyword">enumerate</span>(data[<span class="string">'data'</span>], <span class="number">1</span>):
+    <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"Fact {i}: {fact['fact'][:60]}..."</span>)</code></pre>
+
+        <div class="what-you-see">
+<pre>Type of response: &lt;class 'dict'&gt;
+Keys: ['text', 'number', 'found', 'type']
+Fact: 42 is the number of laws of cricket.
+Number: 42
+
+All keys: ['current_page', 'data', 'first_page_url', ...]
+Number of facts: 3
+
+Fact 1: A cat's brain is biologically more similar to a human...
+Fact 2: Cats have over 20 vocalizations, including the purr...
+Fact 3: A group of cats is called a "clowder."...</pre>
+        </div>
+
+        <p><strong>איזה סוג נתון ב-Python מתאים ל-JSON object <code>{}</code>?</strong></p>
+        <div class="answer-box">
+            <label>התשובה שלך:</label>
+            <input type="text" id="answer-3-1" placeholder="dict / list / str / ...">
+            <button class="check-btn" onclick="checkAnswer('answer-3-1', ['dict', 'dictionary', 'מילון'], 'נכון! JSON object = Python dict, JSON array = Python list.', 'רמז: זה סוג נתון עם מפתחות וערכים...')">בדוק תשובה</button>
+        </div>
+    </div>
+
+    <div class="checkpoint">
+        ✅ <strong>עצור!</strong> ודא שאתה מבין: <code>response.json()</code> הופך JSON לנתוני Python (dict/list).
+    </div>
+
+    <div class="mission-complete">
+        <h3>🎉 משימה 3 הושלמה!</h3>
+        <p>למדת: JSON parsing, ניווט במבנה מקונן, לולאות על נתוני API</p>
+    </div>
+
+    <!-- ==================== MISSION 4 ==================== -->
+    <div class="mission-header" id="mission4">
+        <h2>משימה 4: Query Parameters ו-Headers</h2>
+        <span class="time-estimate">⏱️ 10 דקות</span>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 4.1: שליחת פרמטרים</h3>
+        <ol class="steps">
+            <li>צור קובץ <code>params_demo.py</code></li>
+            <li>כתוב:</li>
+        </ol>
+<pre><code><span class="keyword">import</span> requests
+
+<span class="comment"># Method 1: Parameters in URL</span>
+response = requests.get(<span class="string">"https://v2.jokeapi.dev/joke/Programming?type=single"</span>)
+data = response.json()
+<span class="keyword">print</span>(<span class="string">"Joke:"</span>, data.get(<span class="string">'joke'</span>, <span class="string">'No joke found'</span>))
+<span class="keyword">print</span>()
+
+<span class="comment"># Method 2: Parameters as dict (cleaner!)</span>
+params = {
+    <span class="string">'type'</span>: <span class="string">'single'</span>,
+    <span class="string">'lang'</span>: <span class="string">'en'</span>
+}
+response = requests.get(<span class="string">"https://v2.jokeapi.dev/joke/Any"</span>, params=params)
+data = response.json()
+
+<span class="keyword">print</span>(<span class="string">"URL sent:"</span>, response.url)
+<span class="keyword">print</span>(<span class="string">"Category:"</span>, data.get(<span class="string">'category'</span>))
+<span class="keyword">print</span>(<span class="string">"Joke:"</span>, data.get(<span class="string">'joke'</span>, <span class="string">'No joke found'</span>))</code></pre>
+
+        <div class="what-you-see">
+<pre>Joke: A SQL query walks into a bar, sees two tables and asks... "Can I join you?"
+
+URL sent: https://v2.jokeapi.dev/joke/Any?type=single&lang=en
+Category: Programming
+Joke: There are only 10 types of people in the world...</pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 4.2: Headers מותאמים</h3>
+        <ol class="steps">
+            <li>הוסף לקובץ:</li>
+        </ol>
+<pre><code><span class="comment"># Custom headers</span>
+headers = {
+    <span class="string">'User-Agent'</span>: <span class="string">'MyPythonBot/1.0'</span>,
+    <span class="string">'Accept'</span>: <span class="string">'application/json'</span>
+}
+
+response = requests.get(
+    <span class="string">"https://catfact.ninja/fact"</span>,
+    headers=headers
+)
+<span class="keyword">print</span>(<span class="string">"With custom headers:"</span>, response.json()[<span class="string">'fact'</span>])</code></pre>
+    </div>
+
+    <div class="warning-box">
+        <strong>Rate Limiting:</strong> רוב ה-APIs מגבילים את מספר הבקשות שאפשר לשלוח.
+        אם תשלח יותר מדי בקשות, תקבל שגיאה 429 (Too Many Requests).
+        תמיד הוסף <code>time.sleep(1)</code> בין בקשות בלולאה!
+    </div>
+
+    <div class="mission-complete">
+        <h3>🎉 משימה 4 הושלמה!</h3>
+        <p>למדת: query parameters, headers, rate limiting</p>
+    </div>
+
+    <!-- ==================== MISSION 5 ==================== -->
+    <div class="mission-header" id="mission5">
+        <h2>משימה 5: מיני פרויקט — בוט מזג אוויר!</h2>
+        <span class="time-estimate">⏱️ 15 דקות</span>
+    </div>
+
+    <div class="info-box">
+        <strong>wttr.in</strong> הוא שירות מזג אוויר חינמי שלא דורש מפתח API!
+        פשוט שולחים בקשה עם שם העיר ומקבלים תחזית.
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 5.1: מזג אוויר בסיסי</h3>
+        <ol class="steps">
+            <li>צור קובץ <code>weather_bot.py</code></li>
+            <li>כתוב:</li>
+        </ol>
+<pre><code><span class="keyword">import</span> requests
+
+<span class="keyword">def</span> <span class="function">get_weather</span>(city):
+    <span class="string">"""Get weather for a city using wttr.in"""</span>
+    url = <span class="keyword">f</span><span class="string">"https://wttr.in/{city}?format=j1"</span>
+
+    <span class="keyword">try</span>:
+        response = requests.get(url, timeout=<span class="number">10</span>)
+        response.raise_for_status()
+        data = response.json()
+
+        <span class="comment"># Extract current conditions</span>
+        current = data[<span class="string">'current_condition'</span>][<span class="number">0</span>]
+
+        weather = {
+            <span class="string">'temp_c'</span>: current[<span class="string">'temp_C'</span>],
+            <span class="string">'feels_like'</span>: current[<span class="string">'FeelsLikeC'</span>],
+            <span class="string">'description'</span>: current[<span class="string">'weatherDesc'</span>][<span class="number">0</span>][<span class="string">'value'</span>],
+            <span class="string">'humidity'</span>: current[<span class="string">'humidity'</span>],
+            <span class="string">'wind_speed'</span>: current[<span class="string">'windspeedKmph'</span>],
+        }
+        <span class="keyword">return</span> weather
+
+    <span class="keyword">except</span> requests.exceptions.RequestException <span class="keyword">as</span> e:
+        <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"Error: {e}"</span>)
+        <span class="keyword">return</span> <span class="keyword">None</span>
+
+<span class="keyword">def</span> <span class="function">display_weather</span>(city, weather):
+    <span class="keyword">if not</span> weather:
+        <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"Could not get weather for {city}"</span>)
+        <span class="keyword">return</span>
+
+    <span class="keyword">print</span>(<span class="string">"=" * 35</span>)
+    <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"  Weather in {city}"</span>)
+    <span class="keyword">print</span>(<span class="string">"=" * 35</span>)
+    <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"  Temp:        {weather['temp_c']}°C"</span>)
+    <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"  Feels like:  {weather['feels_like']}°C"</span>)
+    <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"  Conditions:  {weather['description']}"</span>)
+    <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"  Humidity:    {weather['humidity']}%"</span>)
+    <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"  Wind:        {weather['wind_speed']} km/h"</span>)
+    <span class="keyword">print</span>(<span class="string">"=" * 35</span>)
+
+<span class="comment"># Test it!</span>
+cities = [<span class="string">"Tel+Aviv"</span>, <span class="string">"London"</span>, <span class="string">"Tokyo"</span>]
+<span class="keyword">for</span> city <span class="keyword">in</span> cities:
+    weather = get_weather(city)
+    display_weather(city, weather)
+    <span class="keyword">print</span>()</code></pre>
+
+        <div class="what-you-see">
+<pre>===================================
+  Weather in Tel+Aviv
+===================================
+  Temp:        25°C
+  Feels like:  27°C
+  Conditions:  Partly cloudy
+  Humidity:    65%
+  Wind:        18 km/h
+===================================</pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 5.2: בוט אינטראקטיבי</h3>
+        <ol class="steps">
+            <li>הוסף בסוף הקובץ:</li>
+        </ol>
+<pre><code><span class="comment"># Interactive mode</span>
+<span class="keyword">print</span>(<span class="string">"\n🌤️  Weather Bot - type a city name (or 'quit' to exit)"</span>)
+<span class="keyword">while True</span>:
+    city = <span class="keyword">input</span>(<span class="string">"\nCity: "</span>).strip()
+    <span class="keyword">if</span> city.lower() == <span class="string">'quit'</span>:
+        <span class="keyword">print</span>(<span class="string">"Goodbye!"</span>)
+        <span class="keyword">break</span>
+    <span class="keyword">if not</span> city:
+        <span class="keyword">continue</span>
+    weather = get_weather(city.replace(<span class="string">' '</span>, <span class="string">'+'</span>))
+    display_weather(city, weather)</code></pre>
+
+        <p><strong>באיזה פורמט wttr.in מחזיר JSON? (מה הפרמטר ב-URL?)</strong></p>
+        <div class="answer-box">
+            <label>התשובה שלך:</label>
+            <input type="text" id="answer-5-1" placeholder="format=...">
+            <button class="check-btn" onclick="checkAnswer('answer-5-1', ['format=j1', 'j1', '?format=j1'], 'מדויק! format=j1 אומר ל-wttr.in להחזיר JSON.', 'רמז: תסתכל על ה-URL בקוד — יש שם פרמטר format=...')">בדוק תשובה</button>
+        </div>
+    </div>
+
+    <div class="checkpoint">
+        ✅ <strong>עצור!</strong> הרץ את בוט מזג האוויר ובדוק עיר שאתה מכיר — המידע תואם למציאות?
+    </div>
+
+    <div class="mission-complete">
+        <h3>🎉 משימה 5 הושלמה!</h3>
+        <p>למדת: לבנות כלי שלם שמושך מידע מ-API, מעבד אותו, ומציג אותו יפה</p>
+    </div>
+
+    <!-- ==================== MISSION 6 ==================== -->
+    <div class="mission-header" id="mission6">
+        <h2>משימה 6: בונוס — APIs מהנים!</h2>
+        <span class="time-estimate">⏱️ 15 דקות</span>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 6.1: מכונת בדיחות</h3>
+        <ol class="steps">
+            <li>צור קובץ <code>fun_apis.py</code></li>
+            <li>כתוב:</li>
+        </ol>
+<pre><code><span class="keyword">import</span> requests
+
+<span class="keyword">def</span> <span class="function">get_joke</span>():
+    <span class="string">"""Get a random joke from JokeAPI"""</span>
+    url = <span class="string">"https://v2.jokeapi.dev/joke/Any"</span>
+    params = {<span class="string">'type'</span>: <span class="string">'single'</span>, <span class="string">'lang'</span>: <span class="string">'en'</span>}
+    response = requests.get(url, params=params)
+    data = response.json()
+    <span class="keyword">return</span> data.get(<span class="string">'joke'</span>, <span class="string">'No joke found'</span>)
+
+<span class="keyword">def</span> <span class="function">get_cat_fact</span>():
+    <span class="string">"""Get a random cat fact"""</span>
+    response = requests.get(<span class="string">"https://catfact.ninja/fact"</span>)
+    <span class="keyword">return</span> response.json()[<span class="string">'fact'</span>]
+
+<span class="keyword">def</span> <span class="function">get_number_fact</span>(number):
+    <span class="string">"""Get a fun fact about a number"""</span>
+    response = requests.get(<span class="keyword">f</span><span class="string">"http://numbersapi.com/{number}?json"</span>)
+    <span class="keyword">return</span> response.json()[<span class="string">'text'</span>]
+
+<span class="comment"># Run them all!</span>
+<span class="keyword">print</span>(<span class="string">"🃏 Random Joke:"</span>)
+<span class="keyword">print</span>(<span class="string">"  "</span>, get_joke())
+<span class="keyword">print</span>()
+
+<span class="keyword">print</span>(<span class="string">"🐱 Cat Fact:"</span>)
+<span class="keyword">print</span>(<span class="string">"  "</span>, get_cat_fact())
+<span class="keyword">print</span>()
+
+<span class="keyword">print</span>(<span class="string">"🔢 Fun fact about 7:"</span>)
+<span class="keyword">print</span>(<span class="string">"  "</span>, get_number_fact(<span class="number">7</span>))</code></pre>
+
+        <div class="what-you-see">
+<pre>🃏 Random Joke:
+   A SQL query walks into a bar, sees two tables and asks "Can I join you?"
+
+🐱 Cat Fact:
+   Cats have over 20 vocalizations, including the purr.
+
+🔢 Fun fact about 7:
+   7 is the number of spots on a common ladybug.</pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 6.2: דשבורד מידע</h3>
+        <ol class="steps">
+            <li>הוסף לקובץ:</li>
+        </ol>
+<pre><code><span class="keyword">def</span> <span class="function">info_dashboard</span>():
+    <span class="string">"""Display a fun information dashboard"""</span>
+    <span class="keyword">print</span>(<span class="string">"\n" + "=" * 45</span>)
+    <span class="keyword">print</span>(<span class="string">"     📊 Your Daily Info Dashboard"</span>)
+    <span class="keyword">print</span>(<span class="string">"=" * 45</span>)
+
+    <span class="comment"># Joke</span>
+    <span class="keyword">print</span>(<span class="string">"\n🃏 Joke of the moment:"</span>)
+    <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"   {get_joke()}"</span>)
+
+    <span class="comment"># Cat fact</span>
+    <span class="keyword">print</span>(<span class="string">"\n🐱 Cat fact:"</span>)
+    <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"   {get_cat_fact()}"</span>)
+
+    <span class="comment"># Weather</span>
+    weather = get_weather(<span class="string">"Tel+Aviv"</span>)
+    <span class="keyword">if</span> weather:
+        <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"\n🌤️ Tel Aviv: {weather['temp_c']}°C, {weather['description']}"</span>)
+
+    <span class="comment"># Number fact</span>
+    <span class="keyword">import</span> datetime
+    today = datetime.datetime.now().day
+    <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"\n🔢 Fun fact about today's date ({today}):"</span>)
+    <span class="keyword">print</span>(<span class="keyword">f</span><span class="string">"   {get_number_fact(today)}"</span>)
+
+    <span class="keyword">print</span>(<span class="string">"\n" + "=" * 45</span>)
+
+info_dashboard()</code></pre>
+    </div>
+
+    <div class="info-box">
+        <strong>APIs חינמיים נוספים לנסות:</strong><br>
+        - <code>https://api.chucknorris.io/jokes/random</code> — בדיחות צ'אק נוריס<br>
+        - <code>https://uselessfacts.jsph.pl/api/v2/facts/random</code> — עובדות מיותרות<br>
+        - <code>https://dog.ceo/api/breeds/image/random</code> — תמונות כלבים אקראיות
+    </div>
+
+    <div class="mission-complete">
+        <h3>🎉 משימה 6 הושלמה!</h3>
+        <p>למדת: לעבוד עם כמה APIs במקביל, לבנות דשבורד מידע, ולהשתמש ב-APIs חינמיים</p>
+    </div>
+
+    <div class="mission-complete">
+        <h3>🏆 סיימת את שיעור 11!</h3>
+        <p>עכשיו אתה יודע לדבר עם האינטרנט דרך Python. בשיעור הבא — פרויקטים מסכמים שמשלבים הכל!</p>
+    </div>
+
+</div>
+
+<!-- Popup Modal -->
+<div class="popup-overlay" id="popup-overlay" onclick="closePopup()">
+    <div class="popup" id="popup" onclick="event.stopPropagation()">
+        <div class="emoji" id="popup-emoji"></div>
+        <h3 id="popup-title"></h3>
+        <p id="popup-message"></p>
+        <button onclick="closePopup()">סגור</button>
+    </div>
+</div>
+
+<script>
+function checkAnswer(inputId, correctAnswers, successMsg, failMsg) {
+    var input = document.getElementById(inputId);
+    var val = input.value.trim();
+    var isCorrect = false;
+    for (var i = 0; i < correctAnswers.length; i++) {
+        if (val === correctAnswers[i] || val.toLowerCase() === correctAnswers[i].toLowerCase()) { isCorrect = true; break; }
+    }
+    var overlay = document.getElementById('popup-overlay');
+    var emoji = document.getElementById('popup-emoji');
+    var title = document.getElementById('popup-title');
+    var message = document.getElementById('popup-message');
+    var popup = document.getElementById('popup');
+    if (isCorrect) { emoji.textContent = '🎉'; title.textContent = 'כל הכבוד!'; message.textContent = successMsg; popup.className = 'popup correct'; }
+    else { emoji.textContent = '🤔'; title.textContent = 'נסה שוב'; message.textContent = failMsg; popup.className = 'popup incorrect'; }
+    overlay.style.display = 'flex';
+}
+function closePopup() { document.getElementById('popup-overlay').style.display = 'none'; }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מגביר מתח DC - ממיר 5V ל-17V עם קבלים ודיודות</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            line-height: 1.8;
+            padding: 20px;
+            max-width: 920px;
+            margin: 0 auto;
+        }
+
+        h1 { text-align: center; color: #00e5ff; font-size: 2em; margin-bottom: 10px; text-shadow: 0 0 15px rgba(0,229,255,0.3); }
+        h2 { color: #ffab00; margin-top: 30px; margin-bottom: 15px; border-bottom: 2px solid #ffab00; padding-bottom: 8px; }
+        h3 { color: #76ff03; margin-top: 20px; margin-bottom: 10px; }
+
+        .subtitle { text-align: center; color: #90a4ae; font-size: 1.1em; margin-bottom: 30px; }
+
+        .mission-header {
+            background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%);
+            border: 2px solid #42a5f5; border-radius: 12px;
+            padding: 20px; margin: 30px 0 20px 0; text-align: center;
+        }
+        .mission-header h2 { color: #90caf9; border: none; margin: 0; padding: 0; font-size: 1.5em; }
+        .time-estimate { display: inline-block; background: #263238; color: #b0bec5; padding: 4px 12px; border-radius: 20px; font-size: 0.85em; margin-top: 8px; }
+
+        .exercise {
+            background: #1a2a1a; border: 2px solid #4caf50; border-radius: 10px;
+            padding: 20px; margin: 20px 0;
+        }
+        .exercise h3 { color: #81c784; margin-top: 0; }
+
+        .steps { counter-reset: step-counter; list-style: none; padding: 0; margin: 15px 0; }
+        .steps li { counter-increment: step-counter; padding: 8px 0 8px 45px; position: relative; margin-bottom: 5px; }
+        .steps li::before {
+            content: counter(step-counter);
+            position: absolute; right: 0; left: auto; top: 8px;
+            width: 30px; height: 30px; background: #1565c0; color: white;
+            border-radius: 50%; text-align: center; line-height: 30px; font-weight: bold; font-size: 0.9em;
+        }
+
+        .what-you-see {
+            background: #000; border: 1px solid #333; border-radius: 8px;
+            padding: 15px; margin: 15px 0; position: relative;
+        }
+        .what-you-see::before { content: "👁️ מה אתה אמור לראות:"; display: block; color: #ff9800; font-weight: bold; margin-bottom: 10px; }
+        .what-you-see pre { color: #00e676; font-family: 'Courier New', monospace; font-size: 0.9em; white-space: pre; overflow-x: auto; direction: ltr; text-align: left; }
+
+        .answer-box {
+            border: 2px dashed #546e7a; border-radius: 8px;
+            padding: 15px; margin: 15px 0; background: #1a1a2e;
+        }
+        .answer-box label { color: #80cbc4; font-weight: bold; display: block; margin-bottom: 8px; }
+        .answer-box input[type="text"] {
+            width: 100%; padding: 10px; border: 2px solid #37474f; border-radius: 6px;
+            background: #0d1117; color: #e0e0e0; font-size: 1em; margin-bottom: 10px; direction: rtl;
+        }
+        .answer-box input.ltr-input { direction: ltr; text-align: left; }
+
+        .check-btn {
+            background: linear-gradient(135deg, #2e7d32, #43a047); color: white;
+            border: none; padding: 10px 25px; border-radius: 6px;
+            cursor: pointer; font-size: 1em; font-weight: bold; transition: all 0.3s;
+        }
+        .check-btn:hover { background: linear-gradient(135deg, #388e3c, #4caf50); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(76,175,80,0.3); }
+
+        .feedback { display: none; margin-top: 10px; padding: 10px; border-radius: 6px; font-weight: bold; }
+        .feedback.correct { display: block; background: #1b5e20; color: #a5d6a7; border: 1px solid #4caf50; }
+        .feedback.incorrect { display: block; background: #b71c1c; color: #ef9a9a; border: 1px solid #f44336; }
+
+        .checkpoint {
+            background: #1a2a1a; border-right: 5px solid #4caf50;
+            padding: 15px 20px; margin: 20px 0; border-radius: 0 8px 8px 0;
+        }
+
+        .mission-complete {
+            background: #1a1a2e; border: 2px solid #7c4dff; border-radius: 12px;
+            padding: 20px; margin: 25px 0; text-align: center;
+        }
+        .mission-complete h3 { color: #b388ff; }
+
+        .warning {
+            background: #2a1a0a; border: 2px solid #ff6f00; border-radius: 10px;
+            padding: 15px 20px; margin: 15px 0;
+        }
+        .warning::before { content: "⚠️ אזהרת בטיחות"; display: block; color: #ffab00; font-weight: bold; font-size: 1.1em; margin-bottom: 8px; }
+
+        .info-box {
+            background: #0d1b2a; border: 2px solid #0288d1; border-radius: 10px;
+            padding: 15px 20px; margin: 15px 0;
+        }
+        .info-box::before { content: "💡 מידע חשוב"; display: block; color: #4fc3f7; font-weight: bold; margin-bottom: 8px; }
+
+        .diagram {
+            background: #000; border: 1px solid #333; border-radius: 8px;
+            padding: 15px; margin: 15px 0; overflow-x: auto;
+        }
+        .diagram pre {
+            color: #00e5ff; font-family: 'Courier New', monospace;
+            font-size: 0.82em; line-height: 1.4; white-space: pre; direction: ltr; text-align: left;
+        }
+        .diagram.green pre { color: #76ff03; }
+        .diagram.orange pre { color: #ffab00; }
+        .diagram.pink pre { color: #f48fb1; }
+
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; direction: rtl; }
+        th { background: #1a237e; color: #90caf9; padding: 12px; text-align: right; border: 1px solid #37474f; }
+        td { padding: 10px 12px; border: 1px solid #37474f; background: #121212; }
+        tr:hover td { background: #1a1a2e; }
+
+        .formula {
+            background: #1a1a2e; border: 1px solid #7c4dff; border-radius: 8px;
+            padding: 15px; margin: 15px 0; text-align: center; font-size: 1.15em; direction: ltr;
+        }
+        .formula .label { color: #b388ff; font-size: 0.8em; display: block; margin-bottom: 5px; direction: rtl; }
+
+        code { background: #1a1a1a; color: #80cbc4; padding: 2px 6px; border-radius: 4px; font-family: 'Courier New', monospace; direction: ltr; display: inline-block; }
+
+        .component-card {
+            display: inline-block; background: #121218; border: 1px solid #37474f;
+            border-radius: 10px; padding: 12px 16px; margin: 5px; text-align: center; min-width: 110px;
+        }
+        .component-card .icon { font-size: 1.6em; display: block; margin-bottom: 4px; }
+        .component-card .name { color: #80cbc4; font-size: 0.85em; }
+        .component-card .val { color: #ffab00; font-weight: bold; font-size: 0.95em; }
+
+        .stage-badge {
+            display: inline-block; background: #e65100; color: white;
+            padding: 3px 14px; border-radius: 20px; font-weight: bold; font-size: 0.85em; margin-bottom: 8px;
+        }
+
+        .comparison-box {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 15px 0;
+        }
+        .comparison-box > div {
+            border-radius: 10px; padding: 15px;
+        }
+        .comparison-box .good { background: #1a2a1a; border: 2px solid #4caf50; }
+        .comparison-box .bad { background: #2a1a1a; border: 2px solid #f44336; }
+
+        .popup-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center;
+        }
+        .popup-overlay.show { display: flex; }
+        .popup {
+            background: #1a1a2e; border-radius: 15px; padding: 30px;
+            max-width: 400px; text-align: center; animation: popIn 0.3s ease-out;
+        }
+        .popup.correct { border: 3px solid #4caf50; box-shadow: 0 0 30px rgba(76,175,80,0.3); }
+        .popup.incorrect { border: 3px solid #f44336; box-shadow: 0 0 30px rgba(244,67,54,0.3); }
+        .popup .emoji { font-size: 3em; margin-bottom: 10px; }
+        .popup h3 { margin-bottom: 10px; }
+        .popup p { color: #b0bec5; margin-bottom: 20px; }
+        .popup button { background: #1565c0; color: white; border: none; padding: 10px 30px; border-radius: 8px; cursor: pointer; font-size: 1em; }
+        .popup button:hover { background: #1976d2; }
+        @keyframes popIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        @media (max-width: 600px) {
+            body { padding: 10px; font-size: 0.95em; }
+            h1 { font-size: 1.5em; }
+            .diagram pre { font-size: 0.65em; }
+            .comparison-box { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<h1>מגביר מתח DC - Voltage Multiplier</h1>
+<p class="subtitle">מעגל שלוקח 5V DC מסוללה או USB ומוציא עד 17V DC - רק עם טרנזיסטורים, קבלים ודיודות!</p>
+
+<div class="info-box">
+    <p><strong>מה נבנה?</strong> ממיר DC-to-DC שמקבל <strong>5V DC</strong> (מסוללה, USB, או מטען) ומוציא עד <strong>~17V DC</strong> - בלי שום שבבים (IC) ובלי סלילים!</p>
+    <p style="margin-top: 8px;"><strong>איך זה עובד?</strong> המעגל בנוי משני חלקים:</p>
+    <ol>
+        <li><strong>אוסצילטור (מנוע פנימי):</strong> שני טרנזיסטורים שהופכים את ה-DC לאות מתחלף - זה ה"מנוע" שדוחף מטען דרך הסולם</li>
+        <li><strong>סולם מתח (קבלים + דיודות):</strong> כל שלב בסולם מוסיף עוד ~5V למתח DC ביציאה</li>
+    </ol>
+    <div class="diagram" style="margin-top: 10px;">
+        <pre>
+  ┌──────────┐     ┌───────────────────────┐     ┌──────────┐
+  │  5V DC   │ ──► │  אוסצילטור + סולם מתח  │ ──► │ ~17V DC  │
+  │ (כניסה)  │     │   (הקסם קורה בפנים!)   │     │ (יציאה)  │
+  └──────────┘     └───────────────────────┘     └──────────┘
+        </pre>
+    </div>
+</div>
+
+<div class="warning">
+    <p><strong>במעגל הזה אנחנו מגיעים למתחים של 15V-20V!</strong></p>
+    <ul style="margin-top: 8px;">
+        <li>אל תיגע בחוטים חשופים כשהמעגל דולק</li>
+        <li>השתמש בקבלים עם דירוג מתח (voltage rating) מתאים - לפחות 25V</li>
+        <li>נתק את המתח לפני שינויים במעגל</li>
+    </ul>
+</div>
+
+<!-- ==================== MISSION 1 ==================== -->
+<div class="mission-header">
+    <h2>משימה 1: העיקרון - איך מגבירים מתח DC?</h2>
+    <p class="time-estimate">⏱️ 10 דקות</p>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 1.1: הרעיון - להפוך DC נמוך ל-DC גבוה</h3>
+
+    <p>יש לך סוללה של 5V, אבל אתה צריך 17V. מה עושים? בונים <strong>סולם מתח</strong>!</p>
+    <p>דמיין שרשרת של דליים על סולם:</p>
+    <ol>
+        <li>דלי ראשון מתמלא מהברז (5V)</li>
+        <li>דלי ראשון מעביר את המים לדלי שני, שכבר בגובה - עכשיו 10V!</li>
+        <li>דלי שני מעביר לדלי שלישי, שעוד יותר גבוה - 15V!</li>
+        <li>כל דלי = שלב (stage) נוסף במעגל</li>
+    </ol>
+
+    <p><strong>כל "דלי" במעגל בנוי מ:</strong></p>
+    <ul style="margin: 10px 0;">
+        <li><strong>קבל (Capacitor)</strong> - אוגר את המטען (ה"מים")</li>
+        <li><strong>דיודה (Diode)</strong> - שסתום חד-כיווני שמוודא שהמטען עולה רק למעלה ולא חוזר</li>
+    </ul>
+
+    <div class="diagram">
+        <pre>
+  5V DC ──► [אוסצילטור] ──► סולם מתח ──► 17V DC !
+
+  מקור DC                   Stage 1              Stage 2              Stage 3
+  (5V)                     (~10V DC)            (~15V DC)           (~17V DC)
+                         ┌──────────┐         ┌──────────┐         ┌──────────┐
+                         │ +5V      │         │ +5V      │         │ +5V      │
+                         │          │         │          │         │          │
+  ~~~  ──── C1 ──── D1 ──── C2 ──── D2 ──── C3 ──── D3 ──── C4 ──── D4 ──── Vout
+                    │              │              │              │
+                   GND            GND            GND            GND
+                         │          │         │          │         │          │
+                         │  ~10V    │         │  ~15V    │         │  ~20V    │
+                         └──────────┘         └──────────┘         └──────────┘
+
+  כל שלב מוסיף עוד ~5V!
+        </pre>
+    </div>
+
+    <p><strong>אם יש לנו אות AC של 5V שיא (peak), כמה מתח נקבל עם 3 שלבים?</strong></p>
+    <div class="answer-box">
+        <label>התשובה שלך:</label>
+        <input type="text" id="answer-1-1" class="ltr-input" placeholder="?V">
+        <button class="check-btn" onclick="checkNumberRange('answer-1-1', 14, 16, 'מעולה! 3 שלבים × 5V = 15V (בתיאוריה). בפועל קצת פחות בגלל הפסדים בדיודות.', 'רמז: כל שלב מוסיף ~5V. כמה זה 3 × 5V?')">בדוק תשובה</button>
+        <div class="feedback" id="feedback-1-1"></div>
+    </div>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 1.2: תפקיד הדיודה - השסתום</h3>
+
+    <p>הדיודה היא הרכיב הקריטי ביותר בסולם המתח. היא עובדת כמו <strong>שסתום חד-כיווני</strong>:</p>
+
+    <div class="diagram green">
+        <pre>
+  דיודה = שסתום חד-כיווני:
+
+  כיוון מותר (Forward):         כיוון חסום (Reverse):
+  ═══════════════════           ═══════════════════════
+
+       זרם ──►                       זרם ──►
+
+    A ──►|── K                    A ──►|── K
+        D1                            D1
+    (Anode) (Kathode)            (Anode) (Kathode)
+
+    V_A > V_K                    V_A < V_K
+    ✅ זרם עובר!                ❌ זרם חסום!
+    (ירידת מתח ~0.7V)           (לא עובר שום דבר)
+
+
+  בסולם המתח:
+
+    Stage 1        Stage 2
+       │              │
+   C1 charges    C2 charges
+       │              │
+       ▼              ▼
+   ───►|───      ───►|───
+      D1            D2
+       │              │
+       ▼              ▼
+   מטען עולה     מטען עולה
+   רק למעלה!    עוד למעלה!
+
+  הדיודות מונעות מהמטען לחזור אחורה!
+        </pre>
+    </div>
+
+    <p><strong>מה קורה כשזרם מנסה לעבור "אחורה" דרך דיודה?</strong></p>
+    <div class="answer-box">
+        <label>התשובה שלך:</label>
+        <input type="text" id="answer-1-2" placeholder="מה הדיודה עושה?">
+        <button class="check-btn" onclick="checkAnswer('answer-1-2', ['חוסם', 'חסום', 'לא עובר', 'לא מאפשר', 'עוצר', 'block', 'נחסם', 'מונע'], 'נכון! הדיודה חוסמת זרם הפוך - בדיוק כמו שסתום שנסגר. זה מה שמאפשר למתח לעלות ולא לרדת!', 'רמז: תחשוב על שסתום - מה הוא עושה כשמנסים לשפוך מים בכיוון ההפוך?')">בדוק תשובה</button>
+        <div class="feedback" id="feedback-1-2"></div>
+    </div>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 1.3: הטריק - אוסצילטור כ"מנוע פנימי"</h3>
+
+    <p>סולם מתח צריך <strong>משאבה</strong> שדוחפת מטען מעלה. הטריק: שני טרנזיסטורים הופכים את ה-DC לאות מתחלף <strong>בתוך המעגל</strong>. אתה מחבר DC, ובפנים המעגל דואג לכל השאר!</p>
+
+    <div class="diagram orange">
+        <pre>
+  מה קורה בתוך המעגל:
+
+  5V DC                        אוסצילטור פנימי            סולם מתח
+  (כניסה)                      (שני טרנזיסטורים)          (קבלים + דיודות)
+
+  5V ─────────────────  ──►    5V ┌─────┐     ┌───  ──►   17V DC
+     │                             │     │     │           (יציאה)
+     │  DC מהסוללה                │     │     │
+     │                             │     │     │
+     │                             │     │     │
+  0V ─────────────────         0V ┘     └─────┘
+
+  אתה מחבר DC             האוסצילטור הופך        הקבלים והדיודות
+  מסוללה או USB            את זה לאות מתחלף      מעלים את המתח
+                           (7100 פעמים בשנייה!)    בחזרה ל-DC גבוה!
+
+  כל פעם שהאות עולה → הקבל נטען
+  כל פעם שהאות יורד → המטען נדחף לשלב הבא
+  היציאה = DC יציב בערך ~17V!
+        </pre>
+    </div>
+
+    <p><strong>מה תפקיד האוסצילטור במעגל הזה?</strong></p>
+    <div class="answer-box">
+        <label>התשובה שלך:</label>
+        <input type="text" id="answer-1-3" placeholder="מה האוסצילטור עושה?">
+        <button class="check-btn" onclick="checkAnswer('answer-1-3', ['משאבה', 'דוחף', 'מתחלף', 'הופך', 'מנוע', 'שואב', 'שאיבה', 'pump', 'ac', 'מחזורי', 'תנודות'], 'מצוין! האוסצילטור הוא ה&quot;משאבה&quot; הפנימית - הוא הופך DC לאות מתחלף שדוחף מטען דרך הסולם. אתה מחבר DC ומקבל DC גבוה יותר!', 'רמז: האוסצילטור הופך את ה-DC ל... מה? כדי ש&quot;ישאב&quot; מטען מעלה בסולם')">בדוק תשובה</button>
+        <div class="feedback" id="feedback-1-3"></div>
+    </div>
+</div>
+
+<div class="checkpoint">
+    ✅ <strong>עצור!</strong> וודא שאתה מבין: מחברים DC → האוסצילטור הפנימי "שואב" מטען דרך סולם של קבלים ודיודות → מקבלים DC גבוה יותר!
+</div>
+
+<div class="mission-complete">
+    <h3>🎉 משימה 1 הושלמה!</h3>
+    <p>למדת: איך ממירים DC נמוך ל-DC גבוה, תפקיד הדיודה כשסתום, ואיך האוסצילטור משמש כמנוע פנימי</p>
+</div>
+
+<!-- ==================== MISSION 2 ==================== -->
+<div class="mission-header">
+    <h2>משימה 2: רשימת רכיבים והכרת הטרנזיסטור</h2>
+    <p class="time-estimate">⏱️ 10 דקות</p>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 2.1: הרכיבים שצריך</h3>
+
+    <p>אספו את כל הרכיבים האלה לפני שמתחילים:</p>
+
+    <h4 style="color: #ffab00; margin-top: 15px;">רכיבים לאוסצילטור (שני טרנזיסטורים):</h4>
+    <div style="margin: 10px 0;">
+        <div class="component-card">
+            <span class="icon">🔺</span>
+            <span class="name">טרנזיסטור NPN</span>
+            <span class="val">2N2222 × 2</span>
+        </div>
+        <div class="component-card">
+            <span class="icon">🟤</span>
+            <span class="name">נגדי Collector</span>
+            <span class="val">1KΩ × 2</span>
+        </div>
+        <div class="component-card">
+            <span class="icon">🟤</span>
+            <span class="name">נגדי Base</span>
+            <span class="val">10KΩ × 2</span>
+        </div>
+        <div class="component-card">
+            <span class="icon">🟡</span>
+            <span class="name">קבלי זיווג</span>
+            <span class="val">10nF × 2</span>
+        </div>
+    </div>
+
+    <h4 style="color: #ffab00; margin-top: 15px;">רכיבים לסולם המתח (3 שלבים):</h4>
+    <div style="margin: 10px 0;">
+        <div class="component-card">
+            <span class="icon">🔵</span>
+            <span class="name">קבלים</span>
+            <span class="val">10μF × 4</span>
+        </div>
+        <div class="component-card">
+            <span class="icon">◄</span>
+            <span class="name">דיודות 1N4148</span>
+            <span class="val">× 4</span>
+        </div>
+    </div>
+
+    <h4 style="color: #ffab00; margin-top: 15px;">רכיבים כלליים:</h4>
+    <div style="margin: 10px 0;">
+        <div class="component-card">
+            <span class="icon">🔋</span>
+            <span class="name">מקור מתח</span>
+            <span class="val">5V USB</span>
+        </div>
+        <div class="component-card">
+            <span class="icon">📐</span>
+            <span class="name">Breadboard</span>
+            <span class="val">× 1</span>
+        </div>
+        <div class="component-card">
+            <span class="icon">📏</span>
+            <span class="name">חוטי מגשר</span>
+            <span class="val">~15</span>
+        </div>
+        <div class="component-card">
+            <span class="icon">🔴</span>
+            <span class="name">LED (אופציונלי)</span>
+            <span class="val">× 1</span>
+        </div>
+    </div>
+
+    <table>
+        <tr>
+            <th>רכיב</th>
+            <th>ערך</th>
+            <th>כמות</th>
+            <th>הערות</th>
+        </tr>
+        <tr>
+            <td>טרנזיסטור NPN</td>
+            <td>2N2222 / BC547</td>
+            <td>2</td>
+            <td>צד שטוח = סימון כיוון</td>
+        </tr>
+        <tr>
+            <td>נגדי Collector (Rc)</td>
+            <td>1KΩ</td>
+            <td>2</td>
+            <td>חום-שחור-אדום</td>
+        </tr>
+        <tr>
+            <td>נגדי Base (Rb)</td>
+            <td>10KΩ</td>
+            <td>2</td>
+            <td>חום-שחור-כתום</td>
+        </tr>
+        <tr>
+            <td>קבלי זיווג (Ca, Cb)</td>
+            <td>10nF (103)</td>
+            <td>2</td>
+            <td>קרמי, קובעים את התדר</td>
+        </tr>
+        <tr>
+            <td>קבלים לסולם</td>
+            <td>10μF / 25V</td>
+            <td>4</td>
+            <td>אלקטרוליטי, שימו לב לקוטביות!</td>
+        </tr>
+        <tr>
+            <td>דיודות</td>
+            <td>1N4148</td>
+            <td>4</td>
+            <td>פס שחור = קתודה (K)</td>
+        </tr>
+    </table>
+
+    <p><strong>למה חשוב שהקבלים יהיו עם דירוג של לפחות 25V?</strong></p>
+    <div class="answer-box">
+        <label>התשובה שלך:</label>
+        <input type="text" id="answer-2-1" placeholder="למה 25V ולא 10V?">
+        <button class="check-btn" onclick="checkAnswer('answer-2-1', ['גבוה', 'מתח', '20', '15', 'יותר', 'מכפיל', 'עולה', 'להתפוצץ', 'פיצוץ', 'מסוכן', 'בטיחות', 'שורף', 'נשרף', 'voltage', 'rating'], 'נכון! המתח במעגל עולה עם כל שלב. אם הקבל לא מדורג למתח מספיק גבוה, הוא עלול להינזק או להתפוצץ!', 'רמז: מה קורה למתח בשלב האחרון של הסולם? הוא הרבה יותר גבוה מ-5V...')">בדוק תשובה</button>
+        <div class="feedback" id="feedback-2-1"></div>
+    </div>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 2.2: הכרת הטרנזיסטור NPN</h3>
+
+    <p>הטרנזיסטור הוא כמו <strong>ברז חשמלי</strong> - זרם קטן ב-Base פותח זרם גדול מ-Collector ל-Emitter. נשתמש בשניים כדי לבנות אוסצילטור!</p>
+
+    <div class="diagram">
+        <pre>
+  טרנזיסטור NPN - 2N2222 (מבט מלמעלה, צד שטוח לפניך):
+
+      ┌─────────┐
+      │  שטוח   │
+      │         │
+      └──┬─┬─┬──┘
+         │ │ │
+         E B C
+
+  E = Emitter (פולט)   → מתחבר ל-GND
+  B = Base (בסיס)      → "הברז" - שולט על הזרם
+  C = Collector (אוגר) → מתחבר דרך נגד ל-Vcc
+
+
+  איך הטרנזיסטור עובד:
+  ══════════════════════
+
+     Vcc (+5V)                    Vcc (+5V)
+      │                            │
+      Rc (1KΩ)                     Rc (1KΩ)
+      │                            │
+      ├── C                        ├── C
+      │                            │
+  B ──┤  (אין זרם ב-B)       B ──┤  (יש זרם ב-B!)
+      │                            │
+      E                            E
+      │                            │
+     GND                          GND
+
+  C = HIGH (5V)                 C = LOW (0V)
+  טרנזיסטור כבוי ❌             טרנזיסטור דולק ✅
+        </pre>
+    </div>
+
+    <p><strong>כשטרנזיסטור NPN "דולק" (מקבל זרם ב-Base), מה המתח ב-Collector?</strong></p>
+    <div class="answer-box">
+        <label>התשובה שלך:</label>
+        <input type="text" id="answer-2-2" placeholder="HIGH או LOW?">
+        <button class="check-btn" onclick="checkAnswer('answer-2-2', ['low', 'נמוך', '0', 'אפס', '0v'], 'מעולה! כשהטרנזיסטור דולק, הוא מחבר את ה-Collector ל-GND דרך ה-Emitter, אז המתח יורד ל-LOW (~0V)!', 'רמז: כשהטרנזיסטור דולק, הזרם זורם מ-Collector ל-Emitter (ל-GND). מה קורה למתח?')">בדוק תשובה</button>
+        <div class="feedback" id="feedback-2-2"></div>
+    </div>
+</div>
+
+<div class="checkpoint">
+    ✅ <strong>עצור!</strong> וודא שיש לך את כל הרכיבים ושאתה מבין את הפינים של הטרנזיסטור (E, B, C).
+</div>
+
+<div class="mission-complete">
+    <h3>🎉 משימה 2 הושלמה!</h3>
+    <p>למדת: אילו רכיבים צריך ואיך טרנזיסטור NPN עובד</p>
+</div>
+
+<!-- ==================== MISSION 3 ==================== -->
+<div class="mission-header">
+    <h2>משימה 3: בניית האוסצילטור עם שני טרנזיסטורים</h2>
+    <p class="time-estimate">⏱️ 15 דקות</p>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 3.1: מעגל Astable Multivibrator</h3>
+
+    <p>שני טרנזיסטורים שמדליקים ומכבים אחד את השני - בלי שום שבב (IC)! כל אחד "דוחף" את השני למצב ההפוך, מה שיוצר אות מרובע.</p>
+
+    <div class="diagram">
+        <pre>
+  Astable Multivibrator - תרשים סכמטי:
+
+                Vcc (+5V)                    Vcc (+5V)
+                  │                            │
+                 Rc1 (1KΩ)                    Rc2 (1KΩ)
+                  │                            │
+          ┌───── C1 ─────── Ca (10nF) ────── B2 ──┐
+          │       │                            │   │
+          │      Q1 (2N2222)             Q2 (2N2222)│
+          │       │                            │   │
+          │      E1                           E2   │
+          │       │                            │   │
+          │      GND                          GND  │
+          │                                        │
+          └── Rb1 (10KΩ) ── B1              C2 ────┘
+                              │              │
+                              │   Cb (10nF)  │
+                              └──────────────┘
+
+                                      C2 = OUT
+                                  (to voltage ladder)
+
+
+  פישוט:
+  ═══════
+  Vcc──Rc1──C1──Ca──B2     Vcc──Rc2──C2──Cb──B1
+              │                          │
+             Q1                         Q2
+              │                          │
+             GND                        GND
+                                    OUT = C2
+        </pre>
+    </div>
+
+    <ol class="steps">
+        <li>הנח את Q1 ו-Q2 על ה-Breadboard (צד שטוח לפניך: E-B-C משמאל לימין)</li>
+        <li><strong>Q1:</strong> חבר E1 (Emitter) → GND</li>
+        <li><strong>Q1:</strong> חבר Rc1 (1KΩ) בין Vcc (+5V) ל-C1 (Collector)</li>
+        <li><strong>Q2:</strong> חבר E2 (Emitter) → GND</li>
+        <li><strong>Q2:</strong> חבר Rc2 (1KΩ) בין Vcc (+5V) ל-C2 (Collector)</li>
+        <li><strong>חיבור צולב 1:</strong> חבר Ca (10nF) בין C1 (Collector של Q1) ל-B2 (Base של Q2)</li>
+        <li><strong>חיבור צולב 2:</strong> חבר Cb (10nF) בין C2 (Collector של Q2) ל-B1 (Base של Q1)</li>
+        <li>חבר Rb1 (10KΩ) בין Vcc (+5V) ל-B1 (Base של Q1)</li>
+        <li>חבר Rb2 (10KΩ) בין Vcc (+5V) ל-B2 (Base של Q2)</li>
+    </ol>
+
+    <div class="info-box">
+        <p><strong>תדר האוסצילטור:</strong></p>
+        <p>עם Rb=10KΩ, C=10nF, התדר יהיה בערך <strong>7.1KHz</strong> - מושלם לסולם מתח!</p>
+    </div>
+
+    <div class="formula">
+        <span class="label">נוסחת תדר Astable Multivibrator (סימטרי):</span>
+        f = 1 / (1.4 × Rb × C) = 1 / (1.4 × 10KΩ × 10nF) ≈ 7.1 KHz
+    </div>
+
+    <p><strong>מה התדר המשוער של האוסצילטור שלנו (בקירוב)?</strong></p>
+    <div class="answer-box">
+        <label>התשובה שלך:</label>
+        <input type="text" id="answer-3-1" class="ltr-input" placeholder="? KHz">
+        <button class="check-btn" onclick="checkNumberRange('answer-3-1', 5, 9, 'מצוין! ~7.1KHz - תדר מספיק גבוה כדי שהקבלים ייטענו ויתרוקנו ביעילות!', 'רמז: הציבו בנוסחה: 1 / (1.4 × 10000 × 0.00000001)')">בדוק תשובה</button>
+        <div class="feedback" id="feedback-3-1"></div>
+    </div>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 3.2: בדיקת האוסצילטור</h3>
+
+    <p>לפני שמחברים את סולם המתח, נוודא שהאוסצילטור עובד:</p>
+
+    <ol class="steps">
+        <li>חבר את מקור המתח 5V (USB) לפסי + ו-− של ה-Breadboard</li>
+        <li>חבר LED עם נגד 1KΩ (בסדרה) מ-C2 (Collector של Q2) ל-GND</li>
+        <li>הדלק את המתח</li>
+    </ol>
+
+    <div class="what-you-see">
+        <pre>
+LED should glow dimly (it's blinking too fast to see individual flashes)
+
+If you have a multimeter on AC mode:
+  C2 (Q2 Collector) to GND → should show ~2-3V AC
+        </pre>
+    </div>
+
+    <div class="comparison-box">
+        <div class="good">
+            <h4 style="color: #4caf50;">✅ עובד נכון</h4>
+            <ul>
+                <li>LED דולק (חלש/עמום)</li>
+                <li>מולטימטר AC מראה 2-3V</li>
+                <li>הטרנזיסטורים לא מתחממים</li>
+            </ul>
+        </div>
+        <div class="bad">
+            <h4 style="color: #f44336;">❌ משהו לא בסדר</h4>
+            <ul>
+                <li>LED לא דולק בכלל - בדוק חיבורי E/B/C</li>
+                <li>LED דולק חזק ולא מרצד - בדוק קבלי Ca/Cb</li>
+                <li>טרנזיסטור מתחמם - בדוק חיבור E ל-GND</li>
+            </ul>
+        </div>
+    </div>
+
+    <p><strong>למה ה-LED נראה דולק ברציפות ולא מרצד?</strong></p>
+    <div class="answer-box">
+        <label>התשובה שלך:</label>
+        <input type="text" id="answer-3-2" placeholder="למה לא רואים ריצוד?">
+        <button class="check-btn" onclick="checkAnswer('answer-3-2', ['מהר', 'תדר', 'גבוה', 'מהיר', 'עין', 'לראות', 'אלפי', '7000', '7100', 'fast', 'frequency', 'hz', 'khz'], 'נכון! התדר ~7100Hz - ה-LED נדלק ונכבה 7100 פעמים בשנייה, הרבה יותר מהר ממה שהעין יכולה לראות!', 'רמז: כמה פעמים בשנייה ה-LED נדלק ונכבה? האם העין האנושית יכולה לראות ריצוד כזה מהיר?')">בדוק תשובה</button>
+        <div class="feedback" id="feedback-3-2"></div>
+    </div>
+</div>
+
+<div class="checkpoint">
+    ✅ <strong>עצור!</strong> וודא שהאוסצילטור עובד - LED דולק עמום והטרנזיסטורים לא מתחממים. רק אז המשך!
+</div>
+
+<div class="mission-complete">
+    <h3>🎉 משימה 3 הושלמה!</h3>
+    <p>למדת: לבנות אוסצילטור עם שני טרנזיסטורים ולבדוק שהוא עובד</p>
+</div>
+
+<!-- ==================== MISSION 4 ==================== -->
+<div class="mission-header">
+    <h2>משימה 4: בניית שלב ראשון - מכפיל מתח (Voltage Doubler)</h2>
+    <p class="time-estimate">⏱️ 15 דקות</p>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 4.1: הבנת שלב כפול (Stage 1)</h3>
+
+    <p><span class="stage-badge">שלב 1: מכפיל מתח</span></p>
+    <p>השלב הראשון לוקח 5V ומכפיל ל-~10V. הנה מה שקורה צעד אחר צעד:</p>
+
+    <div class="diagram">
+        <pre>
+  שלב 1 - מכפיל מתח (Voltage Doubler):
+
+  OSC OUT (Q2 Collector)
+      │
+      │         C1 (10μF)              D1 (1N4148)
+      ├───────── ┤├+ ──────────────────►|────────┐
+      │                                          │
+      │                                          │
+      │         D2 (1N4148)                      │  Vout1
+      ├──────── |◄──────────┐                    │  ~10V
+      │                     │                    │
+      │                     │    C2 (10μF)       │
+      │                     └──── +┤├─ ──────────┤
+      │                                          │
+     GND                                        GND
+
+
+  מחצית ראשונה (OUT = LOW):        מחצית שנייה (OUT = HIGH):
+  ══════════════════════════        ═══════════════════════════
+
+  OUT = 0V                          OUT = 5V
+     │                                 │
+     │    C1                           │    C1 (charged!)
+     ├──── ┤├+ ──── X                  ├──── ┤├+ ──── D1
+     │     charges                     │              │
+     │     to ~5V                      │     5V + 4.3V = 9.3V!
+     │                                 │              │
+     ├──── D2 ──── charges C2          │         C2 charges
+     │              to ~4.3V           │         to ~9V
+    GND                               GND
+        </pre>
+    </div>
+
+    <div class="info-box">
+        <p><strong>למה ~9V ולא 10V?</strong> כל דיודה "גונבת" ~0.7V (forward voltage drop). עם 2 דיודות: 10V - 1.4V ≈ 8.6V. בפועל נקבל 8-9V.</p>
+    </div>
+
+    <p><strong>כמה מתח כל דיודה 1N4148 "גונבת" כשזרם עובר דרכה?</strong></p>
+    <div class="answer-box">
+        <label>התשובה שלך:</label>
+        <input type="text" id="answer-4-1" class="ltr-input" placeholder="?V">
+        <button class="check-btn" onclick="checkAnswer('answer-4-1', ['0.7', '0.7v', '.7', '0.6', '0.65'], 'נכון! ~0.7V - זו ירידת המתח הטיפוסית בדיודת סיליקון. זה הפסד שצריך לחשב!', 'רמז: זה מספר בין 0 ל-1, וזו ירידת מתח סטנדרטית בדיודת סיליקון...')">בדוק תשובה</button>
+        <div class="feedback" id="feedback-4-1"></div>
+    </div>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 4.2: בניית השלב הראשון על Breadboard</h3>
+
+    <p><span class="stage-badge">בנייה!</span></p>
+
+    <div class="warning">
+        <p><strong>קבלים אלקטרוליטיים הם קוטביים!</strong> חבר את הרגל הארוכה (+) לצד הנכון. חיבור הפוך עלול לגרום לנזק!</p>
+    </div>
+
+    <ol class="steps">
+        <li><strong>נתק את המתח</strong> לפני חיבור רכיבים חדשים!</li>
+        <li>הסר את ה-LED שחיברת לבדיקה (אם חיברת)</li>
+        <li><strong>חבר C1 (10μF):</strong> רגל + → C2 (Collector של Q2) - יציאת האוסצילטור, רגל − → נקודה A</li>
+        <li><strong>חבר D1 (1N4148):</strong> אנודה (ללא פס) → נקודה A, קתודה (פס שחור) → נקודה B</li>
+        <li><strong>חבר D2 (1N4148):</strong> אנודה (ללא פס) → GND, קתודה (פס שחור) → נקודה A</li>
+        <li><strong>חבר C2 (10μF):</strong> רגל + → נקודה B, רגל − → GND</li>
+    </ol>
+
+    <div class="diagram green">
+        <pre>
+  מבט על ה-Breadboard (שלב 1):
+
+  OSC OUT (Q2 Collector)
+       │
+       │    C1 (+)         (−)                     D1
+       ├────┤ 10μF ├────────●── A ──────────►|──── ● ── B
+                            │               (anode→kathode)
+                            │
+                         D2 │
+                     GND ──►|──┘
+                       (anode→kathode)
+
+                                                    │
+                                              C2 (+)│(−)
+                                        B ────┤10μF├──── GND
+
+  נקודה A = חיבור בין C1−, D1 anode, D2 kathode
+  נקודה B = חיבור בין D1 kathode, C2+
+        </pre>
+    </div>
+
+    <p><strong>כיוון הדיודה D2: האנודה מחוברת ל...?</strong></p>
+    <div class="answer-box">
+        <label>התשובה שלך:</label>
+        <input type="text" id="answer-4-2" placeholder="לאן מחוברת האנודה של D2?">
+        <button class="check-btn" onclick="checkAnswer('answer-4-2', ['gnd', 'ground', 'אדמה', '0v', 'מינוס', 'אפס', 'קרקע'], 'מעולה! האנודה של D2 מחוברת ל-GND. כך הדיודה מאפשרת לזרם לעבור מ-GND כדי לטעון את C1 בחצי הגל הראשון.', 'רמז: D2 מחברת בין GND לנקודה A. לאיזה כיוון היא מאפשרת לזרם לעבור?')">בדוק תשובה</button>
+        <div class="feedback" id="feedback-4-2"></div>
+    </div>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 4.3: מדידה ובדיקה</h3>
+
+    <ol class="steps">
+        <li>הדלק את המתח (5V USB)</li>
+        <li>חכה 2-3 שניות שהקבלים ייטענו</li>
+        <li>מדוד עם מולטימטר (DC mode) את המתח על C2: נקודה B ביחס ל-GND</li>
+    </ol>
+
+    <div class="what-you-see">
+        <pre>
+Multimeter DC reading across C2 (point B to GND):
+
+  Expected: 7V - 9V  (ideally ~8.6V)
+
+  If you measure:
+    7-9V    → Great! Stage 1 works!
+    4-6V    → Check diode direction (D1 and D2)
+    0-2V    → Check C1 connection and oscillator output
+    > 10V   → Something is wrong, disconnect!
+        </pre>
+    </div>
+
+    <div class="formula">
+        <span class="label">נוסחת מתח יציאה - שלב 1 (מכפיל):</span>
+        Vout1 = 2 × Vpeak − 2 × Vd = 2 × 5V − 2 × 0.7V = 8.6V
+    </div>
+
+    <p><strong>מדדת את המתח על C2. מה המתח שקיבלת?</strong></p>
+    <div class="answer-box">
+        <label>התשובה שלך:</label>
+        <input type="text" id="answer-4-3" class="ltr-input" placeholder="?V">
+        <button class="check-btn" onclick="checkNumberRange('answer-4-3', 5, 12, 'יופי! אם המדידה בטווח 7-9V, השלב הראשון עובד מצוין. אם קצת פחות - זה בסדר, יש הפסדים נוספים בעומס ובדליפות.', 'רמז: המתח צריך להיות בערך כפול מ-5V פחות הפסדי דיודות. נסה לבדוק שוב.')">בדוק תשובה</button>
+        <div class="feedback" id="feedback-4-3"></div>
+    </div>
+</div>
+
+<div class="checkpoint">
+    ✅ <strong>עצור!</strong> וודא שמדדת 7V-9V על C2. אם לא - בדוק כיוון דיודות וחיבורי קבלים. רק אז המשך!
+</div>
+
+<div class="mission-complete">
+    <h3>🎉 משימה 4 הושלמה!</h3>
+    <p>למדת: לבנות שלב ראשון של מכפיל מתח ולמדוד את התוצאה</p>
+</div>
+
+<!-- ==================== MISSION 5 ==================== -->
+<div class="mission-header">
+    <h2>משימה 5: הוספת שלבים - משלש ומרביע מתח!</h2>
+    <p class="time-estimate">⏱️ 20 דקות</p>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 5.1: שלב שני - משלש מתח (Voltage Tripler)</h3>
+
+    <p><span class="stage-badge">שלב 2: משלש מתח</span></p>
+    <p>עכשיו נוסיף עוד קבל ועוד דיודה כדי להגיע ל-~13V!</p>
+
+    <div class="diagram">
+        <pre>
+  הוספת שלב 2 (Tripler):
+
+  שלב 1 (כבר בנוי)                    שלב 2 (חדש!)
+  ════════════════                     ══════════════
+
+  OSC OUT
+     │
+     │    C1          D1               D3 (1N4148)
+     ├──── ┤├+ ── A ──►|── B ─────────►|────── C
+     │                  │                       │
+     │          D2      │    C2                 │   C3 (10μF)
+     ├──────── |◄── A   └── +┤├─ ── GND        └── +┤├─ ── GND
+     │
+    GND                 Vout1≈8.6V              Vout2≈12.2V
+
+
+  נקודה C = חיבור בין D3 kathode ו-C3+
+        </pre>
+    </div>
+
+    <ol class="steps">
+        <li><strong>נתק את המתח!</strong></li>
+        <li><strong>חבר D3 (1N4148):</strong> אנודה → נקודה B (שם ש-D1 kathode), קתודה (פס שחור) → נקודה C חדשה</li>
+        <li><strong>חבר C3 (10μF):</strong> רגל + → נקודה C, רגל − → GND</li>
+        <li>הדלק את המתח וחכה 3 שניות</li>
+        <li>מדוד DC על C3: נקודה C ביחס ל-GND</li>
+    </ol>
+
+    <div class="formula">
+        <span class="label">נוסחת מתח יציאה - שלב 2 (משלש):</span>
+        Vout2 = 3 × Vpeak − 3 × Vd = 3 × 5V − 3 × 0.7V = 12.9V
+    </div>
+
+    <div class="what-you-see">
+        <pre>
+Multimeter DC at point C to GND:
+
+  Expected: 10V - 13V  (ideally ~12.9V)
+
+  Voltage is climbing!
+  Stage 1: ~8.6V
+  Stage 2: ~12.9V  ← You are here!
+        </pre>
+    </div>
+
+    <p><strong>כמה מתח הפסדנו בגלל 3 דיודות?</strong></p>
+    <div class="answer-box">
+        <label>התשובה שלך:</label>
+        <input type="text" id="answer-5-1" class="ltr-input" placeholder="?V">
+        <button class="check-btn" onclick="checkAnswer('answer-5-1', ['2.1', '2.1v', '2,1'], 'מדויק! 3 דיודות × 0.7V = 2.1V הפסד. זו הסיבה שלא מקבלים בדיוק ×3.', 'רמז: כל דיודה גונבת 0.7V. כמה זה 3 × 0.7V?')">בדוק תשובה</button>
+        <div class="feedback" id="feedback-5-1"></div>
+    </div>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 5.2: שלב שלישי - מרביע מתח (Voltage Quadrupler)!</h3>
+
+    <p><span class="stage-badge">שלב 3: מרביע מתח</span></p>
+    <p>השלב האחרון! עוד קבל ועוד דיודה, ומגיעים ל-~17V!</p>
+
+    <ol class="steps">
+        <li><strong>נתק את המתח!</strong></li>
+        <li><strong>חבר D4 (1N4148):</strong> אנודה → נקודה C, קתודה (פס שחור) → נקודה D חדשה</li>
+        <li><strong>חבר C4 (10μF):</strong> רגל + → נקודה D, רגל − → GND</li>
+        <li>הדלק את המתח וחכה 5 שניות</li>
+        <li>מדוד DC על C4: נקודה D ביחס ל-GND</li>
+    </ol>
+
+    <div class="diagram pink">
+        <pre>
+  סולם המתח השלם - 4 שלבים:
+
+  OSC OUT (Q2 Collector)
+     │
+     │    C1          D1          D3          D4
+     ├──── ┤├+ ── A ──►|── B ────►|── C ────►|── D
+     │                  │                      │
+     │          D2      │   C2       C3        │   C4
+     ├──────── |◄── A   └─ +┤├─GND  +┤├─GND   └─ +┤├─ GND
+     │
+    GND            ≈8.6V    ≈12.9V          ≈17.2V!
+
+
+  טבלת מתחים (תיאורטי):
+  ╔═════════╦══════════════╦══════════════╗
+  ║  שלב   ║   מתח מושלם  ║  מתח אמיתי  ║
+  ╠═════════╬══════════════╬══════════════╣
+  ║ Stage 1 ║   10.0V      ║   ~8.6V     ║
+  ║ Stage 2 ║   15.0V      ║   ~12.9V    ║
+  ║ Stage 3 ║   20.0V      ║   ~17.2V    ║
+  ╚═════════╩══════════════╩══════════════╝
+
+  ההפרש = N × 0.7V (N = מספר דיודות)
+        </pre>
+    </div>
+
+    <div class="what-you-see">
+        <pre>
+Multimeter DC at point D to GND:
+
+  Expected: 14V - 17V  (ideally ~17.2V)
+
+  Congratulations! You turned 5V into ~17V!
+
+  ╔══════════════════════════════════╗
+  ║  5V  →  [Ladder]  →  ~17V !!   ║
+  ╚══════════════════════════════════╝
+        </pre>
+    </div>
+
+    <div class="formula">
+        <span class="label">נוסחת מתח יציאה כללית - N שלבים:</span>
+        Vout = (N+1) × Vpeak − (N+1) × Vd
+    </div>
+
+    <p><strong>אם היינו מוסיפים שלב רביעי (D5 + C5), מה המתח התיאורטי?</strong></p>
+    <div class="answer-box">
+        <label>התשובה שלך:</label>
+        <input type="text" id="answer-5-2" class="ltr-input" placeholder="?V">
+        <button class="check-btn" onclick="checkNumberRange('answer-5-2', 20, 22, 'מעולה! 5 × 5V − 5 × 0.7V = 25V − 3.5V = 21.5V! כל שלב מוסיף עוד ~4.3V.', 'רמז: 5 שלבים, כל אחד נותן Vpeak − Vd. מה זה (5+1) × 5V − (5+1) × 0.7V?')">בדוק תשובה</button>
+        <div class="feedback" id="feedback-5-2"></div>
+    </div>
+</div>
+
+<div class="checkpoint">
+    ✅ <strong>עצור!</strong> מדוד את המתח בכל נקודה: B (~8.6V), C (~12.9V), D (~17.2V). רשום את התוצאות!
+</div>
+
+<div class="mission-complete">
+    <h3>🎉 משימה 5 הושלמה!</h3>
+    <p>למדת: להוסיף שלבים לסולם המתח ולהגיע ממתח נמוך למתח גבוה!</p>
+</div>
+
+<!-- ==================== MISSION 6 ==================== -->
+<div class="mission-header">
+    <h2>משימה 6: מגבלות, שיפורים וניסויים</h2>
+    <p class="time-estimate">⏱️ 15 דקות</p>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 6.1: למה המתח יורד תחת עומס?</h3>
+
+    <p>נסה לחבר LED עם נגד 1KΩ ליציאת סולם המתח (נקודה D). מה קורה למתח?</p>
+
+    <ol class="steps">
+        <li>מדוד את המתח בנקודה D <strong>בלי עומס</strong> (ללא LED) - רשום</li>
+        <li>חבר LED + נגד 1KΩ בין נקודה D ל-GND</li>
+        <li>מדוד שוב את המתח בנקודה D <strong>עם עומס</strong> - רשום</li>
+        <li>השווה בין שתי המדידות</li>
+    </ol>
+
+    <div class="what-you-see">
+        <pre>
+Without load:  ~17V  (no current flowing)
+With LED+1K:   ~12-14V  (voltage drops!)
+
+The more current you draw, the more the voltage drops.
+This is the main limitation of charge pump circuits.
+        </pre>
+    </div>
+
+    <div class="comparison-box">
+        <div class="good">
+            <h4 style="color: #4caf50;">✅ סולם מתח טוב בשביל:</h4>
+            <ul>
+                <li>עומסים קלים (מעט זרם)</li>
+                <li>LED בודד או כמה</li>
+                <li>מעגלי לוגיקה (CMOS)</li>
+                <li>חיישנים בזרם נמוך</li>
+            </ul>
+        </div>
+        <div class="bad">
+            <h4 style="color: #f44336;">❌ לא מתאים ל:</h4>
+            <ul>
+                <li>מנועים (צריכים זרם גבוה)</li>
+                <li>חימום / תאורה חזקה</li>
+                <li>טעינת סוללות</li>
+                <li>כל דבר שצריך > 50mA</li>
+            </ul>
+        </div>
+    </div>
+
+    <p><strong>למה המתח יורד כשמחברים עומס (LED)?</strong></p>
+    <div class="answer-box">
+        <label>התשובה שלך:</label>
+        <input type="text" id="answer-6-1" placeholder="למה המתח יורד?">
+        <button class="check-btn" onclick="checkAnswer('answer-6-1', ['זרם', 'עומס', 'מטען', 'מתרוקן', 'פורק', 'לא מספיק', 'קבל', 'current', 'load', 'drain', 'discharge'], 'מצוין! כשמושכים זרם, הקבלים לא מספיקים להיטען מחדש לפני שהמטען &quot;נשאב&quot;. ככל שהזרם גדל, המתח יורד יותר!', 'רמז: תחשוב מה קורה ל"דלי המים" אם מישהו שותה ממנו מהר יותר ממה שהברז ממלא...')">בדוק תשובה</button>
+        <div class="feedback" id="feedback-6-1"></div>
+    </div>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 6.2: שיפורים אפשריים</h3>
+
+    <p>יש כמה דרכים לשפר את ביצועי סולם המתח:</p>
+
+    <table>
+        <tr>
+            <th>שיפור</th>
+            <th>מה עושים</th>
+            <th>תוצאה</th>
+        </tr>
+        <tr>
+            <td><strong>קבלים גדולים יותר</strong></td>
+            <td>להחליף 10μF ב-100μF</td>
+            <td>יותר זרם זמין, פחות ירידת מתח תחת עומס</td>
+        </tr>
+        <tr>
+            <td><strong>תדר גבוה יותר</strong></td>
+            <td>להקטין Rb או Ca/Cb באוסצילטור</td>
+            <td>הקבלים נטענים יותר מהר = יותר זרם</td>
+        </tr>
+        <tr>
+            <td><strong>דיודות שוטקי</strong></td>
+            <td>להחליף 1N4148 ב-1N5819</td>
+            <td>ירידת מתח 0.3V במקום 0.7V = יותר מתח!</td>
+        </tr>
+        <tr>
+            <td><strong>קבל יציאה גדול</strong></td>
+            <td>להוסיף 100μF ביציאה</td>
+            <td>מתח יציב יותר, פחות "ריפל"</td>
+        </tr>
+    </table>
+
+    <div class="info-box">
+        <p><strong>ניסוי:</strong> החלף את אחד הקבלים ב-100μF ומדוד שוב עם עומס LED. האם המתח יורד פחות?</p>
+    </div>
+
+    <p><strong>אם נחליף דיודות 1N4148 (Vd=0.7V) בדיודות שוטקי 1N5819 (Vd=0.3V), מה המתח התיאורטי של 3 שלבים?</strong></p>
+    <div class="answer-box">
+        <label>התשובה שלך:</label>
+        <input type="text" id="answer-6-2" class="ltr-input" placeholder="?V">
+        <button class="check-btn" onclick="checkNumberRange('answer-6-2', 17, 20, 'מעולה! (4 × 5V) − (4 × 0.3V) = 20V − 1.2V = 18.8V. זה שיפור משמעותי על פני 17.2V עם דיודות רגילות!', 'רמז: N+1=4, אז (4 × 5V) − (4 × 0.3V) = ?')">בדוק תשובה</button>
+        <div class="feedback" id="feedback-6-2"></div>
+    </div>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 6.3: טבלת מדידות</h3>
+
+    <p>רשום את כל המדידות שלך:</p>
+
+    <table>
+        <tr>
+            <th>נקודה</th>
+            <th>מתח תיאורטי</th>
+            <th>המדידה שלך (ללא עומס)</th>
+            <th>המדידה שלך (עם LED)</th>
+        </tr>
+        <tr>
+            <td><strong>B</strong> (שלב 1)</td>
+            <td>8.6V</td>
+            <td><input type="text" class="ltr-input" style="width:80px; padding:5px; background:#0d1117; border:1px solid #37474f; color:#e0e0e0; border-radius:4px;" placeholder="?V"></td>
+            <td><input type="text" class="ltr-input" style="width:80px; padding:5px; background:#0d1117; border:1px solid #37474f; color:#e0e0e0; border-radius:4px;" placeholder="?V"></td>
+        </tr>
+        <tr>
+            <td><strong>C</strong> (שלב 2)</td>
+            <td>12.9V</td>
+            <td><input type="text" class="ltr-input" style="width:80px; padding:5px; background:#0d1117; border:1px solid #37474f; color:#e0e0e0; border-radius:4px;" placeholder="?V"></td>
+            <td><input type="text" class="ltr-input" style="width:80px; padding:5px; background:#0d1117; border:1px solid #37474f; color:#e0e0e0; border-radius:4px;" placeholder="?V"></td>
+        </tr>
+        <tr>
+            <td><strong>D</strong> (שלב 3)</td>
+            <td>17.2V</td>
+            <td><input type="text" class="ltr-input" style="width:80px; padding:5px; background:#0d1117; border:1px solid #37474f; color:#e0e0e0; border-radius:4px;" placeholder="?V"></td>
+            <td><input type="text" class="ltr-input" style="width:80px; padding:5px; background:#0d1117; border:1px solid #37474f; color:#e0e0e0; border-radius:4px;" placeholder="?V"></td>
+        </tr>
+    </table>
+
+    <p><strong>באיזה שלב ההפרש בין "ללא עומס" ל"עם עומס" הכי גדול?</strong></p>
+    <div class="answer-box">
+        <label>התשובה שלך:</label>
+        <input type="text" id="answer-6-3" placeholder="שלב ?">
+        <button class="check-btn" onclick="checkAnswer('answer-6-3', ['3', 'שלישי', 'אחרון', 'd', 'D', 'שלב 3', 'stage 3'], 'נכון! השלב האחרון (3) מראה את ההפרש הגדול ביותר. ככל שעולים בסולם, יש יותר דיודות וקבלים בדרך, ויותר הפסדים.', 'רמז: ככל שאנחנו רחוקים יותר מהמקור, ההפסדים מצטברים...')">בדוק תשובה</button>
+        <div class="feedback" id="feedback-6-3"></div>
+    </div>
+</div>
+
+<div class="checkpoint">
+    ✅ <strong>עצור!</strong> וודא שמילאת את טבלת המדידות ושאתה מבין למה יש הבדל בין תיאוריה לפרקטיקה.
+</div>
+
+<div class="mission-complete">
+    <h3>🎉 משימה 6 הושלמה!</h3>
+    <p>למדת: מגבלות של סולם מתח, איך לשפר את הביצועים, והבדל בין תיאוריה לפרקטיקה</p>
+</div>
+
+<!-- ==================== SUMMARY ==================== -->
+<div class="mission-header" style="background: linear-gradient(135deg, #4a148c 0%, #7b1fa2 100%); border-color: #ce93d8;">
+    <h2 style="color: #f3e5f5;">סיכום - מה למדנו?</h2>
+</div>
+
+<div class="exercise" style="border-color: #7c4dff;">
+    <h3 style="color: #b388ff;">הישגים:</h3>
+    <ul style="margin: 10px 0;">
+        <li>✅ בנית אוסצילטור עם שני טרנזיסטורים (Astable Multivibrator)</li>
+        <li>✅ בנית סולם מתח עם 3 שלבים (קבלים ודיודות)</li>
+        <li>✅ הגבהת מתח מ-5V ל-~17V!</li>
+        <li>✅ הבנת הפסדי דיודות ומגבלות זרם</li>
+        <li>✅ למדת לשפר ביצועים עם רכיבים טובים יותר</li>
+    </ul>
+
+    <h3 style="color: #b388ff; margin-top: 20px;">נוסחאות חשובות:</h3>
+    <div class="formula">
+        <span class="label">מתח יציאה של N שלבים:</span>
+        Vout = (N+1) × Vpeak − (N+1) × Vd
+    </div>
+    <div class="formula">
+        <span class="label">תדר Astable Multivibrator (סימטרי):</span>
+        f = 1 / (1.4 × Rb × C)
+    </div>
+
+    <h3 style="color: #b388ff; margin-top: 20px;">מושגים מרכזיים:</h3>
+    <table>
+        <tr>
+            <th>מושג</th>
+            <th>הסבר</th>
+        </tr>
+        <tr>
+            <td>DC-to-DC Converter</td>
+            <td>מעגל שמקבל DC בכניסה ומוציא DC שונה (גבוה יותר) ביציאה</td>
+        </tr>
+        <tr>
+            <td>Voltage Multiplier</td>
+            <td>סולם של קבלים ודיודות שכל שלב מוסיף עוד Vpeak למתח ה-DC ביציאה</td>
+        </tr>
+        <tr>
+            <td>Forward Voltage Drop</td>
+            <td>~0.7V שכל דיודת סיליקון "גונבת" (0.3V בשוטקי)</td>
+        </tr>
+        <tr>
+            <td>Astable Multivibrator</td>
+            <td>שני טרנזיסטורים שמדליקים ומכבים אחד את השני ומייצרים גל מרובע</td>
+        </tr>
+        <tr>
+            <td>Ripple / ריפל</td>
+            <td>תנודות במתח היציאה - ככל שהעומס כבד יותר, יש יותר ריפל</td>
+        </tr>
+    </table>
+</div>
+
+<div class="mission-complete" style="border-color: #ffd600; background: linear-gradient(135deg, #1a1a0a 0%, #2a2a1a 100%);">
+    <h3 style="color: #ffd600; font-size: 1.5em;">🏆 כל הכבוד! סיימת את המדריך!</h3>
+    <p style="font-size: 1.1em;">בנית ממיר DC-to-DC שמגביר 5V ל-~17V בלי שום שבבים!</p>
+    <p style="margin-top: 10px; color: #90a4ae;">אתגר למתקדמים: נסה להוסיף שלב רביעי וחמישי. כמה גבוה אתה יכול להגיע?</p>
+</div>
+
+<!-- Popup Modal -->
+<div class="popup-overlay" id="popup-overlay" onclick="closePopup()">
+    <div class="popup" id="popup" onclick="event.stopPropagation()">
+        <div class="emoji" id="popup-emoji"></div>
+        <h3 id="popup-title"></h3>
+        <p id="popup-message"></p>
+        <button onclick="closePopup()">סגור</button>
+    </div>
+</div>
+
+<script>
+function checkAnswer(inputId, correctAnswers, successMsg, failMsg, partialMatch = true) {
+    const input = document.getElementById(inputId);
+    const userAnswer = input.value.trim().toLowerCase();
+
+    if (!userAnswer) {
+        showPopup(false, 'אופס!', 'אנא הכנס תשובה לפני הבדיקה');
+        return;
+    }
+
+    let isCorrect = false;
+    if (partialMatch) {
+        isCorrect = correctAnswers.some(ans => userAnswer.includes(ans.toLowerCase()));
+    } else {
+        isCorrect = correctAnswers.some(ans => userAnswer === ans.toLowerCase());
+    }
+
+    const feedbackEl = document.getElementById('feedback-' + inputId.replace('answer-', ''));
+    if (isCorrect) {
+        if (feedbackEl) { feedbackEl.className = 'feedback correct'; feedbackEl.textContent = successMsg; }
+        showPopup(true, 'כל הכבוד! 🎉', successMsg);
+    } else {
+        if (feedbackEl) { feedbackEl.className = 'feedback incorrect'; feedbackEl.textContent = failMsg; }
+        showPopup(false, 'נסה שוב! 💪', failMsg);
+    }
+}
+
+function checkNumberRange(inputId, min, max, successMsg, failMsg) {
+    const input = document.getElementById(inputId);
+    const userAnswer = input.value.trim().replace(/[^0-9.\-]/g, '');
+    const num = parseFloat(userAnswer);
+
+    if (isNaN(num)) {
+        showPopup(false, 'אופס!', 'אנא הכנס מספר');
+        return;
+    }
+
+    const feedbackEl = document.getElementById('feedback-' + inputId.replace('answer-', ''));
+    if (num >= min && num <= max) {
+        if (feedbackEl) { feedbackEl.className = 'feedback correct'; feedbackEl.textContent = successMsg; }
+        showPopup(true, 'כל הכבוד! 🎉', successMsg);
+    } else {
+        if (feedbackEl) { feedbackEl.className = 'feedback incorrect'; feedbackEl.textContent = failMsg; }
+        showPopup(false, 'נסה שוב! 💪', failMsg);
+    }
+}
+
+function showPopup(isCorrect, title, message) {
+    const overlay = document.getElementById('popup-overlay');
+    const popup = document.getElementById('popup');
+    const emoji = document.getElementById('popup-emoji');
+    const titleEl = document.getElementById('popup-title');
+    const msgEl = document.getElementById('popup-message');
+
+    popup.className = 'popup ' + (isCorrect ? 'correct' : 'incorrect');
+    emoji.textContent = isCorrect ? '🎉' : '🤔';
+    titleEl.textContent = title;
+    titleEl.style.color = isCorrect ? '#4caf50' : '#f44336';
+    msgEl.textContent = message;
+
+    overlay.classList.add('show');
+}
+
+function closePopup() {
+    document.getElementById('popup-overlay').classList.remove('show');
+}
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closePopup();
+});
+</script>
+
+</body>
+</html>

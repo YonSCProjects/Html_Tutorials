@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>האקינג אתי: סדנה מעשית</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+            line-height: 1.8;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #0d1117;
+            color: #c9d1d9;
+        }
+        h1, h2, h3 {
+            color: #58a6ff;
+            border-bottom: 2px solid #30363d;
+            padding-bottom: 10px;
+        }
+        h1 { font-size: 2em; color: #39d353; }
+        h2 { font-size: 1.5em; margin-top: 40px; }
+        h3 { font-size: 1.2em; border-bottom: 1px solid #30363d; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: #161b22;
+            direction: rtl;
+        }
+        th, td {
+            border: 1px solid #30363d;
+            padding: 12px;
+            text-align: right;
+        }
+        th {
+            background: #21262d;
+            color: #58a6ff;
+        }
+        tr:nth-child(even) {
+            background: #0d1117;
+        }
+
+        pre {
+            background: #161b22;
+            color: #39d353;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #30363d;
+            overflow-x: auto;
+            direction: ltr;
+            text-align: left;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            line-height: 1.4;
+            unicode-bidi: isolate;
+            white-space: pre;
+            display: block;
+            width: 100%;
+        }
+
+        code {
+            background: #21262d;
+            color: #39d353;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            direction: ltr;
+        }
+
+        .exercise {
+            background: linear-gradient(135deg, #1a2e1a, #1e3a1e);
+            border: 2px solid #39d353;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        .exercise h3 {
+            color: #39d353;
+            border: none;
+            margin-top: 0;
+        }
+
+        .step {
+            background: #161b22;
+            border-right: 4px solid #58a6ff;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .step-number {
+            display: inline-block;
+            background: #58a6ff;
+            color: #0d1117;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .answer-box {
+            background: #21262d;
+            border: 2px dashed #30363d;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            min-height: 40px;
+        }
+
+        .answer-box::before {
+            content: "התשובה שלך: ";
+            color: #8b949e;
+        }
+
+        .checkpoint {
+            background: linear-gradient(135deg, #1a2e1a, #1e3a1e);
+            border-left: 4px solid #39d353;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px 0 0 8px;
+        }
+
+        .warning {
+            background: linear-gradient(135deg, #2d2a1a, #3a351e);
+            border-left: 4px solid #d29922;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px 0 0 8px;
+        }
+
+        .danger {
+            background: linear-gradient(135deg, #2d1a1a, #3a1e1e);
+            border-left: 4px solid #f85149;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px 0 0 8px;
+        }
+
+        .header-info {
+            background: #161b22;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border: 1px solid #30363d;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid #30363d;
+            margin: 30px 0;
+        }
+
+        .mission-header {
+            background: linear-gradient(135deg, #161b22, #21262d);
+            border: 2px solid #39d353;
+            color: #c9d1d9;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 30px 0 20px 0;
+        }
+
+        .mission-header h2 {
+            color: #39d353;
+            border: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .do-now {
+            background: #58a6ff;
+            color: #0d1117;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            display: inline-block;
+            margin: 10px 0;
+        }
+
+        .what-you-see {
+            background: #000;
+            border: 1px solid #39d353;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        .what-you-see::before {
+            content: "מה אתה אמור לראות:";
+            display: block;
+            color: #8b949e;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+        }
+
+        ol.steps {
+            counter-reset: step-counter;
+            list-style: none;
+            padding: 0;
+        }
+
+        ol.steps li {
+            counter-increment: step-counter;
+            padding: 15px;
+            padding-right: 50px;
+            position: relative;
+            background: #161b22;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 1px solid #30363d;
+        }
+
+        ol.steps li::before {
+            content: counter(step-counter);
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #58a6ff;
+            color: #0d1117;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            font-weight: bold;
+        }
+
+        strong {
+            color: #f0f6fc;
+        }
+
+        a {
+            color: #58a6ff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .mission-complete {
+            background: linear-gradient(135deg, #1a1a2e, #1e1e3a);
+            border: 2px solid #a371f7;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .time-estimate {
+            background: #21262d;
+            color: #8b949e;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            display: inline-block;
+        }
+
+        /* Interactive Answer Box Styles */
+        .answer-box {
+            background: #21262d;
+            border: 2px dashed #30363d;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            min-height: 40px;
+        }
+
+        .answer-box::before {
+            content: none;
+        }
+
+        .answer-box label {
+            display: block;
+            color: #8b949e;
+            margin-bottom: 8px;
+        }
+
+        .answer-box input[type="text"],
+        .answer-box textarea {
+            width: 100%;
+            padding: 10px;
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 4px;
+            color: #c9d1d9;
+            font-size: 14px;
+            font-family: inherit;
+            direction: rtl;
+        }
+
+        .answer-box input[type="text"]:focus,
+        .answer-box textarea:focus {
+            outline: none;
+            border-color: #58a6ff;
+        }
+
+        .answer-box .check-btn {
+            margin-top: 10px;
+            padding: 8px 20px;
+            background: #238636;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        .answer-box .check-btn:hover {
+            background: #2ea043;
+        }
+
+        .answer-box .feedback {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .answer-box .feedback.correct {
+            display: block;
+            background: #1a4721;
+            border: 1px solid #238636;
+            color: #39d353;
+        }
+
+        .answer-box .feedback.incorrect {
+            display: block;
+            background: #4a1a1a;
+            border: 1px solid #f85149;
+            color: #f85149;
+        }
+
+        .answer-box .feedback.partial {
+            display: block;
+            background: #3a351a;
+            border: 1px solid #d29922;
+            color: #d29922;
+        }
+
+        /* Table input styles */
+        table input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 4px;
+            color: #c9d1d9;
+            font-size: 14px;
+            direction: ltr;
+        }
+
+        table input[type="text"]:focus {
+            outline: none;
+            border-color: #58a6ff;
+        }
+
+        table .check-cell {
+            text-align: center;
+            width: 60px;
+        }
+
+        table .check-cell.correct {
+            color: #39d353;
+        }
+
+        table .check-cell.incorrect {
+            color: #f85149;
+        }
+
+        /* Popup Modal */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .popup-overlay.show {
+            display: flex;
+        }
+
+        .popup {
+            background: #161b22;
+            border: 2px solid #30363d;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 400px;
+            text-align: center;
+            animation: popIn 0.3s ease;
+        }
+
+        @keyframes popIn {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .popup.correct {
+            border-color: #238636;
+        }
+
+        .popup.incorrect {
+            border-color: #f85149;
+        }
+
+        .popup .emoji {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .popup h3 {
+            border: none;
+            margin: 0 0 10px 0;
+            padding: 0;
+        }
+
+        .popup.correct h3 {
+            color: #39d353;
+        }
+
+        .popup.incorrect h3 {
+            color: #f85149;
+        }
+
+        .popup p {
+            margin: 0 0 20px 0;
+            color: #8b949e;
+        }
+
+        .popup button {
+            padding: 10px 30px;
+            background: #21262d;
+            color: #c9d1d9;
+            border: 1px solid #30363d;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .popup button:hover {
+            background: #30363d;
+        }
+
+        @media print {
+            body { background: white; color: #333; }
+            pre { background: #eee; color: #333; border-color: #ccc; }
+        }
+    </style>
+</head>
+<body>
+
+<h1>האקינג אתי: סדנה מעשית</h1>
+<h2 style="border: none; margin-top: 0; color: #8b949e;">למד על ידי עשייה</h2>
+
+<div class="header-info">
+    <p><strong>בשביל:</strong> אריאל</p>
+    <p><strong>מה תעשה:</strong> תרגילים מעשיים שתוכל לעשות לבד</p>
+    <p><strong>מה תצטרך:</strong> מחשב עם דפדפן וחיבור לאינטרנט</p>
+</div>
+
+<div class="danger">
+    <p><strong>⚠️ כלל חשוב לפני שמתחילים:</strong></p>
+    <p>האקרים אתיים עובדים רק על מערכות שמותר להם לבדוק.</p>
+    <p>כל התרגילים במדריך הזה הם על אתרים שנועדו לתרגול.</p>
+    <p><strong>לעולם אל תנסה טכניקות אלה על אתרים ללא אישור!</strong></p>
+</div>
+
+<hr>
+
+<!-- ==================== MISSION 1 ==================== -->
+
+<div class="mission-header">
+    <h2>משימה 1: פיצוח סיסמה ראשונה</h2>
+    <p class="time-estimate">⏱️ 10 דקות</p>
+</div>
+
+<p>אתרים לא שומרים את הסיסמה שלך כטקסט רגיל. הם שומרים גרסה מוצפנת שנקראת <strong>hash</strong>.</p>
+
+<p>לדוגמה, הסיסמה <code>cat</code> הופכת ל:</p>
+<pre>d077f244def8a70e5ea758bd8352fcd8</pre>
+
+<p>אבל אם הסיסמה נפוצה מדי, האקרים יכולים למצוא אותה!</p>
+
+<div class="exercise">
+    <h3>תרגיל 1.1: פצח את ה-Hash הראשון שלך</h3>
+
+    <ol class="steps">
+        <li>פתח דפדפן חדש</li>
+        <li>גלוש לאתר: <strong>crackstation.net</strong></li>
+        <li>
+            העתק והדבק את ה-hash הזה בתיבה:
+            <pre>5f4dcc3b5aa765d61d8327deb882cf99</pre>
+        </li>
+        <li>לחץ על כפתור <strong>"Crack Hashes"</strong></li>
+        <li>ראה את התוצאה</li>
+    </ol>
+
+    <div class="what-you-see">
+        <pre>
+Hash                              Type    Result
+5f4dcc3b5aa765d61d8327deb882cf99  md5     ????????
+        </pre>
+    </div>
+
+    <p><strong>מה הסיסמה שמצאת?</strong></p>
+    <div class="answer-box">
+        <label>התשובה שלך:</label>
+        <input type="text" id="answer-1-1" placeholder="הקלד את הסיסמה כאן..." style="direction: ltr;">
+        <button class="check-btn" onclick="checkAnswer('answer-1-1', ['password'], 'נכון! הסיסמה היא password - אחת הסיסמאות הכי נפוצות בעולם!', 'לא נכון. נסה שוב - העתק את ה-hash ל-crackstation.net')">בדוק תשובה</button>
+        <div class="feedback" id="feedback-1-1"></div>
+    </div>
+</div>
+
+<div class="checkpoint">
+    ✅ <strong>עצור!</strong> אם מצאת את הסיסמה, המשך לתרגיל הבא. אם לא - חזור ובדוק שהעתקת את ה-hash נכון.
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 1.2: פצח עוד hash-ים</h3>
+
+    <p>נסה לפצח את ה-hash-ים הבאים באותו אתר:</p>
+
+    <table>
+        <tr>
+            <th>Hash</th>
+            <th>הסיסמה שמצאת</th>
+            <th>בדיקה</th>
+        </tr>
+        <tr>
+            <td><code>e10adc3949ba59abbe56e057f20f883e</code></td>
+            <td><input type="text" id="hash-1" data-answer="123456" placeholder="?"></td>
+            <td class="check-cell" id="check-hash-1"></td>
+        </tr>
+        <tr>
+            <td><code>25f9e794323b453885f5181f1b624d0b</code></td>
+            <td><input type="text" id="hash-2" data-answer="123456789" placeholder="?"></td>
+            <td class="check-cell" id="check-hash-2"></td>
+        </tr>
+        <tr>
+            <td><code>d8578edf8458ce06fbc5bb76a58c5ca4</code></td>
+            <td><input type="text" id="hash-3" data-answer="qwerty" placeholder="?"></td>
+            <td class="check-cell" id="check-hash-3"></td>
+        </tr>
+    </table>
+    <button class="check-btn" onclick="checkHashTable()">בדוק את כל התשובות</button>
+
+    <p><strong>שאלה:</strong> מה משותף לכל הסיסמאות שמצאת?</p>
+    <div class="answer-box">
+        <label>התשובה שלך:</label>
+        <input type="text" id="answer-1-2" placeholder="מה משותף להן...">
+        <button class="check-btn" onclick="checkAnswer('answer-1-2', ['פשוט', 'נפוצ', 'קל', 'simple', 'common', 'easy', 'מספר', 'number'], 'נכון! כולן סיסמאות פשוטות ונפוצות שקל לפצח.', 'חשוב על זה - האם הסיסמאות האלה מסובכות או פשוטות?', true)">בדוק תשובה</button>
+        <div class="feedback" id="feedback-1-2"></div>
+    </div>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 1.3: צור hash משלך</h3>
+
+    <ol class="steps">
+        <li>גלוש לאתר: <strong>md5hashgenerator.com</strong></li>
+        <li>כתוב סיסמה פשוטה (למשל: <code>dog</code>)</li>
+        <li>לחץ Generate</li>
+        <li>העתק את ה-hash שנוצר</li>
+        <li>חזור ל-<strong>crackstation.net</strong></li>
+        <li>הדבק את ה-hash ונסה לפצח אותו</li>
+    </ol>
+
+    <p><strong>האם הצליח לפצח? כן / לא</strong></p>
+    <div class="answer-box">
+        <label>התשובה שלך:</label>
+        <input type="text" id="answer-1-3a" placeholder="כן או לא">
+        <button class="check-btn" onclick="checkAnswer('answer-1-3a', ['כן', 'yes', 'כ'], 'נכון! סיסמה פשוטה כמו dog קלה לפיצוח.', 'האם באמת לא הצליח? נסה שוב עם מילה פשוטה.')">בדוק תשובה</button>
+        <div class="feedback" id="feedback-1-3a"></div>
+    </div>
+
+    <p>עכשיו נסה שוב עם סיסמה אקראית כמו: <code>X7#kP9$mQ2</code></p>
+
+    <p><strong>האם הצליח לפצח את זו? כן / לא</strong></p>
+    <div class="answer-box">
+        <label>התשובה שלך:</label>
+        <input type="text" id="answer-1-3b" placeholder="כן או לא">
+        <button class="check-btn" onclick="checkAnswer('answer-1-3b', ['לא', 'no', 'ל'], 'מצוין! סיסמה אקראית ומורכבת קשה מאוד לפיצוח. זו הסיבה שאנחנו ממליצים על סיסמאות חזקות!', 'באמת הצליח? מעניין! בדרך כלל סיסמאות אקראיות קשות לפיצוח.')">בדוק תשובה</button>
+        <div class="feedback" id="feedback-1-3b"></div>
+    </div>
+</div>
+
+<div class="mission-complete">
+    <h3>🎉 משימה 1 הושלמה!</h3>
+    <p>למדת: סיסמאות פשוטות ונפוצות קל לפצח. סיסמאות אקראיות בטוחות יותר.</p>
+</div>
+
+<hr>
+
+<!-- ==================== MISSION 2 ==================== -->
+
+<div class="mission-header">
+    <h2>משימה 2: חקירת אתר</h2>
+    <p class="time-estimate">⏱️ 15 דקות</p>
+</div>
+
+<p>לפני שהאקרים תוקפים, הם אוספים מידע. זה נקרא <strong>Reconnaissance</strong> (סיור).</p>
+<p>אנחנו נלמד לאסוף מידע על אתרים - באופן לגמרי חוקי!</p>
+
+<div class="exercise">
+    <h3>תרגיל 2.1: מי הבעלים של האתר?</h3>
+
+    <ol class="steps">
+        <li>גלוש לאתר: <strong>who.is</strong></li>
+        <li>בתיבת החיפוש, כתוב: <code>google.com</code></li>
+        <li>לחץ Search</li>
+        <li>מצא את המידע הבא:</li>
+    </ol>
+
+    <table>
+        <tr>
+            <th>שאלה</th>
+            <th>התשובה שלך</th>
+        </tr>
+        <tr>
+            <td>מתי הדומיין נרשם? (Created Date)</td>
+            <td><input type="text" id="whois-1" placeholder="תאריך..."></td>
+        </tr>
+        <tr>
+            <td>מתי הוא פג תוקף? (Expiry Date)</td>
+            <td><input type="text" id="whois-2" placeholder="תאריך..."></td>
+        </tr>
+        <tr>
+            <td>מה שם הרשם? (Registrar)</td>
+            <td><input type="text" id="whois-3" placeholder="שם הרשם..."></td>
+        </tr>
+    </table>
+    <button class="check-btn" onclick="checkWhoisTable()">בדוק שמילאתי</button>
+    <div class="feedback" id="feedback-whois"></div>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 2.2: מצא את כתובת ה-IP</h3>
+
+    <ol class="steps">
+        <li>גלוש לאתר: <strong>dnschecker.org</strong></li>
+        <li>בתיבה למעלה, כתוב: <code>youtube.com</code></li>
+        <li>לחץ Search</li>
+        <li>הסתכל על התוצאות בטבלה</li>
+    </ol>
+
+    <p><strong>מה אחת מכתובות ה-IP של youtube.com?</strong></p>
+    <div class="answer-box">
+        <label>התשובה שלך:</label>
+        <input type="text" id="answer-2-2" placeholder="xxx.xxx.xxx.xxx" style="direction: ltr;">
+        <button class="check-btn" onclick="checkIPAddress('answer-2-2')">בדוק תשובה</button>
+        <div class="feedback" id="feedback-2-2"></div>
+    </div>
+
+    <p>עכשיו חפש את כתובת ה-IP של:</p>
+    <table>
+        <tr>
+            <th>אתר</th>
+            <th>כתובת IP</th>
+        </tr>
+        <tr>
+            <td>facebook.com</td>
+            <td><input type="text" id="ip-fb" placeholder="xxx.xxx.xxx.xxx" style="direction: ltr;"></td>
+        </tr>
+        <tr>
+            <td>minecraft.net</td>
+            <td><input type="text" id="ip-mc" placeholder="xxx.xxx.xxx.xxx" style="direction: ltr;"></td>
+        </tr>
+    </table>
+    <button class="check-btn" onclick="checkIPTable()">בדוק שמילאתי</button>
+    <div class="feedback" id="feedback-ip-table"></div>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 2.3: מה הקוד המקור של דף?</h3>
+
+    <ol class="steps">
+        <li>גלוש לאתר כלשהו (למשל google.com)</li>
+        <li>לחץ קליק ימני על הדף</li>
+        <li>בחר <strong>"View Page Source"</strong> או <strong>"הצג מקור דף"</strong></li>
+        <li>הסתכל על הקוד שמופיע</li>
+    </ol>
+
+    <div class="what-you-see">
+        <pre>
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;Google&lt;/title&gt;
+    ...
+        </pre>
+    </div>
+
+    <p><strong>מה כתוב בתוך תג ה-title של google.com?</strong></p>
+    <div class="answer-box">
+        <label>התשובה שלך:</label>
+        <input type="text" id="answer-2-3" placeholder="הקלד את מה שמצאת..." style="direction: ltr;">
+        <button class="check-btn" onclick="checkAnswer('answer-2-3', ['google', 'Google'], 'נכון! ה-title של גוגל הוא פשוט Google.', 'לא בדיוק. חפש את התג &lt;title&gt; בקוד המקור.')">בדוק תשובה</button>
+        <div class="feedback" id="feedback-2-3"></div>
+    </div>
+
+    <p>האקרים מסתכלים על קוד מקור כדי למצוא:</p>
+    <ul>
+        <li>הערות שמפתחים שכחו למחוק</li>
+        <li>קישורים נסתרים</li>
+        <li>שמות של קבצים וספריות</li>
+    </ul>
+</div>
+
+<div class="mission-complete">
+    <h3>🎉 משימה 2 הושלמה!</h3>
+    <p>למדת: איך לאסוף מידע ציבורי על כל אתר באינטרנט.</p>
+</div>
+
+<hr>
+
+<!-- ==================== MISSION 3 ==================== -->
+
+<div class="mission-header">
+    <h2>משימה 3: הודעות סודיות בתמונות</h2>
+    <p class="time-estimate">⏱️ 10 דקות</p>
+</div>
+
+<p><strong>סטגנוגרפיה</strong> = הסתרת מידע בתוך תמונות רגילות.</p>
+<p>התמונה נראית רגילה, אבל יש בתוכה הודעה סודית!</p>
+
+<div class="exercise">
+    <h3>תרגיל 3.1: הסתר הודעה בתמונה</h3>
+
+    <ol class="steps">
+        <li>גלוש לאתר: <strong>stylesuxx.github.io/steganography/</strong></li>
+        <li>לחץ על לשונית <strong>"Encode"</strong></li>
+        <li>לחץ על <strong>"Choose Image"</strong> והעלה תמונה כלשהי מהמחשב</li>
+        <li>בתיבת הטקסט, כתוב הודעה סודית (למשל: "שלום זו הודעה סודית")</li>
+        <li>לחץ על <strong>"Encode"</strong></li>
+        <li>לחץ על <strong>"Download"</strong> כדי להוריד את התמונה החדשה</li>
+    </ol>
+
+    <p><strong>השווה בין התמונה המקורית לתמונה החדשה. אתה רואה הבדל?</strong></p>
+    <div class="answer-box">
+        <label>התשובה שלך:</label>
+        <input type="text" id="answer-3-1" placeholder="כן או לא">
+        <button class="check-btn" onclick="checkAnswer('answer-3-1', ['לא', 'no', 'ל'], 'מדהים, נכון? התמונה נראית בדיוק אותו דבר, אבל בתוכה מסתתרת הודעה סודית!', 'באמת רואה הבדל? זה נדיר - בדרך כלל התמונות נראות זהות!')">בדוק תשובה</button>
+        <div class="feedback" id="feedback-3-1"></div>
+    </div>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 3.2: חלץ את ההודעה הסודית</h3>
+
+    <ol class="steps">
+        <li>באותו אתר, לחץ על לשונית <strong>"Decode"</strong></li>
+        <li>העלה את התמונה שהורדת בתרגיל הקודם</li>
+        <li>ראה את ההודעה הסודית מופיעה!</li>
+    </ol>
+
+    <p><strong>האם ההודעה שחילצת זהה להודעה שהסתרת?</strong></p>
+    <div class="answer-box">
+        <label>התשובה שלך:</label>
+        <input type="text" id="answer-3-2" placeholder="כן או לא">
+        <button class="check-btn" onclick="checkAnswer('answer-3-2', ['כן', 'yes', 'כ'], 'מעולה! עכשיו אתה יודע להסתיר ולחלץ הודעות סודיות מתמונות!', 'אם לא, נסה שוב - וודא שאתה מעלה את התמונה הנכונה.')">בדוק תשובה</button>
+        <div class="feedback" id="feedback-3-2"></div>
+    </div>
+</div>
+
+<div class="warning">
+    <p><strong>שימוש בעולם האמיתי:</strong></p>
+    <p>מרגלים ועיתונאים משתמשים בטכניקה הזו כדי לשלוח מידע סודי מבלי שאף אחד ידע שיש הודעה בכלל!</p>
+</div>
+
+<div class="mission-complete">
+    <h3>🎉 משימה 3 הושלמה!</h3>
+    <p>למדת: איך להסתיר ולחלץ הודעות סודיות מתמונות.</p>
+</div>
+
+<hr>
+
+<!-- ==================== MISSION 4 ==================== -->
+
+<div class="mission-header">
+    <h2>משימה 4: פקודות לינוקס בסיסיות</h2>
+    <p class="time-estimate">⏱️ 15 דקות</p>
+</div>
+
+<p>רוב כלי ההאקינג רצים על <strong>לינוקס</strong>. בוא נלמד את הבסיס!</p>
+<p>אנחנו נשתמש בטרמינל לינוקס ישירות בדפדפן - לא צריך להתקין כלום.</p>
+
+<div class="exercise">
+    <h3>תרגיל 4.1: פתח טרמינל לינוקס</h3>
+
+    <ol class="steps">
+        <li>גלוש לאתר: <strong>bellard.org/jslinux/</strong></li>
+        <li>לחץ על <strong>"Alpine Linux 3.12.0 Console"</strong></li>
+        <li>חכה כמה שניות עד שהמסך השחור יופיע</li>
+        <li>אתה אמור לראות שורה שמסתיימת ב-<code>#</code></li>
+    </ol>
+
+    <div class="what-you-see">
+        <pre>
+Welcome to Alpine Linux!
+localhost:~#
+        </pre>
+    </div>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 4.2: הפקודות הראשונות שלך</h3>
+
+    <p>כתוב כל פקודה ולחץ Enter. רשום מה קיבלת:</p>
+
+    <table>
+        <tr>
+            <th>הקלד את הפקודה</th>
+            <th>מה הפקודה עושה</th>
+            <th>מה קיבלת?</th>
+        </tr>
+        <tr>
+            <td><code>whoami</code></td>
+            <td>מראה את שם המשתמש</td>
+            <td><input type="text" id="cmd-whoami" data-answer="root" placeholder="?" style="direction: ltr;"></td>
+        </tr>
+        <tr>
+            <td><code>pwd</code></td>
+            <td>מראה באיזו תיקייה אתה</td>
+            <td><input type="text" id="cmd-pwd" data-answer="/root" placeholder="?" style="direction: ltr;"></td>
+        </tr>
+        <tr>
+            <td><code>ls</code></td>
+            <td>מראה קבצים בתיקייה</td>
+            <td><input type="text" id="cmd-ls" placeholder="?" style="direction: ltr;"></td>
+        </tr>
+        <tr>
+            <td><code>date</code></td>
+            <td>מראה תאריך ושעה</td>
+            <td><input type="text" id="cmd-date" placeholder="?" style="direction: ltr;"></td>
+        </tr>
+    </table>
+    <button class="check-btn" onclick="checkLinuxCommands()">בדוק תשובות</button>
+    <div class="feedback" id="feedback-linux"></div>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 4.3: ניווט בתיקיות</h3>
+
+    <p>הקלד את הפקודות הבאות בזו אחר זו:</p>
+
+    <ol class="steps">
+        <li>הקלד: <code>cd /</code> (עובר לתיקייה הראשית)</li>
+        <li>הקלד: <code>ls</code> (רשום את התיקיות שאתה רואה)</li>
+        <li>הקלד: <code>cd /etc</code> (עובר לתיקיית הגדרות)</li>
+        <li>הקלד: <code>ls</code> (רשום 3 קבצים שאתה רואה)</li>
+        <li>הקלד: <code>cat hostname</code> (מראה תוכן קובץ)</li>
+    </ol>
+
+    <p><strong>אילו תיקיות ראית כשהקלדת ls ב-/?</strong></p>
+    <div class="answer-box">
+        <label>התשובה שלך (רשום כמה מהתיקיות):</label>
+        <input type="text" id="answer-4-3a" placeholder="bin, etc, home..." style="direction: ltr;">
+        <button class="check-btn" onclick="checkAnswer('answer-4-3a', ['bin', 'etc', 'home', 'usr', 'var', 'root', 'tmp'], 'נכון! אלה תיקיות המערכת הבסיסיות בלינוקס.', 'נסה שוב - אתה אמור לראות תיקיות כמו bin, etc, home...', true)">בדוק תשובה</button>
+        <div class="feedback" id="feedback-4-3a"></div>
+    </div>
+
+    <p><strong>מה כתוב בקובץ hostname?</strong></p>
+    <div class="answer-box">
+        <label>התשובה שלך:</label>
+        <input type="text" id="answer-4-3b" placeholder="..." style="direction: ltr;">
+        <button class="check-btn" onclick="checkAnswer('answer-4-3b', ['localhost'], 'נכון! שם המחשב הוא localhost - שם ברירת מחדל.', 'בדוק שוב - הקלד cat hostname בתיקיית /etc')">בדוק תשובה</button>
+        <div class="feedback" id="feedback-4-3b"></div>
+    </div>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 4.4: חיפוש בתוך קבצים</h3>
+
+    <ol class="steps">
+        <li>הקלד: <code>cd /etc</code></li>
+        <li>הקלד: <code>cat passwd</code></li>
+        <li>זה מראה את רשימת המשתמשים במערכת</li>
+    </ol>
+
+    <p><strong>כמה שורות יש בקובץ passwd? (רמז: ספור את השורות)</strong></p>
+    <div class="answer-box">
+        <label>התשובה שלך:</label>
+        <input type="text" id="answer-4-4" placeholder="מספר...">
+        <button class="check-btn" onclick="checkNumberRange('answer-4-4', 10, 30, 'נכון! זה מספר המשתמשים במערכת.', 'בדוק שוב - ספור את השורות בקובץ passwd')">בדוק תשובה</button>
+        <div class="feedback" id="feedback-4-4"></div>
+    </div>
+</div>
+
+<div class="mission-complete">
+    <h3>🎉 משימה 4 הושלמה!</h3>
+    <p>למדת: פקודות בסיסיות בלינוקס - whoami, pwd, ls, cd, cat</p>
+</div>
+
+<hr>
+
+<!-- ==================== MISSION 5 ==================== -->
+
+<div class="mission-header">
+    <h2>משימה 5: אתגר CTF ראשון</h2>
+    <p class="time-estimate">⏱️ 20 דקות</p>
+</div>
+
+<p><strong>CTF = Capture The Flag</strong></p>
+<p>אלה תחרויות האקינג שבהן צריך למצוא "דגלים" (flags) נסתרים.</p>
+<p>חברות משתמשות ב-CTF כדי למצוא האקרים טובים להעסיק!</p>
+
+<div class="exercise">
+    <h3>תרגיל 5.1: הרשמה ל-PicoCTF</h3>
+
+    <ol class="steps">
+        <li>גלוש לאתר: <strong>play.picoctf.org</strong></li>
+        <li>לחץ על <strong>"Register"</strong></li>
+        <li>מלא את הפרטים וצור חשבון</li>
+        <li>אשר את האימייל אם צריך</li>
+        <li>התחבר לחשבון שלך</li>
+    </ol>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 5.2: האתגר הראשון - Obedient Cat</h3>
+
+    <ol class="steps">
+        <li>לחץ על <strong>"Practice"</strong> בתפריט</li>
+        <li>לחץ על <strong>"picoGym"</strong></li>
+        <li>בחר קטגוריה: <strong>"General Skills"</strong></li>
+        <li>מצא את האתגר <strong>"Obedient Cat"</strong> ולחץ עליו</li>
+        <li>קרא את ההוראות</li>
+        <li>הורד את הקובץ שמצורף</li>
+        <li>פתח את הקובץ (הוא קובץ טקסט)</li>
+        <li>מצא את ה-flag!</li>
+    </ol>
+
+    <p><strong>מה ה-flag שמצאת? (מתחיל ב-picoCTF{...})</strong></p>
+    <div class="answer-box">
+        <label>התשובה שלך:</label>
+        <input type="text" id="answer-5-2a" placeholder="picoCTF{...}" style="direction: ltr;">
+        <button class="check-btn" onclick="checkFlag('answer-5-2a')">בדוק תשובה</button>
+        <div class="feedback" id="feedback-5-2a"></div>
+    </div>
+
+    <ol class="steps" start="9">
+        <li>חזור לאתר והכנס את ה-flag בתיבה</li>
+        <li>לחץ Submit</li>
+    </ol>
+
+    <p><strong>קיבלת נקודות? כן / לא</strong></p>
+    <div class="answer-box">
+        <label>התשובה שלך:</label>
+        <input type="text" id="answer-5-2b" placeholder="כן או לא">
+        <button class="check-btn" onclick="checkAnswer('answer-5-2b', ['כן', 'yes', 'כ'], '🎉 כל הכבוד! פתרת את האתגר הראשון שלך ב-CTF!', 'נסה שוב - וודא שהעתקת את ה-flag בדיוק כמו שהוא מופיע')">בדוק תשובה</button>
+        <div class="feedback" id="feedback-5-2b"></div>
+    </div>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 5.3: עוד אתגר - Wave a Flag</h3>
+
+    <ol class="steps">
+        <li>חזור ל-picoGym</li>
+        <li>מצא את האתגר <strong>"Wave a flag"</strong></li>
+        <li>הורד את הקובץ</li>
+        <li>זה קובץ תוכנה. תצטרך להריץ אותו בטרמינל</li>
+    </ol>
+
+    <div class="warning">
+        <p><strong>רמז:</strong> כדי להריץ את הקובץ בלינוקס:</p>
+        <pre>
+chmod +x warm
+./warm -h
+        </pre>
+    </div>
+
+    <p>אם זה מסובך מדי, אפשר לדלג ולחזור לזה אחר כך!</p>
+</div>
+
+<div class="mission-complete">
+    <h3>🎉 משימה 5 הושלמה!</h3>
+    <p>למדת: איך להשתתף בתחרויות CTF ולמצוא flags!</p>
+</div>
+
+<hr>
+
+<!-- ==================== סיכום ==================== -->
+
+<h2>סיכום: מה למדת היום</h2>
+
+<table>
+    <tr>
+        <th>משימה</th>
+        <th>מה למדת</th>
+        <th>הושלם?</th>
+    </tr>
+    <tr>
+        <td>1. פיצוח סיסמאות</td>
+        <td>איך hash עובד, למה סיסמאות פשוטות מסוכנות</td>
+        <td>☐</td>
+    </tr>
+    <tr>
+        <td>2. חקירת אתר</td>
+        <td>WHOIS, DNS, קוד מקור</td>
+        <td>☐</td>
+    </tr>
+    <tr>
+        <td>3. סטגנוגרפיה</td>
+        <td>הסתרת הודעות בתמונות</td>
+        <td>☐</td>
+    </tr>
+    <tr>
+        <td>4. לינוקס בסיסי</td>
+        <td>whoami, pwd, ls, cd, cat</td>
+        <td>☐</td>
+    </tr>
+    <tr>
+        <td>5. CTF ראשון</td>
+        <td>PicoCTF, מציאת flags</td>
+        <td>☐</td>
+    </tr>
+</table>
+
+<hr>
+
+<h2>מה הלאה?</h2>
+
+<p>אם נהנית, הנה מה לעשות בהמשך:</p>
+
+<ol>
+    <li><strong>PicoCTF:</strong> נסה לפתור עוד 5 אתגרים ב-picoGym</li>
+    <li><strong>TryHackMe:</strong> הירשם ל-tryhackme.com ונסה את מסלול "Complete Beginner"</li>
+    <li><strong>OverTheWire:</strong> נסה את overthewire.org/wargames/bandit/ - משחק האקינג בטרמינל</li>
+</ol>
+
+<hr>
+
+<div style="text-align: center; padding: 20px;">
+    <p style="color: #39d353; font-size: 1.2em;"><strong>זכור: האקר אתי משתמש בכישורים שלו כדי להגן, לא לתקוף.</strong></p>
+    <p style="color: #8b949e;">עם כוח גדול באה אחריות גדולה.</p>
+</div>
+
+<!-- Popup Modal -->
+<div class="popup-overlay" id="popup-overlay" onclick="closePopup()">
+    <div class="popup" id="popup" onclick="event.stopPropagation()">
+        <div class="emoji" id="popup-emoji"></div>
+        <h3 id="popup-title"></h3>
+        <p id="popup-message"></p>
+        <button onclick="closePopup()">סגור</button>
+    </div>
+</div>
+
+<script>
+// Show popup with feedback
+function showPopup(isCorrect, message) {
+    const overlay = document.getElementById('popup-overlay');
+    const popup = document.getElementById('popup');
+    const emoji = document.getElementById('popup-emoji');
+    const title = document.getElementById('popup-title');
+    const msg = document.getElementById('popup-message');
+
+    popup.className = 'popup ' + (isCorrect ? 'correct' : 'incorrect');
+    emoji.textContent = isCorrect ? '🎉' : '🤔';
+    title.textContent = isCorrect ? 'נכון!' : 'לא בדיוק...';
+    msg.textContent = message;
+
+    overlay.classList.add('show');
+}
+
+function closePopup() {
+    document.getElementById('popup-overlay').classList.remove('show');
+}
+
+// Main answer checking function
+function checkAnswer(inputId, correctAnswers, successMsg, failMsg, partialMatch = false) {
+    const input = document.getElementById(inputId);
+    const feedback = document.getElementById('feedback-' + inputId.replace('answer-', ''));
+    const value = input.value.trim().toLowerCase();
+
+    if (!value) {
+        showPopup(false, 'אנא הכנס תשובה');
+        return;
+    }
+
+    let isCorrect = false;
+
+    if (partialMatch) {
+        // Check if any of the correct answers is contained in the input
+        isCorrect = correctAnswers.some(answer =>
+            value.includes(answer.toLowerCase())
+        );
+    } else {
+        // Exact match (case insensitive)
+        isCorrect = correctAnswers.some(answer =>
+            value === answer.toLowerCase()
+        );
+    }
+
+    if (feedback) {
+        feedback.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+        feedback.textContent = isCorrect ? successMsg : failMsg;
+    }
+
+    showPopup(isCorrect, isCorrect ? successMsg : failMsg);
+}
+
+// Check hash table answers
+function checkHashTable() {
+    let correct = 0;
+    const total = 3;
+
+    for (let i = 1; i <= 3; i++) {
+        const input = document.getElementById('hash-' + i);
+        const check = document.getElementById('check-hash-' + i);
+        const answer = input.dataset.answer;
+        const value = input.value.trim().toLowerCase();
+
+        if (value === answer) {
+            check.textContent = '✓';
+            check.className = 'check-cell correct';
+            correct++;
+        } else if (value) {
+            check.textContent = '✗';
+            check.className = 'check-cell incorrect';
+        } else {
+            check.textContent = '';
+            check.className = 'check-cell';
+        }
+    }
+
+    if (correct === total) {
+        showPopup(true, 'מעולה! פיצחת את כל הסיסמאות!');
+    } else if (correct > 0) {
+        showPopup(false, `פיצחת ${correct} מתוך ${total}. המשך לנסות!`);
+    } else {
+        showPopup(false, 'עדיין לא נכון. העתק את ה-hash לאתר crackstation.net');
+    }
+}
+
+// Check if fields are filled (for variable answers like WHOIS)
+function checkWhoisTable() {
+    const fields = ['whois-1', 'whois-2', 'whois-3'];
+    let filled = 0;
+
+    fields.forEach(id => {
+        if (document.getElementById(id).value.trim()) filled++;
+    });
+
+    const feedback = document.getElementById('feedback-whois');
+
+    if (filled === 3) {
+        feedback.className = 'feedback correct';
+        feedback.textContent = 'מעולה! מצאת את כל המידע על הדומיין.';
+        showPopup(true, 'מעולה! עכשיו אתה יודע איך לחקור מי עומד מאחורי כל אתר.');
+    } else {
+        feedback.className = 'feedback incorrect';
+        feedback.textContent = `מילאת ${filled} מתוך 3 שדות. המשך לחפש!`;
+        showPopup(false, `מילאת ${filled} מתוך 3 שדות. חפש את המידע החסר באתר who.is`);
+    }
+}
+
+// Check IP address format
+function checkIPAddress(inputId) {
+    const input = document.getElementById(inputId);
+    const feedback = document.getElementById('feedback-' + inputId.replace('answer-', ''));
+    const value = input.value.trim();
+
+    // Simple IP validation - should have numbers and dots
+    const ipPattern = /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/;
+
+    if (ipPattern.test(value)) {
+        if (feedback) {
+            feedback.className = 'feedback correct';
+            feedback.textContent = 'נכון! זו כתובת IP תקינה.';
+        }
+        showPopup(true, 'מצוין! מצאת כתובת IP של youtube.com');
+    } else {
+        if (feedback) {
+            feedback.className = 'feedback incorrect';
+            feedback.textContent = 'הפורמט לא נכון. כתובת IP נראית כמו: 142.250.185.46';
+        }
+        showPopup(false, 'כתובת IP צריכה להיות בפורמט xxx.xxx.xxx.xxx');
+    }
+}
+
+// Check IP table
+function checkIPTable() {
+    const fb = document.getElementById('ip-fb').value.trim();
+    const mc = document.getElementById('ip-mc').value.trim();
+    const feedback = document.getElementById('feedback-ip-table');
+    const ipPattern = /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/;
+
+    let valid = 0;
+    if (ipPattern.test(fb)) valid++;
+    if (ipPattern.test(mc)) valid++;
+
+    if (valid === 2) {
+        feedback.className = 'feedback correct';
+        feedback.textContent = 'מצוין! מצאת את כתובות ה-IP של שני האתרים.';
+        showPopup(true, 'כל הכבוד! עכשיו אתה יודע איך למצוא את כתובת ה-IP של כל אתר.');
+    } else {
+        feedback.className = 'feedback incorrect';
+        feedback.textContent = `מצאת ${valid} מתוך 2. המשך לחפש ב-dnschecker.org`;
+        showPopup(false, `מצאת ${valid} מתוך 2 כתובות IP תקינות.`);
+    }
+}
+
+// Check Linux commands
+function checkLinuxCommands() {
+    const whoami = document.getElementById('cmd-whoami').value.trim().toLowerCase();
+    const pwd = document.getElementById('cmd-pwd').value.trim();
+    const ls = document.getElementById('cmd-ls').value.trim();
+    const date = document.getElementById('cmd-date').value.trim();
+
+    const feedback = document.getElementById('feedback-linux');
+    let correct = 0;
+
+    if (whoami === 'root') correct++;
+    if (pwd === '/root' || pwd === '~') correct++;
+    if (ls) correct++; // Any answer is ok for ls
+    if (date) correct++; // Any answer is ok for date
+
+    if (correct >= 3) {
+        feedback.className = 'feedback correct';
+        feedback.textContent = 'מעולה! הרצת את הפקודות בהצלחה!';
+        showPopup(true, 'מצוין! עכשיו אתה יודע להשתמש בטרמינל לינוקס!');
+    } else {
+        feedback.className = 'feedback incorrect';
+        feedback.textContent = 'כמה תשובות חסרות או שגויות. נסה להריץ את הפקודות שוב.';
+        showPopup(false, 'נסה להריץ את הפקודות בטרמינל הלינוקס ב-bellard.org/jslinux');
+    }
+}
+
+// Check number in range
+function checkNumberRange(inputId, min, max, successMsg, failMsg) {
+    const input = document.getElementById(inputId);
+    const feedback = document.getElementById('feedback-' + inputId.replace('answer-', ''));
+    const value = parseInt(input.value.trim());
+
+    if (isNaN(value)) {
+        showPopup(false, 'אנא הכנס מספר');
+        return;
+    }
+
+    const isCorrect = value >= min && value <= max;
+
+    if (feedback) {
+        feedback.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+        feedback.textContent = isCorrect ? successMsg : failMsg;
+    }
+
+    showPopup(isCorrect, isCorrect ? successMsg : failMsg);
+}
+
+// Check CTF flag format
+function checkFlag(inputId) {
+    const input = document.getElementById(inputId);
+    const feedback = document.getElementById('feedback-' + inputId.replace('answer-', ''));
+    const value = input.value.trim();
+
+    // Check if it starts with picoCTF{ and ends with }
+    const flagPattern = /^picoCTF\{.+\}$/;
+
+    if (flagPattern.test(value)) {
+        if (feedback) {
+            feedback.className = 'feedback correct';
+            feedback.textContent = '🎉 Flag תקין! כל הכבוד!';
+        }
+        showPopup(true, 'מצוין! מצאת flag בפורמט הנכון! עכשיו הכנס אותו באתר PicoCTF');
+    } else if (value.includes('picoCTF') || value.includes('pico')) {
+        if (feedback) {
+            feedback.className = 'feedback partial';
+            feedback.textContent = 'כמעט! וודא שה-flag בפורמט: picoCTF{...}';
+        }
+        showPopup(false, 'כמעט! ה-flag צריך להיות בפורמט picoCTF{משהו_בפנים}');
+    } else {
+        if (feedback) {
+            feedback.className = 'feedback incorrect';
+            feedback.textContent = 'לא נכון. ה-flag מתחיל ב-picoCTF{';
+        }
+        showPopup(false, 'ה-flag צריך להתחיל ב-picoCTF{ ולהסתיים ב-}');
+    }
+}
+
+// Allow Enter key to submit
+document.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter' && e.target.tagName === 'INPUT') {
+        const btn = e.target.parentElement.querySelector('.check-btn');
+        if (btn) btn.click();
+    }
+});
+
+// Close popup with Escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closePopup();
+});
+</script>
+
+</body>
+</html>

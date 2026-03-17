@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מדריך שדרוג שרת דיסקורד</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+            line-height: 1.8;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #36393f;
+            color: #dcddde;
+        }
+        h1, h2, h3 {
+            color: #7289da;
+            border-bottom: 2px solid #4f545c;
+            padding-bottom: 10px;
+        }
+        h1 { font-size: 2em; color: #5865F2; }
+        h2 { font-size: 1.5em; margin-top: 40px; }
+        h3 { font-size: 1.2em; border-bottom: 1px solid #4f545c; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: #2f3136;
+            direction: rtl;
+        }
+        th, td {
+            border: 1px solid #4f545c;
+            padding: 12px;
+            text-align: right;
+        }
+        th {
+            background: #5865F2;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background: #36393f;
+        }
+
+        pre {
+            background: #2f3136;
+            color: #b9bbbe;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #4f545c;
+            overflow-x: auto;
+            direction: ltr;
+            text-align: left;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            line-height: 1.4;
+            unicode-bidi: isolate;
+            white-space: pre;
+            display: block;
+            width: 100%;
+        }
+
+        code {
+            background: #2f3136;
+            color: #7289da;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            direction: ltr;
+        }
+
+        .exercise {
+            background: linear-gradient(135deg, #2f3136, #36393f);
+            border: 2px solid #5865F2;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        .exercise h3 {
+            color: #5865F2;
+            border: none;
+            margin-top: 0;
+        }
+
+        .answer-box {
+            background: #2f3136;
+            border: 2px dashed #4f545c;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            min-height: 40px;
+        }
+
+        .answer-box::before {
+            content: "התשובה שלך: ";
+            color: #72767d;
+        }
+
+        .checkpoint {
+            background: linear-gradient(135deg, #2d4a2d, #3a5a3a);
+            border-left: 4px solid #43b581;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px 0 0 8px;
+        }
+
+        .warning {
+            background: linear-gradient(135deg, #4a3d2d, #5a4d3a);
+            border-left: 4px solid #faa61a;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px 0 0 8px;
+        }
+
+        .header-info {
+            background: #2f3136;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border: 1px solid #4f545c;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid #4f545c;
+            margin: 30px 0;
+        }
+
+        .mission-header {
+            background: linear-gradient(135deg, #5865F2, #7289DA);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 30px 0 20px 0;
+        }
+
+        .mission-header h2 {
+            color: white;
+            border: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .what-you-see {
+            background: #202225;
+            border: 1px solid #5865F2;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        .what-you-see::before {
+            content: "מה אתה אמור לראות:";
+            display: block;
+            color: #72767d;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+        }
+
+        ol.steps {
+            counter-reset: step-counter;
+            list-style: none;
+            padding: 0;
+        }
+
+        ol.steps li {
+            counter-increment: step-counter;
+            padding: 15px;
+            padding-right: 50px;
+            position: relative;
+            background: #2f3136;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 1px solid #4f545c;
+        }
+
+        ol.steps li::before {
+            content: counter(step-counter);
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #5865F2;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            font-weight: bold;
+        }
+
+        strong {
+            color: #ffffff;
+        }
+
+        a {
+            color: #00aff4;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .mission-complete {
+            background: linear-gradient(135deg, #3d2f5a, #4a3d6a);
+            border: 2px solid #9b59b6;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .time-estimate {
+            background: #4f545c;
+            color: #b9bbbe;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            display: inline-block;
+        }
+
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+        .checklist li {
+            padding: 8px 0;
+            border-bottom: 1px dashed #4f545c;
+        }
+        .checklist li:before {
+            content: "☐ ";
+            font-size: 1.2em;
+            color: #5865F2;
+        }
+
+        /* Interactive Answer Box Styles */
+        .answer-box {
+            background: #2f3136;
+            border: 2px dashed #4f545c;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            min-height: 40px;
+        }
+
+        .answer-box::before {
+            content: none;
+        }
+
+        .answer-box label {
+            display: block;
+            color: #72767d;
+            margin-bottom: 8px;
+        }
+
+        .answer-box input[type="text"],
+        .answer-box textarea {
+            width: 100%;
+            padding: 10px;
+            background: #202225;
+            border: 1px solid #4f545c;
+            border-radius: 4px;
+            color: #dcddde;
+            font-size: 14px;
+            font-family: inherit;
+            direction: rtl;
+        }
+
+        .answer-box input[type="text"]:focus,
+        .answer-box textarea:focus {
+            outline: none;
+            border-color: #5865F2;
+        }
+
+        .answer-box .check-btn {
+            margin-top: 10px;
+            padding: 8px 20px;
+            background: #5865F2;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        .answer-box .check-btn:hover {
+            background: #4752c4;
+        }
+
+        .answer-box .feedback {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .answer-box .feedback.correct {
+            display: block;
+            background: #2d4a2d;
+            border: 1px solid #43b581;
+            color: #43b581;
+        }
+
+        .answer-box .feedback.incorrect {
+            display: block;
+            background: #4a2d2d;
+            border: 1px solid #f04747;
+            color: #f04747;
+        }
+
+        /* Popup Modal */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .popup-overlay.show {
+            display: flex;
+        }
+
+        .popup {
+            background: #2f3136;
+            border: 2px solid #4f545c;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 400px;
+            text-align: center;
+            animation: popIn 0.3s ease;
+        }
+
+        @keyframes popIn {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .popup.correct {
+            border-color: #43b581;
+        }
+
+        .popup.incorrect {
+            border-color: #f04747;
+        }
+
+        .popup .emoji {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .popup h3 {
+            border: none;
+            margin: 0 0 10px 0;
+            padding: 0;
+        }
+
+        .popup.correct h3 {
+            color: #43b581;
+        }
+
+        .popup.incorrect h3 {
+            color: #f04747;
+        }
+
+        .popup p {
+            margin: 0 0 20px 0;
+            color: #b9bbbe;
+        }
+
+        .popup button {
+            padding: 10px 30px;
+            background: #4f545c;
+            color: #dcddde;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .popup button:hover {
+            background: #5865F2;
+        }
+
+        @media print {
+            body { background: white; color: #333; }
+            pre { background: #eee; color: #333; border-color: #ccc; }
+        }
+    </style>
+</head>
+<body>
+
+<h1>מדריך שדרוג שרת דיסקורד</h1>
+<h2 style="border: none; margin-top: 0; color: #72767d;">סדנה מעשית - הפוך את השרת שלך לאפי</h2>
+
+<div class="header-info">
+    <p><strong>בשביל:</strong> ליאון</p>
+    <p><strong>מה תעשה:</strong> תרגילים מעשיים לשדרוג שרת דיסקורד</p>
+    <p><strong>מה תצטרך:</strong> מחשב עם דפדפן וחשבון דיסקורד</p>
+</div>
+
+<hr>
+
+<!-- ==================== MISSION 1 ==================== -->
+
+<div class="mission-header">
+    <h2>משימה 1: יצירת שרת וסידור ערוצים</h2>
+    <p class="time-estimate">⏱️ 10 דקות</p>
+</div>
+
+<p>שרת מסודר עוזר לחברים למצוא את מה שהם מחפשים. נלמד ליצור קטגוריות וערוצים.</p>
+
+<div class="exercise">
+    <h3>תרגיל 1.1: יצירת קטגוריות</h3>
+
+    <ol class="steps">
+        <li>פתח את דיסקורד ולך לשרת שלך</li>
+        <li>לחץ <strong>קליק ימני</strong> על מקום ריק ברשימת הערוצים</li>
+        <li>בחר <strong>"Create Category"</strong></li>
+        <li>כתוב את השם: <code>📌 INFO</code></li>
+        <li>לחץ <strong>"Create Category"</strong></li>
+    </ol>
+
+    <div class="what-you-see">
+        <pre>
+📌 INFO
+   (ריק - נוסיף ערוצים בהמשך)
+        </pre>
+    </div>
+
+    <p><strong>עכשיו צור עוד 3 קטגוריות:</strong></p>
+    <table>
+        <tr>
+            <th>שם הקטגוריה</th>
+            <th>יצרת? ✓</th>
+        </tr>
+        <tr>
+            <td><code>💬 CHAT</code></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><code>🎮 GAMES</code></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><code>🔊 VOICE</code></td>
+            <td></td>
+        </tr>
+    </table>
+</div>
+
+<div class="checkpoint">
+    ✅ <strong>עצור!</strong> בדוק שיש לך 4 קטגוריות ריקות בשרת.
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 1.2: יצירת ערוצים בתוך קטגוריות</h3>
+
+    <ol class="steps">
+        <li>לחץ <strong>קליק ימני</strong> על הקטגוריה <code>📌 INFO</code></li>
+        <li>בחר <strong>"Create Channel"</strong></li>
+        <li>וודא ש-<strong>"Text"</strong> מסומן</li>
+        <li>כתוב את השם: <code>rules</code></li>
+        <li>לחץ <strong>"Create Channel"</strong></li>
+    </ol>
+
+    <p><strong>צור את כל הערוצים הבאים:</strong></p>
+
+    <table>
+        <tr>
+            <th>קטגוריה</th>
+            <th>ערוצים ליצור</th>
+        </tr>
+        <tr>
+            <td>📌 INFO</td>
+            <td><code>#rules</code>, <code>#announcements</code>, <code>#roles</code></td>
+        </tr>
+        <tr>
+            <td>💬 CHAT</td>
+            <td><code>#general</code>, <code>#memes</code>, <code>#clips</code></td>
+        </tr>
+        <tr>
+            <td>🎮 GAMES</td>
+            <td><code>#minecraft</code>, <code>#fortnite</code>, <code>#looking-for-group</code></td>
+        </tr>
+        <tr>
+            <td>🔊 VOICE</td>
+            <td>ערוצים קוליים: <code>General Voice</code>, <code>Gaming 1</code>, <code>Gaming 2</code></td>
+        </tr>
+    </table>
+
+    <div class="warning">
+        <p><strong>שים לב:</strong> לערוצים קוליים, בחר <strong>"Voice"</strong> במקום "Text" כשאתה יוצר ערוץ!</p>
+    </div>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 1.3: בדיקה עצמית</h3>
+
+    <p><strong>כמה ערוצי טקסט יש לך עכשיו בשרת?</strong></p>
+    <div class="answer-box">
+        <label>התשובה שלך:</label>
+        <input type="text" id="answer-1-3a" placeholder="מספר...">
+        <button class="check-btn" onclick="checkAnswer('answer-1-3a', ['9'], 'נכון! 9 ערוצי טקסט (rules, announcements, roles, general, memes, clips, minecraft, fortnite, looking-for-group)', 'בדוק שוב - צריכים להיות 9 ערוצי טקסט אם יצרת את כולם')">בדוק תשובה</button>
+        <div class="feedback" id="feedback-1-3a"></div>
+    </div>
+
+    <p><strong>כמה ערוצים קוליים יש לך?</strong></p>
+    <div class="answer-box">
+        <label>התשובה שלך:</label>
+        <input type="text" id="answer-1-3b" placeholder="מספר...">
+        <button class="check-btn" onclick="checkAnswer('answer-1-3b', ['3'], 'נכון! 3 ערוצים קוליים (General Voice, Gaming 1, Gaming 2)', 'בדוק שוב - צריכים להיות 3 ערוצים קוליים')">בדוק תשובה</button>
+        <div class="feedback" id="feedback-1-3b"></div>
+    </div>
+</div>
+
+<div class="mission-complete">
+    <h3>🎉 משימה 1 הושלמה!</h3>
+    <p>למדת: איך ליצור קטגוריות וערוצים מסודרים בשרת.</p>
+</div>
+
+<hr>
+
+<!-- ==================== MISSION 2 ==================== -->
+
+<div class="mission-header">
+    <h2>משימה 2: יצירת תפקידים (Roles)</h2>
+    <p class="time-estimate">⏱️ 10 דקות</p>
+</div>
+
+<p>תפקידים מאפשרים לחברים להראות באילו משחקים הם משחקים, ולקבל גישה לערוצים מיוחדים.</p>
+
+<div class="exercise">
+    <h3>תרגיל 2.1: יצירת תפקיד ראשון</h3>
+
+    <ol class="steps">
+        <li>לחץ על <strong>שם השרת</strong> למעלה</li>
+        <li>בחר <strong>"Server Settings"</strong></li>
+        <li>בתפריט השמאלי, לחץ על <strong>"Roles"</strong></li>
+        <li>לחץ על <strong>"Create Role"</strong></li>
+        <li>בשם התפקיד, כתוב: <code>Minecraft</code></li>
+        <li>בחר <strong>צבע ירוק</strong> 🟢</li>
+        <li>גלול למטה ולחץ <strong>"Save Changes"</strong></li>
+    </ol>
+
+    <div class="what-you-see">
+        <pre>
+ROLES
+├── @everyone
+└── @Minecraft (ירוק)
+        </pre>
+    </div>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 2.2: צור עוד תפקידים</h3>
+
+    <p>חזור על התהליך וצור את התפקידים הבאים:</p>
+
+    <table>
+        <tr>
+            <th>שם התפקיד</th>
+            <th>צבע</th>
+            <th>יצרת? ✓</th>
+        </tr>
+        <tr>
+            <td><code>Fortnite</code></td>
+            <td>🟣 סגול</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><code>Valorant</code></td>
+            <td>🔴 אדום</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><code>Roblox</code></td>
+            <td>🟡 צהוב</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><code>GTA V</code></td>
+            <td>🔵 כחול</td>
+            <td></td>
+        </tr>
+    </table>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 2.3: תן לעצמך תפקיד</h3>
+
+    <ol class="steps">
+        <li>עדיין ב-Server Settings ← Roles</li>
+        <li>לחץ על התפקיד <strong>"Minecraft"</strong></li>
+        <li>לחץ על הלשונית <strong>"Manage Members"</strong></li>
+        <li>לחץ על <strong>"Add Members"</strong></li>
+        <li>בחר את <strong>עצמך</strong></li>
+        <li>לחץ <strong>"Add"</strong></li>
+    </ol>
+
+    <p><strong>איזה צבע יש לשם שלך עכשיו בשרת?</strong></p>
+    <div class="answer-box">
+        <label>התשובה שלך:</label>
+        <input type="text" id="answer-2-3" placeholder="צבע...">
+        <button class="check-btn" onclick="checkAnswer('answer-2-3', ['ירוק', 'green', 'ירו'], 'נכון! השם שלך ירוק כי יש לך את תפקיד Minecraft 🟢', 'אם נתת לעצמך את תפקיד Minecraft, הצבע צריך להיות ירוק', true)">בדוק תשובה</button>
+        <div class="feedback" id="feedback-2-3"></div>
+    </div>
+</div>
+
+<div class="mission-complete">
+    <h3>🎉 משימה 2 הושלמה!</h3>
+    <p>למדת: איך ליצור תפקידים צבעוניים ולתת אותם לחברים.</p>
+</div>
+
+<hr>
+
+<!-- ==================== MISSION 3 ==================== -->
+
+<div class="mission-header">
+    <h2>משימה 3: כתיבת חוקים לשרת</h2>
+    <p class="time-estimate">⏱️ 10 דקות</p>
+</div>
+
+<p>חוקים ברורים עוזרים לשמור על השרת נעים ובטוח לכולם.</p>
+
+<div class="exercise">
+    <h3>תרגיל 3.1: הפיכת ערוץ לקריאה בלבד</h3>
+
+    <ol class="steps">
+        <li>לחץ <strong>קליק ימני</strong> על ערוץ <code>#rules</code></li>
+        <li>בחר <strong>"Edit Channel"</strong></li>
+        <li>לחץ על <strong>"Permissions"</strong> בצד שמאל</li>
+        <li>תחת <strong>"@everyone"</strong>, מצא את <strong>"Send Messages"</strong></li>
+        <li>לחץ על ה-<strong>X האדום</strong> (לחסום)</li>
+        <li>לחץ <strong>"Save Changes"</strong></li>
+    </ol>
+
+    <div class="what-you-see">
+        <pre>
+Send Messages
+[✓]  [/]  [X] ← לחץ על ה-X האדום
+        </pre>
+    </div>
+
+    <p><strong>עכשיו רק אתה יכול לכתוב בערוץ החוקים!</strong></p>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 3.2: כתיבת החוקים</h3>
+
+    <ol class="steps">
+        <li>לך לערוץ <code>#rules</code></li>
+        <li>העתק את הטקסט הבא ושלח אותו כהודעה:</li>
+    </ol>
+
+    <pre style="direction: rtl; text-align: right;">
+# 🎮 חוקי השרת 🎮
+
+**1. תכבדו אחד את השני**
+אין שנאה, בריונות או רעילות
+
+**2. אין ספאם**
+אל תציפו את הצ'אט בהודעות חוזרות
+
+**3. ערוץ נכון = נושא נכון**
+#minecraft לדיבור על מיינקראפט
+
+**4. אין צ'יטים**
+אנחנו משחקים נקי פה
+
+**5. תהנו! 🎉**
+בשביל זה אנחנו פה
+
+---
+הפרת חוקים = אזהרה ← השתקה ← קיק ← באן
+    </pre>
+
+    <p><strong>שלחת את ההודעה? כן / לא</strong></p>
+    <div class="answer-box">
+        <label>התשובה שלך:</label>
+        <input type="text" id="answer-3-2" placeholder="כן או לא">
+        <button class="check-btn" onclick="checkAnswer('answer-3-2', ['כן', 'yes', 'כ'], 'מעולה! יש לך עכשיו חוקים רשמיים בשרת!', 'שלח את ההודעה לערוץ #rules')">בדוק תשובה</button>
+        <div class="feedback" id="feedback-3-2"></div>
+    </div>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 3.3: הצמדת ההודעה</h3>
+
+    <ol class="steps">
+        <li>רחף עם העכבר מעל הודעת החוקים</li>
+        <li>לחץ על <strong>שלוש הנקודות</strong> (...) שמופיעות</li>
+        <li>בחר <strong>"Pin Message"</strong></li>
+        <li>אשר</li>
+    </ol>
+
+    <p><strong>עכשיו כל אחד יכול למצוא את החוקים בלחיצה על סמל הפין!</strong></p>
+</div>
+
+<div class="mission-complete">
+    <h3>🎉 משימה 3 הושלמה!</h3>
+    <p>למדת: איך ליצור ערוץ קריאה בלבד ולכתוב חוקים.</p>
+</div>
+
+<hr>
+
+<!-- ==================== MISSION 4 ==================== -->
+
+<div class="mission-header">
+    <h2>משימה 4: הוספת בוט MEE6</h2>
+    <p class="time-estimate">⏱️ 15 דקות</p>
+</div>
+
+<p>בוטים יכולים לעשות דברים אוטומטיים בשרת - כמו לברך חברים חדשים!</p>
+
+<div class="exercise">
+    <h3>תרגיל 4.1: הזמנת הבוט לשרת</h3>
+
+    <ol class="steps">
+        <li>פתח לשונית חדשה בדפדפן</li>
+        <li>גלוש לאתר: <strong>mee6.xyz</strong></li>
+        <li>לחץ על <strong>"Add to Discord"</strong></li>
+        <li>בחלון שנפתח, בחר את <strong>השרת שלך</strong></li>
+        <li>לחץ <strong>"Continue"</strong></li>
+        <li>לחץ <strong>"Authorize"</strong></li>
+        <li>השלם את ה-CAPTCHA אם יש</li>
+    </ol>
+
+    <div class="what-you-see">
+        <pre>
+רשימת החברים בשרת:
+├── אתה
+└── MEE6 (בוט) ← חדש!
+        </pre>
+    </div>
+
+    <p><strong>האם MEE6 מופיע ברשימת החברים של השרת? כן / לא</strong></p>
+    <div class="answer-box">
+        <label>התשובה שלך:</label>
+        <input type="text" id="answer-4-1" placeholder="כן או לא">
+        <button class="check-btn" onclick="checkAnswer('answer-4-1', ['כן', 'yes', 'כ'], '🎉 מעולה! הבוט הצטרף לשרת בהצלחה!', 'נסה שוב - וודא שבחרת את השרת הנכון כשהזמנת את MEE6')">בדוק תשובה</button>
+        <div class="feedback" id="feedback-4-1"></div>
+    </div>
+</div>
+
+<div class="checkpoint">
+    ✅ <strong>עצור!</strong> אם MEE6 לא מופיע, חזור לשלב 1 ונסה שוב.
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 4.2: הגדרת הודעת ברוכים הבאים</h3>
+
+    <ol class="steps">
+        <li>גלוש ל: <strong>mee6.xyz/dashboard</strong></li>
+        <li>לחץ על <strong>השרת שלך</strong></li>
+        <li>בתפריט השמאלי, מצא <strong>"Welcome"</strong></li>
+        <li>הפעל את האפשרות - לחץ על <strong>ON</strong></li>
+        <li>בחר ערוץ: <strong>#general</strong> (או צור #welcome)</li>
+        <li>בתיבת הטקסט, כתוב:</li>
+    </ol>
+
+    <pre style="direction: rtl; text-align: right;">
+🎮 ברוכים הבאים {user} לשרת!
+
+בחרו את המשחקים שלכם ב #roles
+קראו את החוקים ב #rules
+
+תהנו! 🎉
+    </pre>
+
+    <ol class="steps" start="7">
+        <li>לחץ <strong>"Save"</strong></li>
+    </ol>
+
+    <p><strong>מה המשמעות של {user} בהודעה?</strong></p>
+    <div class="answer-box">
+        <label>התשובה שלך:</label>
+        <input type="text" id="answer-4-2" placeholder="מה זה מייצג...">
+        <button class="check-btn" onclick="checkAnswer('answer-4-2', ['שם', 'משתמש', 'user', 'name', 'מי', 'החבר', 'הצטרף', 'mention', 'תיוג'], 'נכון! {user} מוחלף בשם או תיוג של המשתמש שהצטרף לשרת!', 'רמז: מה יופיע במקום {user} כשמישהו יצטרף?', true)">בדוק תשובה</button>
+        <div class="feedback" id="feedback-4-2"></div>
+    </div>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 4.3: בדיקת הבוט</h3>
+
+    <p>כדי לבדוק שזה עובד, תצטרך:</p>
+    <ol class="steps">
+        <li>לבקש מחבר להצטרף לשרת</li>
+        <li>או: ליצור חשבון דיסקורד שני ולהצטרף איתו</li>
+        <li>לראות אם הודעת הברכה מופיעה!</li>
+    </ol>
+
+    <p><strong>הצלחת לראות הודעת ברכה? כן / לא / לא בדקתי עדיין</strong></p>
+    <div class="answer-box">
+        <label>התשובה שלך:</label>
+        <input type="text" id="answer-4-3" placeholder="כן / לא / לא בדקתי">
+        <button class="check-btn" onclick="checkWelcomeTest('answer-4-3')">בדוק תשובה</button>
+        <div class="feedback" id="feedback-4-3"></div>
+    </div>
+</div>
+
+<div class="mission-complete">
+    <h3>🎉 משימה 4 הושלמה!</h3>
+    <p>למדת: איך להוסיף בוט ולהגדיר הודעות אוטומטיות.</p>
+</div>
+
+<hr>
+
+<!-- ==================== MISSION 5 ==================== -->
+
+<div class="mission-header">
+    <h2>משימה 5: תפקידים עם ריאקשן (מתקדם)</h2>
+    <p class="time-estimate">⏱️ 15 דקות</p>
+</div>
+
+<p>חברים יוכלו ללחוץ על אימוג'י ולקבל תפקיד אוטומטית - בלי לבקש ממך!</p>
+
+<div class="exercise">
+    <h3>תרגיל 5.1: הזמנת Carl-bot</h3>
+
+    <ol class="steps">
+        <li>פתח לשונית חדשה</li>
+        <li>גלוש ל: <strong>carl.gg</strong></li>
+        <li>לחץ <strong>"Invite"</strong></li>
+        <li>בחר את השרת שלך</li>
+        <li>לחץ <strong>"Authorize"</strong></li>
+    </ol>
+
+    <p><strong>האם Carl-bot מופיע בשרת? כן / לא</strong></p>
+    <div class="answer-box">
+        <label>התשובה שלך:</label>
+        <input type="text" id="answer-5-1" placeholder="כן או לא">
+        <button class="check-btn" onclick="checkAnswer('answer-5-1', ['כן', 'yes', 'כ'], 'מעולה! Carl-bot מוכן לעזור לך ליצור Reaction Roles!', 'נסה שוב - לך ל-carl.gg ולחץ Invite')">בדוק תשובה</button>
+        <div class="feedback" id="feedback-5-1"></div>
+    </div>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 5.2: יצירת הודעה לבחירת תפקידים</h3>
+
+    <ol class="steps">
+        <li>לך לערוץ <code>#roles</code> בשרת</li>
+        <li>שלח את ההודעה הבאה:</li>
+    </ol>
+
+    <pre style="direction: rtl; text-align: right;">
+# 🎮 בחרו את המשחקים שלכם 🎮
+
+לחצו על האימוג'י כדי לקבל תפקיד!
+
+🟢 = Minecraft
+🟣 = Fortnite
+🔴 = Valorant
+🟡 = Roblox
+🔵 = GTA V
+    </pre>
+
+    <ol class="steps" start="3">
+        <li>אחרי ששלחת, <strong>הוסף ריאקשנים להודעה שלך</strong>:</li>
+        <li>לחץ על ההודעה ← הוסף ריאקשן ← 🟢</li>
+        <li>חזור והוסף: 🟣, 🔴, 🟡, 🔵</li>
+    </ol>
+
+    <div class="what-you-see">
+        <pre>
+ההודעה שלך
+🟢 🟣 🔴 🟡 🔵  ← ריאקשנים מתחת להודעה
+        </pre>
+    </div>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 5.3: חיבור הריאקשנים לתפקידים</h3>
+
+    <ol class="steps">
+        <li>העתק את <strong>הלינק להודעה</strong>:
+            <ul>
+                <li>קליק ימני על ההודעה ← "Copy Message Link"</li>
+            </ul>
+        </li>
+        <li>גלוש ל: <strong>carl.gg/dashboard</strong></li>
+        <li>לחץ על השרת שלך</li>
+        <li>מצא <strong>"Reaction Roles"</strong> בתפריט</li>
+        <li>לחץ <strong>"Create new reaction role"</strong></li>
+        <li>הדבק את הלינק להודעה</li>
+        <li>לכל אימוג'י, בחר את התפקיד:
+            <ul>
+                <li>🟢 → Minecraft</li>
+                <li>🟣 → Fortnite</li>
+                <li>🔴 → Valorant</li>
+                <li>🟡 → Roblox</li>
+                <li>🔵 → GTA V</li>
+            </ul>
+        </li>
+        <li>לחץ <strong>"Save"</strong></li>
+    </ol>
+</div>
+
+<div class="exercise">
+    <h3>תרגיל 5.4: בדיקה!</h3>
+
+    <ol class="steps">
+        <li>לך לערוץ <code>#roles</code></li>
+        <li>לחץ על אימוג'י 🟢 בהודעה שיצרת</li>
+        <li>בדוק אם קיבלת את התפקיד <strong>"Minecraft"</strong>!</li>
+    </ol>
+
+    <p><strong>האם הצבע של השם שלך השתנה? כן / לא</strong></p>
+    <div class="answer-box">
+        <label>התשובה שלך:</label>
+        <input type="text" id="answer-5-4" placeholder="כן או לא">
+        <button class="check-btn" onclick="checkAnswer('answer-5-4', ['כן', 'yes', 'כ'], '🎉 מדהים! עכשיו כל אחד יכול לבחור תפקידים בעצמו פשוט ע\"י לחיצה על אימוג\'י!', 'אם לא השתנה, וודא שחיברת את האימוג\'י לתפקיד נכון ב-Carl-bot dashboard')">בדוק תשובה</button>
+        <div class="feedback" id="feedback-5-4"></div>
+    </div>
+</div>
+
+<div class="mission-complete">
+    <h3>🎉 משימה 5 הושלמה!</h3>
+    <p>למדת: איך לתת לחברים לבחור תפקידים בעצמם!</p>
+</div>
+
+<hr>
+
+<!-- ==================== סיכום ==================== -->
+
+<h2>סיכום: מה למדת היום</h2>
+
+<table>
+    <tr>
+        <th>משימה</th>
+        <th>מה למדת</th>
+        <th>הושלם?</th>
+    </tr>
+    <tr>
+        <td>1. ערוצים וקטגוריות</td>
+        <td>סידור השרת עם קטגוריות</td>
+        <td>☐</td>
+    </tr>
+    <tr>
+        <td>2. תפקידים</td>
+        <td>יצירת תפקידים צבעוניים</td>
+        <td>☐</td>
+    </tr>
+    <tr>
+        <td>3. חוקים</td>
+        <td>ערוץ קריאה בלבד, הצמדת הודעות</td>
+        <td>☐</td>
+    </tr>
+    <tr>
+        <td>4. בוט MEE6</td>
+        <td>הודעות ברוכים הבאים אוטומטיות</td>
+        <td>☐</td>
+    </tr>
+    <tr>
+        <td>5. Reaction Roles</td>
+        <td>תפקידים אוטומטיים עם אימוג'י</td>
+        <td>☐</td>
+    </tr>
+</table>
+
+<hr>
+
+<h2>מה הלאה?</h2>
+
+<p>אם סיימת את כל המשימות, הנה רעיונות להמשך:</p>
+
+<ul class="checklist">
+    <li>הוסף אייקון ובאנר לשרת (Server Settings ← Overview)</li>
+    <li>צור אימוג'ים מותאמים אישית (Server Settings ← Emoji)</li>
+    <li>הוסף בוט מוזיקה (חפש "Jockie Music Discord bot")</li>
+    <li>הזמן חברים לשרת!</li>
+</ul>
+
+<hr>
+
+<div style="text-align: center; padding: 20px;">
+    <p style="color: #5865F2; font-size: 1.2em;"><strong>השרת שלך, החוקים שלך, הקהילה שלך!</strong></p>
+    <p style="color: #72767d;">עכשיו לך תזמין חברים ותתחיל לשחק! 🎮</p>
+</div>
+
+<!-- Popup Modal -->
+<div class="popup-overlay" id="popup-overlay" onclick="closePopup()">
+    <div class="popup" id="popup" onclick="event.stopPropagation()">
+        <div class="emoji" id="popup-emoji"></div>
+        <h3 id="popup-title"></h3>
+        <p id="popup-message"></p>
+        <button onclick="closePopup()">סגור</button>
+    </div>
+</div>
+
+<script>
+// Show popup with feedback
+function showPopup(isCorrect, message) {
+    const overlay = document.getElementById('popup-overlay');
+    const popup = document.getElementById('popup');
+    const emoji = document.getElementById('popup-emoji');
+    const title = document.getElementById('popup-title');
+    const msg = document.getElementById('popup-message');
+
+    popup.className = 'popup ' + (isCorrect ? 'correct' : 'incorrect');
+    emoji.textContent = isCorrect ? '🎉' : '🤔';
+    title.textContent = isCorrect ? 'נכון!' : 'לא בדיוק...';
+    msg.textContent = message;
+
+    overlay.classList.add('show');
+}
+
+function closePopup() {
+    document.getElementById('popup-overlay').classList.remove('show');
+}
+
+// Main answer checking function
+function checkAnswer(inputId, correctAnswers, successMsg, failMsg, partialMatch = false) {
+    const input = document.getElementById(inputId);
+    const feedback = document.getElementById('feedback-' + inputId.replace('answer-', ''));
+    const value = input.value.trim().toLowerCase();
+
+    if (!value) {
+        showPopup(false, 'אנא הכנס תשובה');
+        return;
+    }
+
+    let isCorrect = false;
+
+    if (partialMatch) {
+        // Check if any of the correct answers is contained in the input
+        isCorrect = correctAnswers.some(answer =>
+            value.includes(answer.toLowerCase())
+        );
+    } else {
+        // Exact match (case insensitive)
+        isCorrect = correctAnswers.some(answer =>
+            value === answer.toLowerCase()
+        );
+    }
+
+    if (feedback) {
+        feedback.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+        feedback.textContent = isCorrect ? successMsg : failMsg;
+    }
+
+    showPopup(isCorrect, isCorrect ? successMsg : failMsg);
+}
+
+// Special check for welcome test (accepts multiple answers)
+function checkWelcomeTest(inputId) {
+    const input = document.getElementById(inputId);
+    const feedback = document.getElementById('feedback-' + inputId.replace('answer-', ''));
+    const value = input.value.trim().toLowerCase();
+
+    if (!value) {
+        showPopup(false, 'אנא הכנס תשובה');
+        return;
+    }
+
+    let message = '';
+    let isSuccess = true;
+
+    if (value.includes('כן') || value.includes('yes')) {
+        message = 'מעולה! הבוט עובד מושלם!';
+    } else if (value.includes('לא בדקתי') || value.includes('עדיין')) {
+        message = 'אין בעיה! תוכל לבדוק מאוחר יותר כשיצטרף חבר לשרת.';
+    } else if (value.includes('לא') || value.includes('no')) {
+        message = 'בדוק שהגדרת את הערוץ הנכון ושההודעה נשמרה. נסה שוב!';
+        isSuccess = false;
+    } else {
+        message = 'ענה כן, לא, או "לא בדקתי עדיין"';
+        isSuccess = false;
+    }
+
+    if (feedback) {
+        feedback.className = 'feedback ' + (isSuccess ? 'correct' : 'incorrect');
+        feedback.textContent = message;
+    }
+
+    showPopup(isSuccess, message);
+}
+
+// Allow Enter key to submit
+document.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter' && e.target.tagName === 'INPUT') {
+        const btn = e.target.parentElement.querySelector('.check-btn');
+        if (btn) btn.click();
+    }
+});
+
+// Close popup with Escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closePopup();
+});
+</script>
+
+</body>
+</html>

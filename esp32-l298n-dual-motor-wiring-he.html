@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מדריך חיווט ESP32 + L298N לשני מנועים</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+            line-height: 1.8;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+            color: #333;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h1 { font-size: 2em; }
+        h2 { font-size: 1.5em; margin-top: 40px; }
+        h3 { font-size: 1.2em; border-bottom: 1px solid #bdc3c7; }
+
+        .ltr {
+            direction: ltr;
+            text-align: left;
+        }
+        .rtl {
+            direction: rtl;
+            text-align: right;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            direction: rtl;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: right;
+        }
+        th {
+            background: #3498db;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        pre {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            direction: ltr;
+            text-align: left;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            line-height: 1.4;
+            unicode-bidi: isolate;
+            white-space: pre;
+            display: block;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        code {
+            background: #ecf0f1;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            direction: ltr;
+        }
+
+        .checkpoint {
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px 0 0 8px;
+        }
+
+        .warning {
+            background: linear-gradient(135deg, #fff3cd, #ffeeba);
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px 0 0 8px;
+        }
+
+        .danger {
+            background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px 0 0 8px;
+        }
+
+        .exit {
+            background: linear-gradient(135deg, #d1ecf1, #bee5eb);
+            border-left: 4px solid #17a2b8;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px 0 0 8px;
+        }
+
+        .info-box {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+        .checklist li {
+            padding: 8px 0;
+            border-bottom: 1px dashed #ddd;
+        }
+        .checklist li:before {
+            content: "☐ ";
+            font-size: 1.2em;
+        }
+
+        .emoji-list {
+            list-style: none;
+            padding: 0;
+        }
+        .emoji-list li {
+            padding: 10px 0;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px solid #eee;
+            margin: 30px 0;
+        }
+
+        .step-badge {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+
+        strong {
+            color: #2c3e50;
+        }
+
+        .header-info {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .quick-ref {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: monospace;
+        }
+
+        @media print {
+            body { background: white; }
+            pre { background: #eee; color: #333; }
+        }
+    </style>
+</head>
+<body>
+
+<h1>מדריך חיווט ESP32 + L298N לשני מנועים</h1>
+<h2 style="border: none; margin-top: 0;">למכונית המחקר של מאיר (2 מנועים קדמיים)</h2>
+
+<div class="header-info">
+    <p><strong>פרויקט:</strong> מכונית נשלטת ESP32 עם מצלמה לצפייה בחיות בית</p>
+    <p><strong>מנועים:</strong> 2 מנועי DC בחזית המכונית (ללא מנועים אחוריים)</p>
+    <p><strong>מתח:</strong> סוללת Li-Po 3.7V</p>
+</div>
+
+<hr>
+
+<h2>מה תלמד</h2>
+<p>בסוף המדריך הזה, יהיה לך:</p>
+<ul class="emoji-list">
+    <li>ESP32 מופעל ועובד ✅</li>
+    <li>בקר מנועים L298N מחובר נכון ✅</li>
+    <li>שני מנועים מסתובבים באופן עצמאי ✅</li>
+    <li>הבנה איך החיווט עובד ✅</li>
+</ul>
+
+<hr>
+
+<h2>🔀 בחירה: איך להשתמש במדריך</h2>
+<p><strong>אפשרות א':</strong> לעקוב צעד אחר צעד (מומלץ בפעם הראשונה)</p>
+<p><strong>אפשרות ב':</strong> להשתמש בתרשימים כהתייחסות תוך כדי חיווט עצמאי</p>
+
+<hr>
+
+<h2>רכיבים נדרשים</h2>
+<table>
+    <tr>
+        <th>רכיב</th>
+        <th>כמות</th>
+        <th>הערות</th>
+    </tr>
+    <tr>
+        <td>ESP32 DevKit</td>
+        <td>1</td>
+        <td>כל לוח פיתוח ESP32</td>
+    </tr>
+    <tr>
+        <td>בקר מנועים L298N</td>
+        <td>1</td>
+        <td>הלוח האדום עם גוף קירור</td>
+    </tr>
+    <tr>
+        <td>מנועי DC</td>
+        <td>2</td>
+        <td>מנועי המכונית הקדמיים</td>
+    </tr>
+    <tr>
+        <td>סוללת Li-Po</td>
+        <td>1</td>
+        <td>3.7V (או 2S 7.4V לעוצמה רבה יותר)</td>
+    </tr>
+    <tr>
+        <td>חוטי מגשר</td>
+        <td>~10</td>
+        <td>Male-to-Female מומלץ</td>
+    </tr>
+    <tr>
+        <td>כבל USB</td>
+        <td>1</td>
+        <td>לתכנות ה-ESP32</td>
+    </tr>
+</table>
+
+<hr>
+
+<h2>הבנת בקר המנועים L298N</h2>
+<p>לפני החיווט, בוא נבין מה כל פין עושה:</p>
+
+<pre>
+╔═══════════════════════════════════════════════════════════════╗
+║                    L298N MOTOR DRIVER                         ║
+║                      (מבט מלמעלה)                             ║
+╠═══════════════════════════════════════════════════════════════╣
+║                                                               ║
+║   יציאת מנוע A              יציאת מנוע B                      ║
+║   ┌─────────────┐         ┌─────────────┐                     ║
+║   │ OUT1 │ OUT2 │         │ OUT3 │ OUT4 │                     ║
+║   └──┬──────┬───┘         └──┬──────┬───┘                     ║
+║      │      │                │      │                         ║
+║      ▼      ▼                ▼      ▼                         ║
+║   [חוטי מנוע A]           [חוטי מנוע B]                       ║
+║   (מנוע שמאל)             (מנוע ימין)                         ║
+║                                                               ║
+║   ═══════════════════════════════════════════                 ║
+║                                                               ║
+║   כניסת מתח (מסופי בורג בצד ימין):                           ║
+║   ┌──────────────────────┐                                    ║
+║   │ +12V │ GND │ +5V     │                                    ║
+║   └──┬─────┬──────┬──────┘                                    ║
+║      │     │      │                                           ║
+║      │     │      └── יציאת 5V (יכול להזין ESP32)            ║
+║      │     └── אדמה (חבר לסוללה וגם ל-GND של ESP32)          ║
+║      └── סוללה + (חבר 3.7V-12V כאן)                          ║
+║                                                               ║
+║   פיני בקרה (סרגל פינים):                                    ║
+║   ┌─────────────────────────────────────┐                     ║
+║   │ ENA │ IN1 │ IN2 │ IN3 │ IN4 │ ENB  │                     ║
+║   └──┬────┬─────┬─────┬─────┬─────┬────┘                     ║
+║      │    │     │     │     │     │                           ║
+║      │    │     │     │     │     └── הפעלת מנוע B            ║
+║      │    │     │     │     └── כיוון מנוע B 2                ║
+║      │    │     │     └── כיוון מנוע B 1                      ║
+║      │    │     └── כיוון מנוע A 2                            ║
+║      │    └── כיוון מנוע A 1                                  ║
+║      └── הפעלת מנוע A                                         ║
+║                                                               ║
+║   ⚠️  חשוב: הסר את הג'מפרים מ-ENA ו-ENB אם יש!               ║
+║       (נשלוט במהירות עם PWM מה-ESP32)                        ║
+║                                                               ║
+╚═══════════════════════════════════════════════════════════════╝
+</pre>
+
+<hr>
+
+<h2>הבנת פיני ה-ESP32</h2>
+
+<pre>
+╔═══════════════════════════════════════════════════════════════╗
+║                    ESP32 DEVKIT                               ║
+║                    (מבט מלמעלה)                               ║
+╠═══════════════════════════════════════════════════════════════╣
+║                                                               ║
+║              ┌─────────────────────┐                          ║
+║              │         USB         │                          ║
+║              └─────────────────────┘                          ║
+║                                                               ║
+║    צד שמאל                │            צד ימין               ║
+║    ─────────              │            ──────────             ║
+║    3V3  ●                 │                 ● VIN ◄── סוללה   ║
+║    GND  ● ◄── אדמה        │                 ● GND             ║
+║    D15  ●                 │                 ● D13             ║
+║    D2   ●                 │                 ● D12             ║
+║    D4   ●                 │                 ● D14             ║
+║    D16  ● ◄── IN1         │                 ● D27 ◄── IN3     ║
+║    D17  ● ◄── IN2         │                 ● D26 ◄── IN4     ║
+║    D5   ● ◄── ENA (PWM)   │                 ● D25 ◄── ENB     ║
+║    D18  ●                 │                 ● D33             ║
+║    D19  ●                 │                 ● D32             ║
+║    D21  ●                 │                 ● D35             ║
+║    D3   ●                 │                 ● D34             ║
+║    D1   ●                 │                 ● VN              ║
+║    D22  ●                 │                 ● VP              ║
+║    D23  ●                 │                 ● EN              ║
+║                                                               ║
+║   פינים שנשתמש בהם:                                           ║
+║   • VIN  = כניסת מתח (3.7V-5V מסוללה או מ-5V של L298N)       ║
+║   • GND  = אדמה (חייב להתחבר ל-GND של L298N)                 ║
+║   • D16  = כיוון מנוע A 1 (IN1)                               ║
+║   • D17  = כיוון מנוע A 2 (IN2)                               ║
+║   • D5   = הפעלת/מהירות מנוע A (ENA) - תומך PWM              ║
+║   • D27  = כיוון מנוע B 1 (IN3)                               ║
+║   • D26  = כיוון מנוע B 2 (IN4)                               ║
+║   • D25  = הפעלת/מהירות מנוע B (ENB) - תומך PWM              ║
+║                                                               ║
+╚═══════════════════════════════════════════════════════════════╝
+</pre>
+
+<hr>
+
+<h2>תרשים חיווט מלא</h2>
+
+<pre>
+╔═══════════════════════════════════════════════════════════════════════════╗
+║                     תרשים חיווט מלא                                      ║
+║                  ESP32 + L298N + 2 מנועים + סוללה                        ║
+╠═══════════════════════════════════════════════════════════════════════════╣
+║                                                                           ║
+║                          ┌─────────────┐                                  ║
+║                          │   סוללה     │                                  ║
+║                          │   3.7V      │                                  ║
+║                          │  Li-Po      │                                  ║
+║                          └──┬─────┬────┘                                  ║
+║                             │     │                                       ║
+║                          אדום    שחור                                    ║
+║                          (+)│     │(-)                                   ║
+║                             │     │                                      ║
+║                             ▼     ▼                                      ║
+║   ┌─────────────────────────────────────────────────────────────┐        ║
+║   │                        L298N                                │        ║
+║   │  ┌─────────────────────────────────────────────────────┐    │        ║
+║   │  │  מסופי מתח                                          │   │        ║
+║   │  │  ┌────────┬────────┬────────┐                       │    │        ║
+║   │  │  │ +12V   │  GND   │  +5V   │                       │    │        ║
+║   │  │  │   ▲    │   ▲    │   │    │                       │    │        ║
+║   │  │  └───┼────┴───┼────┴───┼────┘                       │    │        ║
+║   │  │      │        │        │                            │    │        ║
+║   │  │   סוללה    סוללה     ל-ESP32                       │    │        ║
+║   │  │     (+)      (-)      VIN                           │    │        ║
+║   │  │    אדום    שחור    (אופציונלי)                     │    │        ║
+║   │  └─────────────────────────────────────────────────────┘    │        ║
+║   │                                                             │        ║
+║   │  ┌─────────────────────────────────────────────────────┐    │        ║
+║   │  │  יציאות מנועים                                     │    │        ║
+║   │  │  ┌────────┬────────┐     ┌────────┬────────┐        │    │        ║
+║   │  │  │  OUT1  │  OUT2  │     │  OUT3  │  OUT4  │        │    │        ║
+║   │  │  │   │    │    │   │     │   │    │    │   │        │    │        ║
+║   │  │  └───┼────┴────┼───┘     └───┼────┴────┼───┘        │    │        ║
+║   │  │      │         │             │         │            │    │        ║
+║   │  │      ▼         ▼             ▼         ▼            │    │        ║
+║   │  │   ┌─────────────┐         ┌─────────────┐           │    │        ║
+║   │  │   │  מנוע A     │         │  מנוע B     │          │    │        ║
+║   │  │   │  (שמאל)     │         │  (ימין)     │          │    │        ║
+║   │  │   │   ┌───┐     │         │   ┌───┐     │           │    │        ║
+║   │  │   │   │ M │     │         │   │ M │     │           │    │        ║
+║   │  │   │   └───┘     │         │   └───┘     │           │    │        ║
+║   │  │   └─────────────┘         └─────────────┘           │    │        ║
+║   │  └─────────────────────────────────────────────────────┘    │        ║
+║   │                                                              │       ║
+║   │  ┌─────────────────────────────────────────────────────┐    │         ║
+║   │  │  פיני בקרה (מתחברים ל-ESP32)                        │    │        ║
+║   │  │                                                      │    │        ║
+║   │  │   ENA   IN1   IN2   IN3   IN4   ENB                 │    │         ║
+║   │  │    │     │     │     │     │     │                  │    │         ║
+║   │  └────┼─────┼─────┼─────┼─────┼─────┼──────────────────┘    │         ║
+║   │       │     │     │     │     │     │                        │        ║
+║   └───────┼─────┼─────┼─────┼─────┼─────┼────────────────────────┘        ║
+║           │     │     │     │     │     │                                 ║
+║           ▼     ▼     ▼     ▼     ▼     ▼                                 ║
+║   ┌───────────────────────────────────────────────────────────┐           ║
+║   │                         ESP32                              │          ║
+║   │                                                            │          ║
+║   │   D5 ◄────── ENA (מהירות מנוע A)                          │          ║
+║   │   D16 ◄───── IN1 (כיוון מנוע A)                           │          ║
+║   │   D17 ◄───── IN2 (כיוון מנוע A)                           │          ║
+║   │   D27 ◄───── IN3 (כיוון מנוע B)                           │          ║
+║   │   D26 ◄───── IN4 (כיוון מנוע B)                           │          ║
+║   │   D25 ◄───── ENB (מהירות מנוע B)                          │          ║
+║   │                                                            │          ║
+║   │   GND ◄───── GND של L298N (חשוב!)                         │          ║
+║   │   VIN ◄───── יציאת 5V של L298N (או ישירות מסוללה)        │         ║
+║   │                                                            │          ║
+║   └───────────────────────────────────────────────────────────┘           ║
+║                                                                           ║
+╚═══════════════════════════════════════════════════════════════════════════╝
+</pre>
+
+<hr>
+
+<h2>הוראות חיווט צעד אחר צעד</h2>
+
+<h3>⚠️ בטיחות קודם כל</h3>
+
+<div class="danger">
+    <p><strong>לעולם אל תחווט כשהסוללה מחוברת</strong> ⛔</p>
+    <p><strong>בדוק קוטביות (+ ו-) לפני חיבור הסוללה</strong> ⚡</p>
+    <p><strong>ודא שהחיווט נכון לפני הפעלה</strong> 👀</p>
+</div>
+
+<hr>
+
+<h3>שלב 1: הכנת לוח L298N</h3>
+
+<ol>
+    <li>הסתכל על לוח ה-L298N שלך</li>
+    <li>מצא את <strong>כיסויי הג'מפר</strong> על פיני ENA ו-ENB</li>
+    <li><strong>הסר את שני כיסויי הג'מפר</strong> (נשלוט במהירות עם ESP32)</li>
+    <li>שמור את הג'מפרים - אולי תצטרך אותם אחר כך</li>
+</ol>
+
+<pre>
+לפני:                        אחרי:
+┌─────────────┐              ┌─────────────┐
+│ [■] ENA     │              │ [ ] ENA     │  ← ג'מפר הוסר
+│ [■] ENB     │              │ [ ] ENB     │  ← ג'מפר הוסר
+└─────────────┘              └─────────────┘
+</pre>
+
+<div class="checkpoint">
+    ✨ <strong>נקודת בדיקה 1:</strong> שני כיסויי הג'מפר הוסרו מה-L298N
+</div>
+
+<hr>
+
+<h3>שלב 2: חיבור מנועים ל-L298N</h3>
+
+<p><strong>מנוע שמאל (מנוע A):</strong></p>
+<ol>
+    <li>קח את שני החוטים של המנוע השמאלי</li>
+    <li>שחרר את מסופי הבורג OUT1 ו-OUT2</li>
+    <li>הכנס חוט אחד ל-OUT1, חוט אחד ל-OUT2</li>
+    <li>הדק את הברגים היטב</li>
+</ol>
+
+<p><strong>מנוע ימין (מנוע B):</strong></p>
+<ol>
+    <li>קח את שני החוטים של המנוע הימני</li>
+    <li>הכנס חוט אחד ל-OUT3, חוט אחד ל-OUT4</li>
+    <li>הדק את הברגים היטב</li>
+</ol>
+
+<pre>
+מסופי מנועים של L298N:
+┌────────┬────────┐     ┌────────┬────────┐
+│  OUT1  │  OUT2  │     │  OUT3  │  OUT4  │
+│   ↑    │   ↑    │     │   ↑    │   ↑    │
+└───┼────┴───┼────┘     └───┼────┴───┼────┘
+    │        │              │        │
+    └────┬───┘              └────┬───┘
+         │                       │
+    מנוע שמאל               מנוע ימין
+    (2 חוטים)               (2 חוטים)
+</pre>
+
+<p><strong>הערה:</strong> אל תדאג איזה חוט הולך לאן - אם המנוע מסתובב הפוך, נחליף בקוד!</p>
+
+<div class="checkpoint">
+    ✨ <strong>נקודת בדיקה 2:</strong> שני המנועים מחוברים ל-L298N (4 חוטים בסך הכל במסופי המנועים)
+</div>
+
+<div class="exit">
+    🚪 <strong>יציאה מכובדת:</strong> אפשר לעצור כאן! המנועים מחוברים פיזית.
+</div>
+
+<hr>
+
+<h3>שלב 3: חיבור חוטי בקרה מ-ESP32 ל-L298N</h3>
+
+<p>השתמש ב-<strong>6 חוטי מגשר</strong> (Male-to-Female עובדים הכי טוב):</p>
+
+<table>
+    <tr>
+        <th>פין L298N</th>
+        <th>→</th>
+        <th>פין ESP32</th>
+        <th>צבע חוט (מומלץ)</th>
+    </tr>
+    <tr><td>ENA</td><td>→</td><td>D5</td><td>כתום</td></tr>
+    <tr><td>IN1</td><td>→</td><td>D16</td><td>צהוב</td></tr>
+    <tr><td>IN2</td><td>→</td><td>D17</td><td>צהוב</td></tr>
+    <tr><td>IN3</td><td>→</td><td>D27</td><td>ירוק</td></tr>
+    <tr><td>IN4</td><td>→</td><td>D26</td><td>ירוק</td></tr>
+    <tr><td>ENB</td><td>→</td><td>D25</td><td>כתום</td></tr>
+</table>
+
+<pre>
+פיני בקרה של L298N:
+┌─────┬─────┬─────┬─────┬─────┬─────┐
+│ ENA │ IN1 │ IN2 │ IN3 │ IN4 │ ENB │
+└──┬──┴──┬──┴──┬──┴──┬──┴──┬──┴──┬──┘
+   │     │     │     │     │     │
+   │     │     │     │     │     │
+   ▼     ▼     ▼     ▼     ▼     ▼
+  D5    D16   D17   D27   D26   D25
+   │     │     │     │     │     │
+   └─────┴─────┴─────┴─────┴─────┘
+              ESP32
+</pre>
+
+<p><strong>בדיקה:</strong> כל 6 חוטי הבקרה מחוברים נכון</p>
+
+<div class="checkpoint">
+    ✨ <strong>נקודת בדיקה 3:</strong> 6 חוטי בקרה מה-L298N ל-ESP32
+</div>
+
+<hr>
+
+<h3>שלב 4: חיבור אדמה (קריטי!)</h3>
+
+<div class="warning">
+    <strong>השלב הזה הכרחי! המנועים לא יעבדו בלי אדמה משותפת.</strong>
+</div>
+
+<ol>
+    <li>מצא פין <strong>GND</strong> ב-ESP32</li>
+    <li>חבר חוט מ-GND של ESP32 למסוף GND של L298N</li>
+</ol>
+
+<pre>
+ESP32 GND ─────────────► מסוף GND של L298N
+                         (מסוף הבורג האמצעי)
+</pre>
+
+<div class="checkpoint">
+    ✨ <strong>נקודת בדיקה 4:</strong> חוט אדמה מחובר בין ESP32 ל-L298N
+</div>
+
+<hr>
+
+<h3>שלב 5: חיבור מתח סוללה</h3>
+
+<div class="danger">
+    ⚠️ <strong>בדוק קוטביות שלוש פעמים לפני חיבור!</strong>
+</div>
+
+<ol>
+    <li><strong>אל תחבר סוללה עדיין</strong> - רק הכן את החוטים</li>
+    <li>חוט <strong>אדום (+)</strong> של סוללה → מסוף <strong>+12V</strong> של L298N</li>
+    <li>חוט <strong>שחור (-)</strong> של סוללה → מסוף <strong>GND</strong> של L298N</li>
+</ol>
+
+<pre>
+סוללה:               מתח L298N:
+┌─────────┐          ┌────────┬────────┬────────┐
+│  + אדום │─────────►│  +12V  │  GND   │  +5V   │
+│  - שחור │─────────►│        │   ▲    │        │
+└─────────┘          └────────┴───┼────┴────────┘
+                                  │
+                        שחור של סוללה הולך לכאן
+</pre>
+
+<p><strong>לפני חיבור סוללה:</strong></p>
+<ul class="checklist">
+    <li>בדוק את כל החיווט</li>
+    <li>אדום ל-+12V, שחור ל-GND</li>
+    <li>אין חוטים רופפים</li>
+    <li>מנועים מאובטחים</li>
+</ul>
+
+<div class="checkpoint">
+    ✨ <strong>נקודת בדיקה 5:</strong> סוללה מחוברת, אין עשן, אין חום!
+</div>
+
+<div class="exit">
+    🚪 <strong>יציאה מכובדת:</strong> החומרה הושלמה! אפשר לעצור כאן ולקודד בפעם הבאה.
+</div>
+
+<hr>
+
+<h3>שלב 6: הזנת ה-ESP32</h3>
+
+<p><strong>אפשרות א':</strong> שימוש ביציאת 5V של L298N</p>
+<ul>
+    <li>חבר מסוף <strong>+5V</strong> של L298N → פין <strong>VIN</strong> של ESP32</li>
+    <li>זה מזין את ה-ESP32 מאותה סוללה</li>
+</ul>
+
+<p><strong>אפשרות ב':</strong> שימוש בכבל USB (יותר קל לבדיקות)</p>
+<ul>
+    <li>חבר כבל USB ל-ESP32</li>
+    <li>ESP32 מוזן מהמחשב, מנועים מהסוללה</li>
+</ul>
+
+<p><strong>לבדיקות, השתמש באפשרות ב' (USB) קודם!</strong></p>
+
+<div class="checkpoint">
+    ✨ <strong>נקודת בדיקה 6:</strong> ESP32 מופעל (נורית על הלוח דולקת)
+</div>
+
+<hr>
+
+<h2>טבלת סיכום חיווט</h2>
+
+<table>
+    <tr>
+        <th>חיבור</th>
+        <th>מ</th>
+        <th>אל</th>
+        <th>הערות</th>
+    </tr>
+    <tr><td>מנוע A</td><td>חוטי מנוע שמאל</td><td>L298N OUT1, OUT2</td><td>סדר לא משנה</td></tr>
+    <tr><td>מנוע B</td><td>חוטי מנוע ימין</td><td>L298N OUT3, OUT4</td><td>סדר לא משנה</td></tr>
+    <tr><td>ENA</td><td>L298N ENA</td><td>ESP32 D5</td><td>PWM למהירות</td></tr>
+    <tr><td>IN1</td><td>L298N IN1</td><td>ESP32 D16</td><td>בקרת כיוון</td></tr>
+    <tr><td>IN2</td><td>L298N IN2</td><td>ESP32 D17</td><td>בקרת כיוון</td></tr>
+    <tr><td>IN3</td><td>L298N IN3</td><td>ESP32 D27</td><td>בקרת כיוון</td></tr>
+    <tr><td>IN4</td><td>L298N IN4</td><td>ESP32 D26</td><td>בקרת כיוון</td></tr>
+    <tr><td>ENB</td><td>L298N ENB</td><td>ESP32 D25</td><td>PWM למהירות</td></tr>
+    <tr><td>אדמה</td><td>ESP32 GND</td><td>L298N GND</td><td><strong>קריטי!</strong></td></tr>
+    <tr><td>סוללה +</td><td>אדום סוללה</td><td>L298N +12V</td><td>בדוק קוטביות!</td></tr>
+    <tr><td>סוללה -</td><td>שחור סוללה</td><td>L298N GND</td><td>בדוק קוטביות!</td></tr>
+    <tr><td>מתח ESP32</td><td>L298N +5V או USB</td><td>ESP32 VIN או USB</td><td>בחר אחד</td></tr>
+</table>
+
+<hr>
+
+<h2>קוד בדיקה</h2>
+<p>אחרי שהחיווט הושלם, העלה את הקוד הזה לבדיקת המנועים:</p>
+
+<pre>
+// ESP32 + L298N Dual Motor Test
+// בדיקת מנועים כפולים - מכונית מחקר של מאיר
+
+// פיני מנוע A (שמאל)
+#define ENA 5   // בקרת מהירות PWM
+#define IN1 16  // כיוון
+#define IN2 17  // כיוון
+
+// פיני מנוע B (ימין)
+#define ENB 25  // בקרת מהירות PWM
+#define IN3 27  // כיוון
+#define IN4 26  // כיוון
+
+void setup() {
+  Serial.begin(115200);
+
+  // הגדר את כל פיני המנוע כיציאות
+  pinMode(ENA, OUTPUT);
+  pinMode(IN1, OUTPUT);
+  pinMode(IN2, OUTPUT);
+  pinMode(ENB, OUTPUT);
+  pinMode(IN3, OUTPUT);
+  pinMode(IN4, OUTPUT);
+
+  Serial.println("=== בדיקת מנועים מוכנה ===");
+  Serial.println("פקודות:");
+  Serial.println("  f = קדימה");
+  Serial.println("  b = אחורה");
+  Serial.println("  l = פנה שמאלה");
+  Serial.println("  r = פנה ימינה");
+  Serial.println("  s = עצור");
+}
+
+void loop() {
+  if (Serial.available()) {
+    char cmd = Serial.read();
+
+    switch (cmd) {
+      case 'f': // קדימה
+        Serial.println("נוסע קדימה");
+        motorA_forward();
+        motorB_forward();
+        break;
+
+      case 'b': // אחורה
+        Serial.println("נוסע אחורה");
+        motorA_backward();
+        motorB_backward();
+        break;
+
+      case 'l': // פנה שמאלה
+        Serial.println("פונה שמאלה");
+        motorA_backward();
+        motorB_forward();
+        break;
+
+      case 'r': // פנה ימינה
+        Serial.println("פונה ימינה");
+        motorA_forward();
+        motorB_backward();
+        break;
+
+      case 's': // עצור
+        Serial.println("עוצר");
+        motorA_stop();
+        motorB_stop();
+        break;
+    }
+  }
+}
+
+// פונקציות מנוע A (שמאל)
+void motorA_forward() {
+  digitalWrite(IN1, HIGH);
+  digitalWrite(IN2, LOW);
+  analogWrite(ENA, 200); // מהירות 0-255
+}
+
+void motorA_backward() {
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, HIGH);
+  analogWrite(ENA, 200);
+}
+
+void motorA_stop() {
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, LOW);
+  analogWrite(ENA, 0);
+}
+
+// פונקציות מנוע B (ימין)
+void motorB_forward() {
+  digitalWrite(IN3, HIGH);
+  digitalWrite(IN4, LOW);
+  analogWrite(ENB, 200);
+}
+
+void motorB_backward() {
+  digitalWrite(IN3, LOW);
+  digitalWrite(IN4, HIGH);
+  analogWrite(ENB, 200);
+}
+
+void motorB_stop() {
+  digitalWrite(IN3, LOW);
+  digitalWrite(IN4, LOW);
+  analogWrite(ENB, 0);
+}
+</pre>
+
+<h3>שלבי בדיקה:</h3>
+<ol>
+    <li>העלה קוד ל-ESP32</li>
+    <li>פתח Serial Monitor (קצב 115200)</li>
+    <li>הקלד פקודות:
+        <ul>
+            <li><code>f</code> = שני המנועים קדימה</li>
+            <li><code>b</code> = שני המנועים אחורה</li>
+            <li><code>l</code> = פנה שמאלה</li>
+            <li><code>r</code> = פנה ימינה</li>
+            <li><code>s</code> = עצור</li>
+        </ul>
+    </li>
+</ol>
+
+<div class="checkpoint">
+    ✨ <strong>נקודת בדיקה סופית:</strong> שני המנועים מגיבים לפקודות!
+</div>
+
+<hr>
+
+<h2>פתרון בעיות</h2>
+
+<table>
+    <tr>
+        <th>בעיה</th>
+        <th>סיבה אפשרית</th>
+        <th>פתרון</th>
+    </tr>
+    <tr><td>מנועים לא מסתובבים</td><td>אדמה לא מחוברת</td><td>חבר ESP32 GND ל-L298N GND</td></tr>
+    <tr><td>מנועים לא מסתובבים</td><td>ג'מפרים של ENA/ENB עדיין מחוברים</td><td>הסר כיסויי ג'מפר</td></tr>
+    <tr><td>מנועים לא מסתובבים</td><td>סוללה ריקה</td><td>טען סוללה</td></tr>
+    <tr><td>מנוע אחד מסתובב הפוך</td><td>סדר חיווט</td><td>החלף חוטי המנוע ב-L298N או החלף IN1/IN2 בקוד</td></tr>
+    <tr><td>מנועים מסתובבים אבל המכונית פונה לא נכון</td><td>שמאל/ימין מוחלפים</td><td>החלף חיבורי מנועים או תקן בקוד</td></tr>
+    <tr><td>מנועים חלשים</td><td>מתח סוללה נמוך</td><td>טען או השתמש בסוללה מתח גבוה יותר</td></tr>
+    <tr><td>ESP32 מתאפס כשמנועים מתחילים</td><td>צריכת זרם גבוהה מדי</td><td>השתמש במתח נפרד ל-ESP32 (USB)</td></tr>
+    <tr><td>כלום לא עובד</td><td>חיבורים רעים</td><td>בדוק שכל החיבורים הדוקים</td></tr>
+</table>
+
+<hr>
+
+<h2>מה הלאה?</h2>
+<p>אחרי שהמנועים עובדים:</p>
+<ol>
+    <li><strong>הרכב רכיבים על לוח העץ</strong> (דבק חם)</li>
+    <li><strong>הוסף מודול מצלמה</strong></li>
+    <li><strong>צור אפליקציית טלפון לשליטה מרחוק</strong></li>
+    <li><strong>הוסף מיקרופון להקלטת אודיו</strong></li>
+</ol>
+<p>מכונית המחקר שלך לצפייה בחיות מתקדמת! 🚗🐾</p>
+
+<hr>
+
+<h2>כרטיס התייחסות מהיר (הדפס את זה!)</h2>
+
+<div class="quick-ref">
+<pre style="background: transparent; color: inherit; padding: 0;">
+╔═══════════════════════════════════════════╗
+║     ESP32 + L298N התייחסות מהירה          ║
+╠═══════════════════════════════════════════╣
+║                                           ║
+║  L298N  →  ESP32                          ║
+║  ─────────────────                        ║
+║  ENA    →  D5   (מהירות מנוע A)           ║
+║  IN1    →  D16  (כיוון מנוע A 1)          ║
+║  IN2    →  D17  (כיוון מנוע A 2)          ║
+║  IN3    →  D27  (כיוון מנוע B 1)          ║
+║  IN4    →  D26  (כיוון מנוע B 2)          ║
+║  ENB    →  D25  (מהירות מנוע B)           ║
+║  GND    →  GND  (קריטי!)                  ║
+║                                           ║
+║  סוללה:                                   ║
+║  אדום (+)  → L298N +12V                   ║
+║  שחור (-)  → L298N GND                    ║
+║                                           ║
+║  מנועים:                                  ║
+║  מנוע שמאל  → OUT1, OUT2                  ║
+║  מנוע ימין  → OUT3, OUT4                  ║
+║                                            ║
+║  ⚠️ הסר ג'מפרים מ-ENA/ENB!               ║
+║  ⚠️ בדוק קוטביות לפני הפעלה!            ║
+║                                           ║
+╚═══════════════════════════════════════════╝
+</pre>
+</div>
+
+<hr>
+
+<p style="text-align: center; color: #7f8c8d;">
+    <em>מדריך נוצר: דצמבר 2025</em><br>
+    <em>עבור: פרויקט מכונית מחקר ESP32 של מאיר</em>
+</p>
+
+</body>
+</html>

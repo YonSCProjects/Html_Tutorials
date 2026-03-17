@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>טיימר תגובה – בנייה מלאה עם Claude</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e0e0e0;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.8;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 40px;
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            color: #00d4aa;
+            font-size: 2.2em;
+            text-align: center;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(0, 212, 170, 0.3);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .intro-box {
+            background: linear-gradient(135deg, #00d4aa20, #00d4aa10);
+            border: 2px solid #00d4aa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .intro-box h3 {
+            color: #00d4aa;
+            margin-top: 0;
+        }
+
+        .mission-header {
+            background: linear-gradient(90deg, #e94560, #0f3460);
+            color: white;
+            padding: 20px 25px;
+            border-radius: 15px;
+            margin: 40px 0 20px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .mission-header h2 {
+            margin: 0;
+            font-size: 1.5em;
+        }
+
+        .time-estimate {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+
+        .exercise {
+            background: rgba(0, 212, 170, 0.1);
+            border: 2px solid #00d4aa;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .exercise h3 {
+            color: #00d4aa;
+            margin-top: 0;
+            font-size: 1.3em;
+        }
+
+        .steps {
+            counter-reset: step-counter;
+            list-style: none;
+            padding: 0;
+        }
+
+        .steps li {
+            counter-increment: step-counter;
+            margin: 15px 0;
+            padding-right: 45px;
+            position: relative;
+        }
+
+        .steps li::before {
+            content: counter(step-counter);
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 30px;
+            height: 30px;
+            background: #00d4aa;
+            color: #1a1a2e;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .prompt-box {
+            background: #1a1a2e;
+            border: 2px solid #e94560;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            direction: rtl;
+            text-align: right;
+        }
+
+        .prompt-box::before {
+            content: "💬 פרומפט ל-Claude:";
+            display: block;
+            color: #e94560;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .prompt-box pre {
+            background: #0f0f1a;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 0;
+            white-space: pre-wrap;
+            direction: rtl;
+            text-align: right;
+            color: #fff;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .what-you-see {
+            background: #000;
+            border: 2px solid #00d4aa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .what-you-see::before {
+            content: "👀 מה צריך לראות:";
+            display: block;
+            color: #00d4aa;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .what-you-see pre {
+            margin: 0;
+            color: #00ff00;
+            direction: ltr;
+            text-align: left;
+        }
+
+        .checkpoint {
+            background: linear-gradient(135deg, #00d4aa20, #00d4aa10);
+            border-right: 5px solid #00d4aa;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 0 15px 15px 0;
+        }
+
+        .checkpoint strong {
+            color: #00d4aa;
+        }
+
+        .answer-box {
+            background: rgba(233, 69, 96, 0.1);
+            border: 2px dashed #e94560;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .answer-box label {
+            display: block;
+            color: #e94560;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .answer-box input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #444;
+            border-radius: 8px;
+            background: #1a1a2e;
+            color: #fff;
+            font-size: 1em;
+            margin-bottom: 10px;
+        }
+
+        .answer-box input[type="text"]:focus {
+            border-color: #e94560;
+            outline: none;
+        }
+
+        .check-btn {
+            background: linear-gradient(135deg, #e94560, #0f3460);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .check-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(233, 69, 96, 0.4);
+        }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .feedback.correct {
+            background: rgba(0, 212, 170, 0.2);
+            border: 2px solid #00d4aa;
+            color: #00d4aa;
+            display: block;
+        }
+
+        .feedback.incorrect {
+            background: rgba(233, 69, 96, 0.2);
+            border: 2px solid #e94560;
+            color: #e94560;
+            display: block;
+        }
+
+        .mission-complete {
+            background: linear-gradient(135deg, #9b59b620, #9b59b610);
+            border: 2px solid #9b59b6;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .mission-complete h3 {
+            color: #9b59b6;
+            margin-top: 0;
+        }
+
+        .state-diagram {
+            background: #0f0f1a;
+            border: 2px solid #00d4aa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .state-diagram pre {
+            color: #00d4aa;
+            font-family: monospace;
+            direction: ltr;
+            text-align: center;
+            margin: 0;
+        }
+
+        .tip-box {
+            background: rgba(255, 193, 7, 0.1);
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .tip-box::before {
+            content: "💡 טיפ:";
+            display: block;
+            color: #ffc107;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .final-section {
+            background: linear-gradient(135deg, #00d4aa20, #e9456020);
+            border: 2px solid #00d4aa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        .final-section h2 {
+            color: #00d4aa;
+            margin-top: 0;
+        }
+
+        /* Popup Styles */
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popup {
+            background: #1a1a2e;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            max-width: 400px;
+            animation: popIn 0.3s ease-out;
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0.5); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .popup.correct {
+            border: 3px solid #00d4aa;
+            box-shadow: 0 0 30px rgba(0, 212, 170, 0.5);
+        }
+
+        .popup.incorrect {
+            border: 3px solid #e94560;
+            box-shadow: 0 0 30px rgba(233, 69, 96, 0.5);
+        }
+
+        .popup .emoji {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        .popup h3 {
+            margin: 0 0 15px 0;
+        }
+
+        .popup.correct h3 {
+            color: #00d4aa;
+        }
+
+        .popup.incorrect h3 {
+            color: #e94560;
+        }
+
+        .popup button {
+            background: linear-gradient(135deg, #e94560, #0f3460);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            margin-top: 15px;
+        }
+
+        ul {
+            padding-right: 20px;
+        }
+
+        li {
+            margin: 8px 0;
+        }
+
+        code {
+            background: #0f0f1a;
+            padding: 2px 8px;
+            border-radius: 4px;
+            color: #00d4aa;
+            font-family: Consolas, monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚡ טיימר תגובה – בנייה עם Claude</h1>
+        <p class="subtitle">בונים משחק מדידת תגובה בלי לכתוב שורת קוד אחת!</p>
+
+        <div class="intro-box">
+            <h3>🎯 מה נלמד היום?</h3>
+            <p>במדריך הזה תלמדו לבנות משחק טיימר תגובה שלם בעזרת Claude AI. כל הקוד ייכתב על ידי ה-AI, ואתם תלמדו איך לתת הוראות נכונות!</p>
+            <p><strong>מה זה טיימר תגובה?</strong> משחק שמודד כמה מהר אתם מגיבים - לוחצים Start, מחכים שהמסך יהפוך לירוק, ואז לוחצים כמה שיותר מהר!</p>
+        </div>
+
+        <!-- משימה 1 -->
+        <div class="mission-header">
+            <h2>משימה 1: יצירת שלד הפרויקט</h2>
+            <span class="time-estimate">⏱️ 10 דקות</span>
+        </div>
+
+        <div class="exercise">
+            <h3>תרגיל 1.1: הכנת הקובץ CONTEXT.md</h3>
+            <ol class="steps">
+                <li>פתחו את Claude ויצרו תיקייה חדשה לפרויקט</li>
+                <li>צרו קובץ בשם <code>CONTEXT.md</code></li>
+                <li>כתבו בו את היעדים של המשחק שלכם</li>
+            </ol>
+
+            <div class="what-you-see">
+                <pre>
+CONTEXT.md צריך להכיל:
+- מטרת המשחק
+- מצבי המסך: idle, waiting, ready, clicked, toosoon
+- מבחני קבלה (מה צריך לעבוד)
+                </pre>
+            </div>
+        </div>
+
+        <div class="exercise">
+            <h3>תרגיל 1.2: בקשה ראשונה ל-Claude</h3>
+            <ol class="steps">
+                <li>פתחו את הצ'אט של Claude</li>
+                <li>העתיקו והדביקו את הפרומפט הבא:</li>
+            </ol>
+
+            <div class="prompt-box">
+                <pre>קרא/י את CONTEXT.md בריפו. צר/י קובץ index.html שמממש משחק טיימר תגובה בסיסי לפי מבחני הקבלה. שמור/י את הכל בקובץ יחיד בהתחלה. ודא/י שהטקסט קריא ונגיש, ושיש מצבי מסך: idle, waiting, ready, clicked, toosoon.</pre>
+            </div>
+
+            <ol class="steps" start="3">
+                <li>לחצו Enter ותנו ל-Claude ליצור את הקוד</li>
+                <li>פתחו את <code>index.html</code> בדפדפן</li>
+            </ol>
+
+            <p><strong>כמה מצבי מסך (states) יש במשחק?</strong></p>
+            <div class="answer-box">
+                <label>התשובה שלך:</label>
+                <input type="text" id="answer-1-1" placeholder="מספר...">
+                <button class="check-btn" onclick="checkAnswer('answer-1-1', ['5', 'חמש', 'חמישה'], '🎯 נכון! 5 מצבים: idle, waiting, ready, clicked, toosoon', '❌ רמז: ספרו את כל המצבים ברשימה למעלה')">בדוק תשובה</button>
+                <div class="feedback" id="feedback-1-1"></div>
+            </div>
+        </div>
+
+        <div class="checkpoint">
+            ✅ <strong>עצור!</strong> פתחו את index.html בדפדפן. לחצו Start, חכו לירוק, ולחצו. אם זה עובד - המשיכו!
+        </div>
+
+        <div class="mission-complete">
+            <h3>🎉 משימה 1 הושלמה!</h3>
+            <p>למדת: איך לתת ל-Claude הקשר ראשוני ולבנות שלד פרויקט</p>
+        </div>
+
+        <!-- משימה 2 -->
+        <div class="mission-header">
+            <h2>משימה 2: טיפול במקרי קצה ו-UX</h2>
+            <span class="time-estimate">⏱️ 10 דקות</span>
+        </div>
+
+        <div class="exercise">
+            <h3>תרגיל 2.1: הוספת הגנות</h3>
+            <ol class="steps">
+                <li>חשבו: מה קורה אם מישהו לוחץ מוקדם מדי (לפני הירוק)?</li>
+                <li>העתיקו את הפרומפט הזה ל-Claude:</li>
+            </ol>
+
+            <div class="prompt-box">
+                <pre>עדכן/ני את index.html: הוסף/י הגנה על false start (לחיצה מוקדמת) והפכי את כל הפאנל עצמו ל"כפתור" בעת הצורך. שמור/י על מחלקות CSS נפרדות לכל מצב כדי שנוכל לאבחן בקלות. הוסף/י מונה ניסיונות.</pre>
+            </div>
+
+            <ol class="steps" start="3">
+                <li>תנו ל-Claude לעדכן את הקוד</li>
+                <li>בדקו: נסו ללחוץ לפני שהמסך ירוק</li>
+            </ol>
+
+            <p><strong>מה קורה כשלוחצים מוקדם מדי? (באנגלית)</strong></p>
+            <div class="answer-box">
+                <label>התשובה שלך:</label>
+                <input type="text" id="answer-2-1" placeholder="Too..." style="direction: ltr;">
+                <button class="check-btn" onclick="checkAnswer('answer-2-1', ['too soon', 'toosoon', 'Too soon!', 'Too Soon'], '🛡️ נכון! המשחק מונע לחיצה מוקדמת', '❌ רמז: זה אחד המצבים שהגדרנו...')">בדוק תשובה</button>
+                <div class="feedback" id="feedback-2-1"></div>
+            </div>
+        </div>
+
+        <div class="state-diagram">
+            <pre>
+┌─────────┐     Start     ┌─────────┐    1.2-3.2s   ┌─────────┐
+│  IDLE   │ ───────────▶  │ WAITING │ ───────────▶  │  READY  │
+└─────────┘               └─────────┘               └─────────┘
+                               │                         │
+                          Click│                    Click│
+                               ▼                         ▼
+                         ┌──────────┐              ┌─────────┐
+                         │ TOO SOON │              │ CLICKED │
+                         └──────────┘              └─────────┘
+            </pre>
+        </div>
+
+        <div class="checkpoint">
+            ✅ <strong>עצור!</strong> וודאו שהמשחק מציג "Too soon!" כשלוחצים מוקדם, ושיש מונה ניסיונות
+        </div>
+
+        <div class="mission-complete">
+            <h3>🎉 משימה 2 הושלמה!</h3>
+            <p>למדת: איך לבקש מ-Claude לטפל במקרי קצה ולשפר UX</p>
+        </div>
+
+        <!-- משימה 3 -->
+        <div class="mission-header">
+            <h2>משימה 3: שיפור מדדים וזיכרון</h2>
+            <span class="time-estimate">⏱️ 10 דקות</span>
+        </div>
+
+        <div class="exercise">
+            <h3>תרגיל 3.1: שמירת שיאים</h3>
+            <ol class="steps">
+                <li>העתיקו את הפרומפט הזה ל-Claude:</li>
+            </ol>
+
+            <div class="prompt-box">
+                <pre>עדכן/ני את index.html: הוסף/י שמירת שיא (best) ב-localStorage וחשבי ממוצע של 10 ניסיונות אחרונים. הוסף/י תמיכה במקש רווח: start/click.</pre>
+            </div>
+
+            <ol class="steps" start="2">
+                <li>בצעו 10 ניסיונות</li>
+                <li>רעננו את הדף (F5)</li>
+                <li>בדקו שהשיא נשמר!</li>
+            </ol>
+
+            <p><strong>איפה נשמר השיא? (שם הטכנולוגיה)</strong></p>
+            <div class="answer-box">
+                <label>התשובה שלך:</label>
+                <input type="text" id="answer-3-1" placeholder="..." style="direction: ltr;">
+                <button class="check-btn" onclick="checkAnswer('answer-3-1', ['localstorage', 'localStorage', 'local storage'], '💾 נכון! localStorage שומר נתונים בדפדפן', '❌ רמז: זה מופיע בפרומפט...')">בדוק תשובה</button>
+                <div class="feedback" id="feedback-3-1"></div>
+            </div>
+        </div>
+
+        <div class="exercise">
+            <h3>תרגיל 3.2: בדיקת מקש רווח</h3>
+            <ol class="steps">
+                <li>לחצו על מקש הרווח כדי להתחיל</li>
+                <li>כשהמסך ירוק - לחצו שוב על רווח</li>
+                <li>בדקו שזה עובד בדיוק כמו לחיצה</li>
+            </ol>
+
+            <p><strong>כמה ניסיונות נלקחים לחישוב הממוצע?</strong></p>
+            <div class="answer-box">
+                <label>התשובה שלך:</label>
+                <input type="text" id="answer-3-2" placeholder="מספר...">
+                <button class="check-btn" onclick="checkAnswer('answer-3-2', ['10', 'עשר', 'עשרה'], '📊 נכון! ממוצע של 10 ניסיונות אחרונים', '❌ רמז: כתוב בפרומפט...')">בדוק תשובה</button>
+                <div class="feedback" id="feedback-3-2"></div>
+            </div>
+        </div>
+
+        <div class="checkpoint">
+            ✅ <strong>עצור!</strong> וודאו: ממוצע מתעדכן, שיא נשמר אחרי רענון, מקש רווח עובד
+        </div>
+
+        <div class="mission-complete">
+            <h3>🎉 משימה 3 הושלמה!</h3>
+            <p>למדת: איך להוסיף זיכרון ומדדים למשחק</p>
+        </div>
+
+        <!-- משימה 4 -->
+        <div class="mission-header">
+            <h2>משימה 4: בדיקות ואימות</h2>
+            <span class="time-estimate">⏱️ 8 דקות</span>
+        </div>
+
+        <div class="exercise">
+            <h3>תרגיל 4.1: יצירת בדיקות</h3>
+            <ol class="steps">
+                <li>העתיקו את הפרומפט הזה ל-Claude:</li>
+            </ol>
+
+            <div class="prompt-box">
+                <pre>הצע/י 5 בדיקות ידניות קצרות המאשרות את סדרי המצבים של המשחק והדיוק במדידה. הוסף/י בלוק JS קצר בקונסול (או פונקציית debug) שמדפיסה את state במעברים מרכזיים.</pre>
+            </div>
+
+            <ol class="steps" start="2">
+                <li>פתחו את כלי המפתחים (F12)</li>
+                <li>עברו ללשונית Console</li>
+                <li>שחקו במשחק וצפו בהודעות</li>
+            </ol>
+
+            <div class="tip-box">
+                הודעות ה-debug עוזרות לנו לראות מה קורה "מאחורי הקלעים" ולמצוא בעיות!
+            </div>
+
+            <p><strong>באיזה קיצור מקלדת פותחים את כלי המפתחים?</strong></p>
+            <div class="answer-box">
+                <label>התשובה שלך:</label>
+                <input type="text" id="answer-4-1" placeholder="..." style="direction: ltr;">
+                <button class="check-btn" onclick="checkAnswer('answer-4-1', ['f12', 'F12'], '🔧 נכון! F12 פותח את כלי המפתחים', '❌ רמז: זה מקש פונקציה...')">בדוק תשובה</button>
+                <div class="feedback" id="feedback-4-1"></div>
+            </div>
+        </div>
+
+        <div class="exercise">
+            <h3>תרגיל 4.2: רשימת בדיקות</h3>
+            <p>סמנו ✓ ליד כל בדיקה שעברה:</p>
+            <ul>
+                <li>☐ Start → מסך "Wait for green…" מופיע</li>
+                <li>☐ ירוק מופיע אחרי 1.2-3.2 שניות</li>
+                <li>☐ לחיצה בירוק מציגה זמן במילישניות</li>
+                <li>☐ לחיצה מוקדמת מציגה "Too soon!"</li>
+                <li>☐ מקש רווח עובד</li>
+                <li>☐ שיא נשמר אחרי רענון</li>
+            </ul>
+        </div>
+
+        <div class="checkpoint">
+            ✅ <strong>עצור!</strong> כל הבדיקות צריכות לעבור. אם משהו לא עובד - תארו ל-Claude את הבעיה!
+        </div>
+
+        <div class="mission-complete">
+            <h3>🎉 משימה 4 הושלמה!</h3>
+            <p>למדת: איך לבדוק ולאמת שהקוד עובד נכון</p>
+        </div>
+
+        <!-- משימה 5 -->
+        <div class="mission-header">
+            <h2>משימה 5: רפלקציה ו-Git</h2>
+            <span class="time-estimate">⏱️ 7 דקות</span>
+        </div>
+
+        <div class="exercise">
+            <h3>תרגיל 5.1: סיכום שינויים</h3>
+            <ol class="steps">
+                <li>העתיקו את הפרומפט הזה ל-Claude:</li>
+            </ol>
+
+            <div class="prompt-box">
+                <pre>כתוב/י תקציר שינויים (commit message) שמתאר את מה שנוסף בכל שלב. הכן/הכיני רשימת שיפורים עתידיים (2-3 רעיונות). אין צורך לשנות קוד.</pre>
+            </div>
+
+            <ol class="steps" start="2">
+                <li>קראו את הסיכום ש-Claude כתב</li>
+                <li>בצעו commit ו-push</li>
+            </ol>
+        </div>
+
+        <div class="exercise">
+            <h3>תרגיל 5.2: רעיונות לשיפור</h3>
+            <p><strong>כתבו רעיון אחד לשיפור המשחק:</strong></p>
+            <div class="answer-box">
+                <label>הרעיון שלך:</label>
+                <input type="text" id="answer-5-1" placeholder="למשל: להוסיף צלילים...">
+                <button class="check-btn" onclick="checkAnyAnswer('answer-5-1')">בדוק תשובה</button>
+                <div class="feedback" id="feedback-5-1"></div>
+            </div>
+        </div>
+
+        <div class="mission-complete">
+            <h3>🎉 משימה 5 הושלמה!</h3>
+            <p>למדת: איך לתעד ולשמור את העבודה שלך</p>
+        </div>
+
+        <!-- סיכום -->
+        <div class="final-section">
+            <h2>🏆 כל הכבוד! סיימת את המדריך!</h2>
+            <p>בנית משחק טיימר תגובה שלם בעזרת Claude בלבד!</p>
+            <h3>מה למדת:</h3>
+            <ul style="text-align: right; display: inline-block;">
+                <li>לתת ל-Claude הקשר עם CONTEXT.md</li>
+                <li>לבקש פיצ'רים בשפה ברורה</li>
+                <li>לטפל במקרי קצה (false start)</li>
+                <li>להוסיף זיכרון עם localStorage</li>
+                <li>לבדוק ולאמת את הקוד</li>
+            </ul>
+            <h3 style="margin-top: 20px;">טיפים לזכור:</h3>
+            <ul style="text-align: right; display: inline-block;">
+                <li>תמיד לציין שם קובץ ואזור לעריכה</li>
+                <li>לתאר מה קרה ומה ציפינו</li>
+                <li>לשמור בקשות קטנות ורציפות</li>
+                <li>לעשות Commit כשהכול עובד!</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Popup Modal -->
+    <div class="popup-overlay" id="popup-overlay" onclick="closePopup()">
+        <div class="popup" id="popup" onclick="event.stopPropagation()">
+            <div class="emoji" id="popup-emoji"></div>
+            <h3 id="popup-title"></h3>
+            <p id="popup-message"></p>
+            <button onclick="closePopup()">סגור</button>
+        </div>
+    </div>
+
+    <script>
+        function showPopup(isCorrect, title, message) {
+            const overlay = document.getElementById('popup-overlay');
+            const popup = document.getElementById('popup');
+            const emoji = document.getElementById('popup-emoji');
+            const titleEl = document.getElementById('popup-title');
+            const messageEl = document.getElementById('popup-message');
+
+            popup.className = 'popup ' + (isCorrect ? 'correct' : 'incorrect');
+            emoji.textContent = isCorrect ? '🎉' : '🤔';
+            titleEl.textContent = isCorrect ? 'מעולה!' : 'נסה שוב';
+            messageEl.textContent = message;
+
+            overlay.style.display = 'flex';
+        }
+
+        function closePopup() {
+            document.getElementById('popup-overlay').style.display = 'none';
+        }
+
+        function checkAnswer(inputId, correctAnswers, successMsg, failMsg) {
+            const input = document.getElementById(inputId);
+            const feedback = document.getElementById('feedback-' + inputId.split('-').slice(1).join('-'));
+            const userAnswer = input.value.trim().toLowerCase();
+
+            const isCorrect = correctAnswers.some(answer =>
+                userAnswer === answer.toLowerCase()
+            );
+
+            if (isCorrect) {
+                feedback.className = 'feedback correct';
+                feedback.textContent = successMsg;
+                showPopup(true, 'מעולה!', successMsg);
+            } else {
+                feedback.className = 'feedback incorrect';
+                feedback.textContent = failMsg;
+                showPopup(false, 'נסה שוב', failMsg);
+            }
+        }
+
+        function checkAnyAnswer(inputId) {
+            const input = document.getElementById(inputId);
+            const feedback = document.getElementById('feedback-' + inputId.split('-').slice(1).join('-'));
+            const userAnswer = input.value.trim();
+
+            if (userAnswer.length > 3) {
+                feedback.className = 'feedback correct';
+                feedback.textContent = '💡 רעיון מעניין! אפשר לנסות לממש אותו עם Claude';
+                showPopup(true, 'רעיון מעולה!', 'אפשר לנסות לממש אותו עם Claude!');
+            } else {
+                feedback.className = 'feedback incorrect';
+                feedback.textContent = '✏️ כתוב רעיון יותר מפורט';
+                showPopup(false, 'נסה שוב', 'כתוב רעיון יותר מפורט');
+            }
+        }
+
+        // Close popup with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closePopup();
+            }
+        });
+
+        // Submit on Enter
+        document.querySelectorAll('.answer-box input').forEach(input => {
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const btn = this.parentElement.querySelector('.check-btn');
+                    if (btn) btn.click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

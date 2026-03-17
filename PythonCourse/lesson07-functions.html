@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>שיעור 7: פונקציות | קורס Python</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.8;
+            background: #0d1117;
+            color: #c9d1d9;
+            direction: rtl;
+            text-align: right;
+        }
+        /* Navigation */
+        .navbar {
+            background: #161b22;
+            border-bottom: 1px solid #30363d;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .navbar a {
+            color: #58a6ff;
+            text-decoration: none;
+            padding: 6px 14px;
+            border-radius: 6px;
+            transition: background 0.2s;
+            font-size: 0.9em;
+        }
+        .navbar a:hover { background: #21262d; }
+        .navbar .current { color: #f0883e; font-weight: bold; }
+        .nav-links { display: flex; gap: 8px; align-items: center; }
+        /* Header */
+        .lesson-hero {
+            text-align: center;
+            padding: 50px 20px 30px;
+            background: linear-gradient(180deg, rgba(31,111,235,0.15) 0%, transparent 100%);
+        }
+        .lesson-hero .icon { font-size: 3.5em; margin-bottom: 10px; }
+        .lesson-hero h1 { font-size: 2.5em; color: #58a6ff; margin-bottom: 8px; }
+        .lesson-hero p { color: #8b949e; font-size: 1.1em; max-width: 600px; margin: 0 auto; }
+        /* Container */
+        .container { max-width: 850px; margin: 0 auto; padding: 20px; }
+        /* Mission Header */
+        .mission-header {
+            background: linear-gradient(135deg, #21262d, #161b22);
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 40px 0 20px;
+        }
+        .mission-header h2 { color: #58a6ff; font-size: 1.6em; margin-bottom: 6px; }
+        .time-estimate {
+            display: inline-block;
+            background: rgba(139,148,158,0.15);
+            color: #8b949e;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+        }
+        /* Exercise */
+        .exercise {
+            border: 2px solid #238636;
+            border-radius: 10px;
+            padding: 24px;
+            margin: 20px 0;
+            background: rgba(35,134,54,0.05);
+        }
+        .exercise h3 { color: #3fb950; font-size: 1.2em; margin-bottom: 12px; }
+        .steps { padding-right: 0; list-style: none; counter-reset: step; }
+        .steps li {
+            counter-increment: step;
+            padding: 6px 0 6px 0;
+            padding-right: 36px;
+            position: relative;
+            direction: rtl;
+            text-align: right;
+        }
+        .steps li::before {
+            content: counter(step);
+            position: absolute;
+            right: 0;
+            top: 6px;
+            background: #1f6feb;
+            color: white;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        /* Code blocks */
+        pre {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            margin: 12px 0;
+            direction: ltr;
+            text-align: left;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.92em;
+            color: #e6edf3;
+            line-height: 1.5;
+        }
+        code {
+            background: #161b22;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #f0883e;
+            direction: ltr;
+        }
+        /* What you should see */
+        .what-you-see {
+            background: #000;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 12px 0;
+        }
+        .what-you-see::before {
+            content: "מה שאתם אמורים לראות:";
+            display: block;
+            color: #8b949e;
+            font-size: 0.85em;
+            margin-bottom: 8px;
+            direction: rtl;
+            text-align: right;
+        }
+        .what-you-see pre {
+            background: transparent;
+            border: none;
+            padding: 0;
+            margin: 0;
+            color: #4af626;
+        }
+        /* Answer box */
+        .answer-box {
+            border: 2px dashed #30363d;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 14px 0;
+            background: rgba(22,27,34,0.5);
+        }
+        .answer-box label {
+            display: block;
+            margin-bottom: 8px;
+            color: #8b949e;
+            font-weight: bold;
+        }
+        .answer-box input {
+            width: 100%;
+            padding: 10px 14px;
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            color: #c9d1d9;
+            font-size: 1em;
+            margin-bottom: 10px;
+            direction: ltr;
+            text-align: left;
+        }
+        .answer-box input:focus { outline: none; border-color: #58a6ff; }
+        .check-btn {
+            background: #238636;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+        .check-btn:hover { background: #2ea043; }
+        .feedback { margin-top: 8px; font-weight: bold; display: none; }
+        .feedback.correct { color: #3fb950; display: block; }
+        .feedback.incorrect { color: #f85149; display: block; }
+        /* Checkpoint */
+        .checkpoint {
+            border-right: 4px solid #238636;
+            background: rgba(35,134,54,0.08);
+            padding: 16px 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        /* Mission complete */
+        .mission-complete {
+            border: 2px solid #8957e5;
+            border-radius: 10px;
+            padding: 24px;
+            margin: 20px 0;
+            background: rgba(137,87,229,0.08);
+            text-align: center;
+        }
+        .mission-complete h3 { color: #a371f7; font-size: 1.3em; margin-bottom: 8px; }
+        /* Popup */
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .popup {
+            background: #21262d;
+            border: 1px solid #30363d;
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+        .popup .emoji { font-size: 3em; margin-bottom: 10px; }
+        .popup h3 { margin-bottom: 8px; font-size: 1.4em; }
+        .popup p { color: #8b949e; margin-bottom: 20px; }
+        .popup button {
+            background: #30363d;
+            color: #c9d1d9;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        .popup button:hover { background: #484f58; }
+        .popup.correct { border-color: #238636; }
+        .popup.correct h3 { color: #3fb950; }
+        .popup.incorrect { border-color: #f85149; }
+        .popup.incorrect h3 { color: #f85149; }
+        /* Info box */
+        .info-box {
+            background: rgba(56,139,253,0.1);
+            border: 1px solid #1f6feb;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 14px 0;
+        }
+        .info-box strong { color: #58a6ff; }
+        /* Tip box */
+        .tip-box {
+            background: rgba(240,136,62,0.1);
+            border: 1px solid #f0883e;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 14px 0;
+        }
+        .tip-box strong { color: #f0883e; }
+        h2, h3, h4, h5, h6 { direction: rtl; text-align: right; }
+        p, li, td, th, div { direction: rtl; text-align: right; }
+        @media (max-width: 600px) {
+            .lesson-hero h1 { font-size: 1.8em; }
+            .container { padding: 12px; }
+            .exercise, .mission-header { padding: 16px; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-links">
+        <a href="index.html">🏠 דף ראשי</a>
+        <a href="lesson06-dictionaries.html">← שיעור 6</a>
+        <span class="current">שיעור 7</span>
+        <a href="lesson08-strings-files.html">שיעור 8 →</a>
+    </div>
+</nav>
+
+<div class="lesson-hero">
+    <div class="icon">🔧</div>
+    <h1>שיעור 7: פונקציות</h1>
+    <p>למד ליצור פונקציות — אבני הבניין של כל תוכנית מקצועית. מהגדרת def ועד lambda!</p>
+</div>
+
+<div class="container">
+
+    <!-- ===== MISSION 1 ===== -->
+    <div class="mission-header">
+        <h2>משימה 1: הפונקציה הראשונה שלך</h2>
+        <p class="time-estimate">⏱️ 10 דקות</p>
+    </div>
+
+    <div class="info-box">
+        <strong>למה פונקציות?</strong> עקרון ה-DRY — Don't Repeat Yourself! במקום לכתוב את אותו קוד שוב ושוב, נארוז אותו בפונקציה ונקרא לה מתי שנרצה.
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 1.1: הגדרה וקריאה</h3>
+        <ol class="steps">
+            <li>פתח קובץ Python חדש בשם <code>functions.py</code></li>
+            <li>כתוב את הקוד הבא:</li>
+        </ol>
+<pre>
+def say_hello():
+    print("שלום עולם!")
+    print("אני פונקציה!")
+
+# קריאה לפונקציה
+say_hello()
+say_hello()
+</pre>
+        <ol class="steps" start="3">
+            <li>הרץ את הקובץ וראה מה קורה</li>
+        </ol>
+        <div class="what-you-see">
+<pre>שלום עולם!
+אני פונקציה!
+שלום עולם!
+אני פונקציה!</pre>
+        </div>
+
+        <p><strong>כמה פעמים הודפסה ההודעה "שלום עולם!"?</strong></p>
+        <div class="answer-box">
+            <label>התשובה שלך:</label>
+            <input type="text" id="answer-1-1" placeholder="מספר...">
+            <button class="check-btn" onclick="checkAnswer('answer-1-1', ['2'], 'מצוין! קראנו לפונקציה פעמיים ולכן היא רצה פעמיים.', 'ספור כמה פעמים כתבנו say_hello()')">בדוק תשובה</button>
+            <div class="feedback" id="feedback-1-1"></div>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 1.2: פונקציית ברכה</h3>
+        <ol class="steps">
+            <li>צור פונקציה שמדפיסה ברכת יום הולדת:</li>
+        </ol>
+<pre>
+def birthday_greeting():
+    print("🎂 יום הולדת שמח!")
+    print("🎈 שיהיה לך יום נפלא!")
+    print("🎁 מאחלים לך הכל טוב!")
+
+birthday_greeting()
+</pre>
+        <ol class="steps" start="2">
+            <li>עכשיו צור פונקציה משלך שמדפיסה 3 שורות על עצמך!</li>
+        </ol>
+    </div>
+
+    <div class="checkpoint">
+        ✅ <strong>עצור!</strong> האם הצלחת ליצור ולהריץ פונקציה בעצמך? אם כן — המשך הלאה!
+    </div>
+
+    <!-- ===== MISSION 2 ===== -->
+    <div class="mission-header">
+        <h2>משימה 2: פרמטרים וערכי החזרה</h2>
+        <p class="time-estimate">⏱️ 12 דקות</p>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 2.1: פרמטרים — הכנסת נתונים</h3>
+        <ol class="steps">
+            <li>פונקציות יכולות לקבל מידע דרך פרמטרים:</li>
+        </ol>
+<pre>
+def greet(name):
+    print(f"שלום {name}! מה שלומך?")
+
+greet("דני")
+greet("מיכל")
+greet("אורי")
+</pre>
+        <div class="what-you-see">
+<pre>שלום דני! מה שלומך?
+שלום מיכל! מה שלומך?
+שלום אורי! מה שלומך?</pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 2.2: return — הוצאת נתונים</h3>
+        <ol class="steps">
+            <li><code>return</code> מחזיר ערך מהפונקציה:</li>
+        </ol>
+<pre>
+def add(a, b):
+    return a + b
+
+result = add(5, 3)
+print(result)       # 8
+print(add(10, 20))  # 30
+</pre>
+        <ol class="steps" start="2">
+            <li>נבנה מחשבון טיפים:</li>
+        </ol>
+<pre>
+def calculate_tip(bill, tip_percent):
+    tip = bill * tip_percent / 100
+    total = bill + tip
+    return total
+
+meal = 85.50
+final = calculate_tip(meal, 15)
+print(f"חשבון: {meal} ש\"ח")
+print(f"סה\"כ עם טיפ: {final} ש\"ח")
+</pre>
+        <div class="what-you-see">
+<pre>חשבון: 85.5 ש"ח
+סה"כ עם טיפ: 98.325 ש"ח</pre>
+        </div>
+
+        <p><strong>מה הערך שיוחזר מ-<code>calculate_tip(100, 20)</code>?</strong></p>
+        <div class="answer-box">
+            <label>התשובה שלך:</label>
+            <input type="text" id="answer-2-2" placeholder="מספר...">
+            <button class="check-btn" onclick="checkAnswer('answer-2-2', ['120', '120.0'], 'נכון! 100 + 20% = 120', 'חשב: 100 + (100 * 20 / 100) = ?')">בדוק תשובה</button>
+            <div class="feedback" id="feedback-2-2"></div>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 2.3: החזרת מספר ערכים</h3>
+        <ol class="steps">
+            <li>פונקציה יכולה להחזיר כמה ערכים בו-זמנית:</li>
+        </ol>
+<pre>
+def min_max(numbers):
+    return min(numbers), max(numbers)
+
+smallest, biggest = min_max([4, 7, 1, 9, 3])
+print(f"הקטן: {smallest}, הגדול: {biggest}")
+</pre>
+        <div class="what-you-see">
+<pre>הקטן: 1, הגדול: 9</pre>
+        </div>
+    </div>
+
+    <div class="checkpoint">
+        ✅ <strong>עצור!</strong> האם אתה מבין את ההבדל בין <code>print</code> ו-<code>return</code>? print מדפיס למסך, return מחזיר ערך שאפשר לשמור במשתנה.
+    </div>
+
+    <!-- ===== MISSION 3 ===== -->
+    <div class="mission-header">
+        <h2>משימה 3: פרמטרים מתקדמים</h2>
+        <p class="time-estimate">⏱️ 10 דקות</p>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 3.1: ערכי ברירת מחדל</h3>
+        <ol class="steps">
+            <li>אפשר לתת ערך ברירת מחדל לפרמטר:</li>
+        </ol>
+<pre>
+def greet(name, greeting="שלום"):
+    print(f"{greeting} {name}!")
+
+greet("דני")              # שלום דני!
+greet("דני", "בוקר טוב")  # בוקר טוב דני!
+</pre>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 3.2: *args — מספר לא ידוע של ארגומנטים</h3>
+        <ol class="steps">
+            <li><code>*args</code> אוסף את כל הארגומנטים לטאפל:</li>
+        </ol>
+<pre>
+def average(*numbers):
+    if len(numbers) == 0:
+        return 0
+    return sum(numbers) / len(numbers)
+
+print(average(90, 80, 70))         # 80.0
+print(average(100, 95, 88, 72))    # 88.75
+</pre>
+
+        <p><strong>מה יחזיר <code>average(10, 20, 30)</code>?</strong></p>
+        <div class="answer-box">
+            <label>התשובה שלך:</label>
+            <input type="text" id="answer-3-2" placeholder="מספר...">
+            <button class="check-btn" onclick="checkAnswer('answer-3-2', ['20.0', '20'], 'מצוין! (10+20+30)/3 = 20', 'חשב את הממוצע: (10+20+30) / 3')">בדוק תשובה</button>
+            <div class="feedback" id="feedback-3-2"></div>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 3.3: **kwargs — ארגומנטים עם שמות</h3>
+        <ol class="steps">
+            <li><code>**kwargs</code> אוסף ארגומנטים עם שמות למילון:</li>
+        </ol>
+<pre>
+def create_profile(**info):
+    for key, value in info.items():
+        print(f"{key}: {value}")
+
+create_profile(name="דני", age=15, city="תל אביב")
+</pre>
+        <div class="what-you-see">
+<pre>name: דני
+age: 15
+city: תל אביב</pre>
+        </div>
+    </div>
+
+    <!-- ===== MISSION 4 ===== -->
+    <div class="mission-header">
+        <h2>משימה 4: פונקציות Lambda</h2>
+        <p class="time-estimate">⏱️ 8 דקות</p>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 4.1: פונקציות אנונימיות בשורה אחת</h3>
+        <ol class="steps">
+            <li><code>lambda</code> יוצרת פונקציה קצרה בשורה אחת:</li>
+        </ol>
+<pre>
+# פונקציה רגילה
+def double(x):
+    return x * 2
+
+# אותו דבר עם lambda
+double = lambda x: x * 2
+
+print(double(5))  # 10
+</pre>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 4.2: Lambda עם sorted, filter, map</h3>
+        <ol class="steps">
+            <li>מיון רשימה לפי קריטריון מותאם:</li>
+        </ol>
+<pre>
+students = [("דני", 85), ("מיכל", 92), ("אורי", 78)]
+
+# מיון לפי ציון (מהגבוה לנמוך)
+sorted_students = sorted(students, key=lambda s: s[1], reverse=True)
+print(sorted_students)
+
+# סינון — רק מי שעבר 80
+passed = list(filter(lambda s: s[1] >= 80, students))
+print(passed)
+
+# מיפוי — הוספת 5 נקודות בונוס לכולם
+bonus = list(map(lambda s: (s[0], s[1] + 5), students))
+print(bonus)
+</pre>
+        <div class="what-you-see">
+<pre>[('מיכל', 92), ('דני', 85), ('אורי', 78)]
+[('דני', 85), ('מיכל', 92)]
+[('דני', 90), ('מיכל', 97), ('אורי', 83)]</pre>
+        </div>
+    </div>
+
+    <div class="checkpoint">
+        ✅ <strong>עצור!</strong> Lambda שימושי למיונים וסינונים מהירים. לפונקציות מורכבות — השתמש ב-def רגיל.
+    </div>
+
+    <!-- ===== MISSION 5 ===== -->
+    <div class="mission-header">
+        <h2>משימה 5: Scope — טווח משתנים</h2>
+        <p class="time-estimate">⏱️ 8 דקות</p>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 5.1: Local vs Global</h3>
+        <ol class="steps">
+            <li>משתנים בתוך פונקציה הם <strong>מקומיים</strong> (local):</li>
+        </ol>
+<pre>
+x = 10  # משתנה גלובלי
+
+def my_func():
+    x = 5  # משתנה מקומי — לא משנה את הגלובלי!
+    print(f"בתוך הפונקציה: x = {x}")
+
+my_func()
+print(f"בחוץ: x = {x}")
+</pre>
+        <div class="what-you-see">
+<pre>בתוך הפונקציה: x = 5
+בחוץ: x = 10</pre>
+        </div>
+
+        <p><strong>מה הערך של x בחוץ אחרי הקריאה לפונקציה?</strong></p>
+        <div class="answer-box">
+            <label>התשובה שלך:</label>
+            <input type="text" id="answer-5-1" placeholder="מספר...">
+            <button class="check-btn" onclick="checkAnswer('answer-5-1', ['10'], 'נכון! המשתנה המקומי לא משפיע על הגלובלי.', 'שים לב: x בתוך הפונקציה הוא משתנה אחר מ-x בחוץ')">בדוק תשובה</button>
+            <div class="feedback" id="feedback-5-1"></div>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 5.2: כלל LEGB</h3>
+        <div class="info-box">
+            <strong>LEGB Rule:</strong> Python מחפש משתנים בסדר הזה:
+            <strong>L</strong>ocal (בתוך הפונקציה) →
+            <strong>E</strong>nclosing (בפונקציה עוטפת) →
+            <strong>G</strong>lobal (ברמת הקובץ) →
+            <strong>B</strong>uilt-in (מובנה ב-Python)
+        </div>
+<pre>
+name = "גלובלי"  # G
+
+def outer():
+    name = "חיצוני"  # E
+
+    def inner():
+        name = "פנימי"  # L
+        print(name)
+
+    inner()
+
+outer()  # מדפיס: פנימי
+</pre>
+    </div>
+
+    <!-- ===== MISSION 6 ===== -->
+    <div class="mission-header">
+        <h2>משימה 6: פרויקט — ארגז כלים אישי</h2>
+        <p class="time-estimate">⏱️ 12 דקות</p>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 6.1: ממיר טמפרטורה</h3>
+        <ol class="steps">
+            <li>צור קובץ <code>toolkit.py</code> ובנה פונקציית המרה:</li>
+        </ol>
+<pre>
+def celsius_to_fahrenheit(c):
+    return c * 9/5 + 32
+
+def fahrenheit_to_celsius(f):
+    return (f - 32) * 5/9
+
+# בדיקה
+print(celsius_to_fahrenheit(0))    # 32.0
+print(celsius_to_fahrenheit(100))  # 212.0
+print(fahrenheit_to_celsius(98.6)) # 37.0
+</pre>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 6.2: מחשבון BMI</h3>
+<pre>
+def calculate_bmi(weight_kg, height_m):
+    bmi = weight_kg / (height_m ** 2)
+    if bmi < 18.5:
+        category = "תת משקל"
+    elif bmi < 25:
+        category = "משקל תקין"
+    elif bmi < 30:
+        category = "עודף משקל"
+    else:
+        category = "השמנה"
+    return round(bmi, 1), category
+
+bmi, cat = calculate_bmi(70, 1.75)
+print(f"BMI: {bmi} — {cat}")
+</pre>
+        <div class="what-you-see">
+<pre>BMI: 22.9 — משקל תקין</pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 6.3: בודק חוזק סיסמה</h3>
+<pre>
+def check_password(password):
+    score = 0
+    if len(password) >= 8:
+        score += 1
+    if any(c.isupper() for c in password):
+        score += 1
+    if any(c.islower() for c in password):
+        score += 1
+    if any(c.isdigit() for c in password):
+        score += 1
+    if any(c in "!@#$%^&*" for c in password):
+        score += 1
+
+    levels = ["חלשה מאוד", "חלשה", "בינונית", "חזקה", "חזקה מאוד", "מעולה!"]
+    return score, levels[score]
+
+score, level = check_password("MyP@ss1")
+print(f"ציון: {score}/5 — {level}")
+</pre>
+
+        <p><strong>מה הציון של הסיסמה <code>abc</code>? (רק ספרה)</strong></p>
+        <div class="answer-box">
+            <label>התשובה שלך:</label>
+            <input type="text" id="answer-6-3" placeholder="מספר...">
+            <button class="check-btn" onclick="checkAnswer('answer-6-3', ['1'], 'נכון! הסיסמה קצרה מ-8, יש רק אותיות קטנות = ציון 1', 'חשוב: abc — קצרה מ-8? כן. אותיות גדולות? לא. אותיות קטנות? כן. ספרות? לא. תווים מיוחדים? לא.')">בדוק תשובה</button>
+            <div class="feedback" id="feedback-6-3"></div>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>תרגיל 6.4: בודק מספר ראשוני ומטיל קוביה</h3>
+<pre>
+import random
+
+def is_prime(n):
+    if n < 2:
+        return False
+    for i in range(2, int(n**0.5) + 1):
+        if n % i == 0:
+            return False
+    return True
+
+def roll_dice(sides=6):
+    return random.randint(1, sides)
+
+# בדיקות
+print(is_prime(7))    # True
+print(is_prime(10))   # False
+print(f"הקוביה הראתה: {roll_dice()}")
+print(f"קוביה של D20: {roll_dice(20)}")
+</pre>
+    </div>
+
+    <div class="mission-complete">
+        <h3>🎉 שיעור 7 הושלם!</h3>
+        <p>למדת: הגדרת פונקציות עם def, פרמטרים וערכי החזרה, ערכי ברירת מחדל, *args ו-**kwargs, פונקציות lambda, scope ו-LEGB, ובנית ארגז כלים שלם!</p>
+        <p style="margin-top: 12px;"><a href="lesson08-strings-files.html" style="color: #58a6ff; font-weight: bold;">המשך לשיעור 8: מחרוזות וקבצים →</a></p>
+    </div>
+
+</div>
+
+<!-- Popup Modal -->
+<div class="popup-overlay" id="popup-overlay" onclick="closePopup()">
+    <div class="popup" id="popup" onclick="event.stopPropagation()">
+        <div class="emoji" id="popup-emoji"></div>
+        <h3 id="popup-title"></h3>
+        <p id="popup-message"></p>
+        <button onclick="closePopup()">סגור</button>
+    </div>
+</div>
+
+<script>
+function checkAnswer(inputId, correctAnswers, successMsg, failMsg) {
+    var input = document.getElementById(inputId);
+    var val = input.value.trim();
+    var isCorrect = false;
+    for (var i = 0; i < correctAnswers.length; i++) {
+        if (val === correctAnswers[i] || val.toLowerCase() === correctAnswers[i].toLowerCase()) { isCorrect = true; break; }
+    }
+    var overlay = document.getElementById('popup-overlay');
+    var emoji = document.getElementById('popup-emoji');
+    var title = document.getElementById('popup-title');
+    var message = document.getElementById('popup-message');
+    var popup = document.getElementById('popup');
+    if (isCorrect) { emoji.textContent = '🎉'; title.textContent = 'כל הכבוד!'; message.textContent = successMsg; popup.className = 'popup correct'; }
+    else { emoji.textContent = '🤔'; title.textContent = 'נסה שוב'; message.textContent = failMsg; popup.className = 'popup incorrect'; }
+    overlay.style.display = 'flex';
+}
+function closePopup() { document.getElementById('popup-overlay').style.display = 'none'; }
+</script>
+
+</body>
+</html>
