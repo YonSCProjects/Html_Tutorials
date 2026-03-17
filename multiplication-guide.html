@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>מדריך כפל דו-ספרתי ורב-ספרתי</title>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&family=Secular+One&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#FAFAF7;--card:#FFFFFF;--text:#2C2C2A;--muted:#73726C;--hint:#9C9A92;
+  --purple:#7F77DD;--purple-bg:#EEEDFE;--purple-dark:#3C3489;--purple-mid:#534AB7;
+  --blue:#378ADD;--blue-bg:#E6F1FB;--blue-dark:#0C447C;--blue-mid:#185FA5;
+  --teal:#1D9E75;--teal-bg:#E1F5EE;--teal-dark:#085041;--teal-mid:#0F6E56;
+  --amber:#BA7517;--amber-bg:#FAEEDA;--amber-dark:#633806;--amber-mid:#854F0B;
+  --coral:#D85A30;--coral-bg:#FAECE7;--coral-dark:#712B13;
+  --green:#639922;--green-bg:#EAF3DE;--green-dark:#27500A;
+  --red:#E24B4A;--red-bg:#FCEBEB;--red-dark:#791F1F;
+  --pink:#D4537E;--pink-bg:#FBEAF0;--pink-dark:#72243E;
+  --border:#E5E4DF;--border2:#D3D1C7;
+  --radius:12px;--radius-sm:8px;
+}
+body{font-family:'Rubik',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;min-height:100vh}
+
+.hero{
+  background:linear-gradient(135deg,var(--purple-bg) 0%,var(--blue-bg) 50%,var(--teal-bg) 100%);
+  padding:3rem 1.5rem 2.5rem;text-align:center;position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'×÷+−=';font-size:120px;font-weight:700;position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%);color:var(--purple);opacity:.04;letter-spacing:20px;white-space:nowrap;
+}
+.hero h1{font-family:'Secular One',sans-serif;font-size:clamp(1.8rem,5vw,2.6rem);color:var(--purple-dark);position:relative}
+.hero p{font-size:clamp(0.95rem,2.5vw,1.1rem);color:var(--muted);margin-top:.5rem;position:relative}
+
+.container{max-width:780px;margin:0 auto;padding:0 1rem 3rem}
+
+.section{margin-top:2rem}
+.section-header{
+  display:flex;align-items:center;gap:12px;margin-bottom:1rem;
+}
+.section-num{
+  width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:15px;flex-shrink:0;
+}
+.section-title{font-weight:600;font-size:1.15rem}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin-bottom:1rem}
+.card-subtle{background:var(--bg);border:1px dashed var(--border2);border-radius:var(--radius);padding:1rem 1.25rem;font-size:.9rem;color:var(--muted);line-height:1.8}
+
+.row{display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap}
+label.field{font-size:.85rem;color:var(--muted)}
+input[type=number]{
+  width:70px;text-align:center;font-size:1.1rem;font-family:'Rubik',sans-serif;
+  border:1.5px solid var(--border2);border-radius:var(--radius-sm);padding:6px 4px;
+  background:var(--card);color:var(--text);transition:border-color .2s;
+}
+input[type=number]:focus{outline:none;border-color:var(--purple)}
+button{
+  font-family:'Rubik',sans-serif;font-size:.9rem;padding:8px 18px;border-radius:var(--radius-sm);
+  border:1.5px solid var(--border2);background:var(--card);color:var(--text);cursor:pointer;
+  transition:all .15s;font-weight:500;
+}
+button:hover{background:var(--purple-bg);border-color:var(--purple-mid)}
+button:active{transform:scale(.97)}
+button.primary{background:var(--purple);color:#fff;border-color:var(--purple)}
+button.primary:hover{background:var(--purple-mid)}
+
+.op-symbol{font-size:1.4rem;font-weight:600;color:var(--muted)}
+
+.area-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-top:1rem}
+.area-cell{border-radius:var(--radius-sm);padding:10px;text-align:center}
+.area-cell .label{font-size:.8rem;margin-bottom:2px}
+.area-cell .val{font-size:1rem;font-weight:600}
+
+.result-box{
+  text-align:center;padding:12px;border-radius:var(--radius-sm);
+  background:var(--teal-bg);margin-top:1rem;
+}
+.result-box .eq{font-size:.95rem;color:var(--teal-dark)}
+.result-box .ans{font-size:1.4rem;font-weight:700;color:var(--teal-dark)}
+
+.step-nav{display:flex;gap:8px;justify-content:center;margin-top:1rem}
+
+.explain-bubble{
+  background:var(--purple-bg);border-radius:var(--radius);padding:12px 16px;
+  font-size:.9rem;color:var(--purple-dark);text-align:center;min-height:50px;
+  margin-top:1rem;line-height:1.8;
+}
+
+.level-btns{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+.level-btns button.active{background:var(--purple);color:#fff;border-color:var(--purple)}
+
+.quiz-box{
+  text-align:center;background:var(--bg);border-radius:var(--radius);padding:1.5rem;margin-top:1rem;
+}
+.quiz-problem{font-size:1.8rem;font-weight:700;color:var(--text);direction:ltr;margin-bottom:1rem;letter-spacing:1px}
+.quiz-input{display:flex;gap:8px;justify-content:center;align-items:center}
+.quiz-input input{width:130px;font-size:1.2rem}
+#quiz-feedback{margin-top:10px;min-height:24px;font-size:.9rem}
+
+.score-row{display:flex;gap:10px;justify-content:center;margin-top:1.25rem;flex-wrap:wrap}
+.score-card{border-radius:var(--radius-sm);padding:8px 18px;text-align:center;min-width:70px}
+.score-card .lbl{font-size:.75rem;margin-bottom:2px}
+.score-card .num{font-size:1.3rem;font-weight:700}
+
+.tips{margin-top:2rem}
+.tip-item{
+  display:flex;gap:10px;align-items:flex-start;padding:10px 0;
+  border-bottom:1px solid var(--border);
+}
+.tip-item:last-child{border:none}
+.tip-icon{
+  width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:14px;flex-shrink:0;margin-top:2px;
+}
+.tip-text{font-size:.9rem;color:var(--muted);line-height:1.7}
+.tip-text strong{color:var(--text);font-weight:600}
+
+.footer{text-align:center;padding:2rem 1rem;font-size:.8rem;color:var(--hint)}
+
+@media(max-width:500px){
+  .card{padding:1rem}
+  .quiz-problem{font-size:1.4rem}
+  .area-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>מדריך כפל דו-ספרתי ורב-ספרתי</h1>
+  <p>ללמוד, לראות ולתרגל — כפל גדול בקלילות</p>
+</div>
+
+<div class="container">
+
+<!-- SECTION 1: Area Model -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-num" style="background:var(--purple-bg);color:var(--purple-dark)">1</div>
+    <div class="section-title">מודל השטח — לראות את הכפל</div>
+  </div>
+  <div class="card-subtle">כל כפל הוא בעצם חישוב <strong>שטח של מלבן</strong>. פורקים כל מספר לעשרות ויחידות, כופלים כל חלק בנפרד, ומחברים!</div>
+  <div class="card">
+    <div class="row" style="margin-bottom:1rem">
+      <label class="field">מספר ראשון</label>
+      <input type="number" id="a1n1" value="23" min="10" max="99" onchange="updateArea()">
+      <span class="op-symbol">×</span>
+      <label class="field">מספר שני</label>
+      <input type="number" id="a1n2" value="45" min="10" max="99" onchange="updateArea()">
+    </div>
+    <svg id="area-svg" width="100%" viewBox="0 0 680 340"></svg>
+    <div class="area-grid" id="area-parts"></div>
+    <div class="result-box" id="area-result"></div>
+    <div style="text-align:center;margin-top:1rem">
+      <button onclick="animateArea()">הדגמה מונפשת</button>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 2: Long Multiplication -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-num" style="background:var(--blue-bg);color:var(--blue-dark)">2</div>
+    <div class="section-title">כפל ארוך — צעד אחר צעד</div>
+  </div>
+  <div class="card-subtle">זו השיטה שכותבים במחברת. לחצו <strong>"צעד הבא"</strong> כדי לראות בדיוק מה קורה בכל שלב.</div>
+  <div class="card">
+    <div class="row" style="margin-bottom:1rem">
+      <input type="number" id="longA" value="47" min="10" max="999" onchange="resetLong()">
+      <span class="op-symbol">×</span>
+      <input type="number" id="longB" value="36" min="10" max="99" onchange="resetLong()">
+      <button onclick="resetLong()">אפס</button>
+    </div>
+    <div id="long-display" style="display:flex;justify-content:center;overflow-x:auto"></div>
+    <div class="step-nav">
+      <button id="btn-prev" onclick="longPrev()" disabled>צעד קודם</button>
+      <button id="btn-next" onclick="longNext()" class="primary">צעד הבא</button>
+    </div>
+    <div class="explain-bubble" id="long-explain"></div>
+  </div>
+</div>
+
+<!-- SECTION 3: Practice -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-num" style="background:var(--teal-bg);color:var(--teal-dark)">3</div>
+    <div class="section-title">תרגול — הגיע הזמן לבד!</div>
+  </div>
+  <div class="card">
+    <div class="level-btns">
+      <button id="lv1" class="active" onclick="setLvl(1)">דו × חד</button>
+      <button id="lv2" onclick="setLvl(2)">דו × דו</button>
+      <button id="lv3" onclick="setLvl(3)">תלת × דו</button>
+    </div>
+    <div class="quiz-box">
+      <div class="quiz-problem" id="quiz-problem"></div>
+      <div class="quiz-input">
+        <input type="number" id="quiz-ans" onkeydown="if(event.key==='Enter')checkQuiz()">
+        <button class="primary" onclick="checkQuiz()">בדוק</button>
+      </div>
+      <div id="quiz-feedback"></div>
+      <div style="margin-top:10px"><button onclick="quizHint()" style="font-size:.8rem;color:var(--muted)">רמז</button></div>
+    </div>
+    <div class="score-row">
+      <div class="score-card" style="background:var(--green-bg)">
+        <div class="lbl" style="color:var(--green-dark)">נכון</div>
+        <div class="num" style="color:var(--green-dark)" id="sc-ok">0</div>
+      </div>
+      <div class="score-card" style="background:var(--red-bg)">
+        <div class="lbl" style="color:var(--red-dark)">שגוי</div>
+        <div class="num" style="color:var(--red-dark)" id="sc-no">0</div>
+      </div>
+      <div class="score-card" style="background:var(--purple-bg)">
+        <div class="lbl" style="color:var(--purple-dark)">רצף</div>
+        <div class="num" style="color:var(--purple-dark)" id="sc-str">0</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TIPS -->
+<div class="tips">
+  <div class="section-header">
+    <div class="section-num" style="background:var(--amber-bg);color:var(--amber-dark)">★</div>
+    <div class="section-title">טיפים לזכור</div>
+  </div>
+  <div class="card">
+    <div class="tip-item">
+      <div class="tip-icon" style="background:var(--purple-bg);color:var(--purple-dark)">1</div>
+      <div class="tip-text"><strong>פרק תמיד!</strong> מספר גדול = עשרות + יחידות. למשל 47 = 40 + 7</div>
+    </div>
+    <div class="tip-item">
+      <div class="tip-icon" style="background:var(--blue-bg);color:var(--blue-dark)">2</div>
+      <div class="tip-text"><strong>כפול כל חלק בנפרד</strong> ואז חבר. ככה תרגיל אחד גדול הופך לכמה קטנים וקלים</div>
+    </div>
+    <div class="tip-item">
+      <div class="tip-icon" style="background:var(--teal-bg);color:var(--teal-dark)">3</div>
+      <div class="tip-text"><strong>בכפל ארוך — אל תשכח את האפס!</strong> כשכופלים בספרת העשרות, תמיד מוסיפים 0 בסוף</div>
+    </div>
+    <div class="tip-item">
+      <div class="tip-icon" style="background:var(--amber-bg);color:var(--amber-dark)">4</div>
+      <div class="tip-text"><strong>בדוק את עצמך</strong> — הפוך את סדר הכפל (למשל 23×45 = 45×23) ובדוק שהתוצאה זהה</div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<div class="footer">מדריך כפל אינטראקטיבי</div>
+
+<script>
+/* ===== AREA MODEL ===== */
+const aColors = {
+  tl:{f:'#EEEDFE',s:'#534AB7',t:'#3C3489',l:'עשרות × עשרות'},
+  tr:{f:'#E6F1FB',s:'#185FA5',t:'#0C447C',l:'עשרות × יחידות'},
+  bl:{f:'#E1F5EE',s:'#0F6E56',t:'#085041',l:'יחידות × עשרות'},
+  br:{f:'#FAEEDA',s:'#854F0B',t:'#633806',l:'יחידות × יחידות'}
+};
+
+function updateArea(){
+  const a=Math.max(10,Math.min(99,parseInt(document.getElementById('a1n1').value)||23));
+  const b=Math.max(10,Math.min(99,parseInt(document.getElementById('a1n2').value)||45));
+  const a10=Math.floor(a/10)*10,a1=a%10,b10=Math.floor(b/10)*10,b1=b%10;
+  const ox=120,oy=60,mW=460,mH=220;
+  const sc=Math.min(mW/a,mH/b);
+  const w10=a10*sc,w1=a1*sc,h10=b10*sc,h1=b1*sc;
+  const tw=w10+w1,th=h10+h1;
+  const sx=ox+(mW-tw)/2,sy=oy+(mH-th)/2;
+  const rects=[
+    {id:'tl',x:sx,y:sy,w:w10,h:h10,v:a10*b10,la:`${a10}×${b10}`},
+    {id:'tr',x:sx+w10,y:sy,w:w1,h:h10,v:a1*b10,la:`${a1}×${b10}`},
+    {id:'bl',x:sx,y:sy+h10,w:w10,h:h1,v:a10*b1,la:`${a10}×${b1}`},
+    {id:'br',x:sx+w10,y:sy+h10,w:w1,h:h1,v:a1*b1,la:`${a1}×${b1}`}
+  ];
+  let s='';
+  s+=`<text x="${sx+w10/2}" y="${sy-24}" text-anchor="middle" font-size="15" font-weight="600" fill="#2C2C2A">${a10}</text>`;
+  s+=`<text x="${sx+w10+w1/2}" y="${sy-24}" text-anchor="middle" font-size="15" font-weight="600" fill="#2C2C2A">${a1}</text>`;
+  s+=`<text x="${sx-14}" y="${sy+h10/2+5}" text-anchor="middle" font-size="15" font-weight="600" fill="#2C2C2A">${b10}</text>`;
+  s+=`<text x="${sx-14}" y="${sy+h10+h1/2+5}" text-anchor="middle" font-size="15" font-weight="600" fill="#2C2C2A">${b1}</text>`;
+  s+=`<text x="${sx+tw/2}" y="${sy-44}" text-anchor="middle" font-size="13" fill="#73726C">${a} = ${a10} + ${a1}</text>`;
+  rects.forEach(r=>{
+    const c=aColors[r.id];
+    s+=`<rect class="ar" data-id="${r.id}" x="${r.x}" y="${r.y}" width="${r.w}" height="${r.h}" rx="4" fill="${c.f}" stroke="${c.s}" stroke-width="1.5" style="transition:opacity .4s"/>`;
+    s+=`<text class="at" data-id="${r.id}" x="${r.x+r.w/2}" y="${r.y+r.h/2-8}" text-anchor="middle" dominant-baseline="central" font-size="12" fill="${c.t}" style="transition:opacity .4s">${r.la}</text>`;
+    s+=`<text class="at" data-id="${r.id}" x="${r.x+r.w/2}" y="${r.y+r.h/2+12}" text-anchor="middle" dominant-baseline="central" font-size="17" font-weight="600" fill="${c.t}" style="transition:opacity .4s">${r.v.toLocaleString()}</text>`;
+  });
+  const total=a*b;
+  s+=`<text x="${sx+tw/2}" y="${sy+th+36}" text-anchor="middle" font-size="15" font-weight="600" fill="#2C2C2A">${rects.map(r=>r.v.toLocaleString()).join(' + ')} = ${total.toLocaleString()}</text>`;
+  document.getElementById('area-svg').innerHTML=s;
+  document.getElementById('area-svg').setAttribute('viewBox',`0 0 680 ${Math.round(sy+th+60)}`);
+  let ph='';
+  rects.forEach(r=>{const c=aColors[r.id];ph+=`<div class="area-cell" style="background:${c.f};border:1px solid ${c.s}"><div class="label" style="color:${c.t}">${c.l}</div><div class="val" style="color:${c.t}">${r.la} = ${r.v.toLocaleString()}</div></div>`});
+  document.getElementById('area-parts').innerHTML=ph;
+  document.getElementById('area-result').innerHTML=`<div class="eq">${a} × ${b}</div><div class="ans">${total.toLocaleString()}</div>`;
+  window._arects=rects;
+}
+function animateArea(){
+  const ids=['tl','tr','bl','br'];
+  document.querySelectorAll('.ar,.at').forEach(el=>el.style.opacity='.12');
+  let i=0;
+  function go(){
+    if(i>0)document.querySelectorAll(`[data-id="${ids[i-1]}"]`).forEach(el=>el.style.opacity='.35');
+    if(i>=ids.length){document.querySelectorAll('.ar,.at').forEach(el=>el.style.opacity='1');return}
+    document.querySelectorAll(`[data-id="${ids[i]}"]`).forEach(el=>el.style.opacity='1');
+    i++;setTimeout(go,1100);
+  }
+  go();
+}
+updateArea();
+
+/* ===== LONG MULTIPLICATION ===== */
+let lStep=0,lSteps=[];
+function buildLong(){
+  const a=Math.max(10,Math.min(999,parseInt(document.getElementById('longA').value)||47));
+  const b=Math.max(10,Math.min(99,parseInt(document.getElementById('longB').value)||36));
+  const aS=String(a),b1=b%10,b10=Math.floor(b/10);
+  const p1=a*b1,p2=a*b10,total=a*b;
+  lSteps=[];
+  lSteps.push({p:'setup',t:`נסדר את התרגיל: <strong>${a} × ${b}</strong>`,showR1:false,showR2:false,showSum:false});
+  let carry=0;
+  for(let i=aS.length-1;i>=0;i--){
+    const d=parseInt(aS[i]),prod=d*b1+carry,w=prod%10;carry=Math.floor(prod/10);
+    const pos=i===aS.length-1?'יחידות':(i===aS.length-2?'עשרות':'מאות');
+    lSteps.push({p:'r1',t:`<span style="color:#993556">${b1}</span> × ${d} (${pos}) = ${d*b1}${carry>0||prod!==d*b1?` → ${prod}, רושמים ${w}, נשא ${carry}`:`, רושמים ${w}`}`,showR1:true,showR2:false,showSum:false});
+  }
+  lSteps.push({p:'r1d',t:`שורה ראשונה: <strong style="color:#993556">${a} × ${b1} = ${p1}</strong>`,showR1:true,showR2:false,showSum:false});
+  lSteps.push({p:'r2i',t:`עכשיו כופלים בעשרות (<strong style="color:#185FA5">${b10}</strong>). מוסיפים <strong>0</strong> כי זו ספרת עשרות!`,showR1:true,showR2:true,showSum:false});
+  carry=0;
+  for(let i=aS.length-1;i>=0;i--){
+    const d=parseInt(aS[i]),prod=d*b10+carry,w=prod%10;carry=Math.floor(prod/10);
+    const pos=i===aS.length-1?'יחידות':(i===aS.length-2?'עשרות':'מאות');
+    lSteps.push({p:'r2',t:`<span style="color:#185FA5">${b10}</span> × ${d} (${pos}) = ${d*b10}${carry>0||prod!==d*b10?` → ${prod}, רושמים ${w}, נשא ${carry}`:`, רושמים ${w}`}`,showR1:true,showR2:true,showSum:false});
+  }
+  lSteps.push({p:'r2d',t:`שורה שנייה: <strong style="color:#185FA5">${a} × ${b10}0 = ${p2}0</strong>`,showR1:true,showR2:true,showSum:false});
+  lSteps.push({p:'sum',t:`מחברים: <strong>${p1} + ${p2}0 = ${total.toLocaleString()}</strong>`,showR1:true,showR2:true,showSum:true});
+  lSteps.push({p:'fin',t:`<strong style="font-size:1.1rem">${a} × ${b} = ${total.toLocaleString()}</strong> 🎉`,showR1:true,showR2:true,showSum:true});
+}
+function renderLong(){
+  const a=Math.max(10,Math.min(999,parseInt(document.getElementById('longA').value)||47));
+  const b=Math.max(10,Math.min(99,parseInt(document.getElementById('longB').value)||36));
+  const b1=b%10,b10=Math.floor(b/10);
+  const p1=a*b1,p2=a*b10,total=a*b;
+  const st=lSteps[lStep];
+  const maxL=String(total).length+1,cW=40,cH=44;
+
+  function digs(num,row,col,hasZ){
+    const s=String(num);let h='';
+    const sx=(maxL-s.length-(hasZ?1:0))*cW;
+    for(let i=0;i<s.length;i++){
+      h+=`<div style="position:absolute;top:${row*cH}px;left:${sx+i*cW}px;width:${cW}px;height:${cH}px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:600;color:${col}">${s[i]}</div>`;
+    }
+    if(hasZ){
+      h+=`<div style="position:absolute;top:${row*cH}px;left:${sx+s.length*cW}px;width:${cW}px;height:${cH}px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:600;color:#B4B2A9">0</div>`;
+    }
+    return h;
+  }
+  const rows=st.showSum?5:(st.showR2?4:(st.showR1?3:2));
+  let h=`<div style="direction:ltr;font-family:'Rubik',monospace;position:relative;width:${maxL*cW}px;height:${rows*cH+12}px;margin:0 auto">`;
+  h+=digs(a,0,'#2C2C2A',false);
+  h+=`<div style="position:absolute;top:${cH}px;left:0;width:${cW}px;height:${cH}px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:600;color:#73726C">×</div>`;
+  h+=digs(b,1,'#2C2C2A',false);
+  h+=`<div style="position:absolute;top:${2*cH-3}px;left:0;right:0;height:2px;background:#2C2C2A;opacity:.25"></div>`;
+  if(st.showR1)h+=digs(p1,2,'#993556',false);
+  if(st.showR2)h+=digs(p2,3,'#185FA5',true);
+  if(st.showSum){
+    h+=`<div style="position:absolute;top:${4*cH-3}px;left:0;right:0;height:2px;background:#2C2C2A;opacity:.25"></div>`;
+    h+=digs(total,4,st.p==='fin'?'#0F6E56':'#2C2C2A',false);
+  }
+  h+='</div>';
+  document.getElementById('long-display').innerHTML=h;
+  document.getElementById('long-explain').innerHTML=st.t;
+  document.getElementById('btn-prev').disabled=lStep===0;
+  document.getElementById('btn-next').disabled=lStep>=lSteps.length-1;
+  document.getElementById('btn-next').textContent=lStep>=lSteps.length-1?'סיום!':'צעד הבא';
+}
+function longNext(){if(lStep<lSteps.length-1){lStep++;renderLong()}}
+function longPrev(){if(lStep>0){lStep--;renderLong()}}
+function resetLong(){lStep=0;buildLong();renderLong()}
+buildLong();renderLong();
+
+/* ===== QUIZ ===== */
+let qLvl=1,qOk=0,qNo=0,qStr=0,qA=0,qB=0;
+function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a}
+function setLvl(l){
+  qLvl=l;[1,2,3].forEach(i=>{document.getElementById('lv'+i).classList.toggle('active',i===l)});
+  newQ();
+}
+function newQ(){
+  if(qLvl===1){qA=rand(11,99);qB=rand(2,9)}
+  else if(qLvl===2){qA=rand(11,99);qB=rand(11,99)}
+  else{qA=rand(100,999);qB=rand(11,99)}
+  document.getElementById('quiz-problem').textContent=`${qA} × ${qB} = ?`;
+  document.getElementById('quiz-feedback').innerHTML='';
+  const inp=document.getElementById('quiz-ans');inp.value='';
+  setTimeout(()=>inp.focus(),100);
+}
+function quizHint(){
+  const a10=Math.floor(qA/10)*10,a1=qA%10,b10=Math.floor(qB/10)*10,b1=qB%10;
+  let h='';
+  if(qB<10)h=`${qA} × ${qB} = (${a10}×${qB}) + (${a1}×${qB}) = ${a10*qB} + ${a1*qB}`;
+  else h=`${qA} × ${qB} = (${qA}×${b1}) + (${qA}×${b10}0) = ${qA*b1} + ${qA*b10}0`;
+  document.getElementById('quiz-feedback').innerHTML=`<span style="color:var(--blue-mid)">${h}</span>`;
+}
+function checkQuiz(){
+  const ans=parseInt(document.getElementById('quiz-ans').value),correct=qA*qB;
+  const fb=document.getElementById('quiz-feedback');
+  if(isNaN(ans)){fb.innerHTML=`<span style="color:var(--amber)">הכניסו מספר</span>`;return}
+  if(ans===correct){
+    qOk++;qStr++;
+    fb.innerHTML=`<span style="color:var(--green-dark);font-weight:600">${qStr>=5?'מדהים!! ':qStr>=3?'יופי! ':''}נכון! ${qA} × ${qB} = ${correct.toLocaleString()}</span>`;
+    setTimeout(newQ,1200);
+  }else{
+    qNo++;qStr=0;
+    fb.innerHTML=`<span style="color:var(--red-dark)">לא נכון. התשובה: ${qA} × ${qB} = ${correct.toLocaleString()}</span>`;
+    setTimeout(newQ,2500);
+  }
+  document.getElementById('sc-ok').textContent=qOk;
+  document.getElementById('sc-no').textContent=qNo;
+  document.getElementById('sc-str').textContent=qStr;
+}
+newQ();
+</script>
+</body>
+</html>
